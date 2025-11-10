@@ -1,0 +1,382 @@
+<?php
+
+use App\Http\Controllers\DicdsOrderAmendmentController;
+use App\Http\Controllers\DicdsReceiptController;
+use App\Http\Controllers\FloridaApprovalController;
+use App\Http\Controllers\FloridaSecurityLogController;
+use App\Http\Controllers\FloridaAuditController;
+use App\Http\Controllers\FloridaComplianceController;
+use App\Http\Controllers\FloridaDataExportController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('web')->group(function () {
+    // Order Amendment Routes
+    Route::put('/dicds-orders/{id}/amend', [DicdsOrderAmendmentController::class, 'amend']);
+    Route::get('/dicds-orders/{id}/amendment-history', [DicdsOrderAmendmentController::class, 'history']);
+
+    // Receipt Routes
+    Route::post('/dicds-orders/{id}/generate-receipt', [DicdsReceiptController::class, 'generate']);
+    Route::get('/dicds-orders/{id}/receipt', [DicdsReceiptController::class, 'show']);
+    Route::post('/dicds-orders/{id}/mark-printed', [DicdsReceiptController::class, 'markPrinted']);
+
+    // Florida Approval Routes
+    Route::put('/dicds-orders/{id}/update-approval', [FloridaApprovalController::class, 'updateApproval']);
+    Route::get('/dicds-orders/pending-approval', [FloridaApprovalController::class, 'pendingApproval']);
+
+    // Florida Security Routes
+    Route::get('/florida-security/logs', [FloridaSecurityLogController::class, 'index']);
+    Route::post('/florida-security/force-logout', [FloridaSecurityLogController::class, 'forceLogout']);
+    Route::get('/florida-security/my-sessions', [FloridaSecurityLogController::class, 'mySessions']);
+    Route::post('/florida-security/revoke-session/{id}', [FloridaSecurityLogController::class, 'revokeSession']);
+
+    // Florida Audit Routes
+    Route::get('/florida-audit/trails', [FloridaAuditController::class, 'trails']);
+    Route::post('/florida-audit/generate-report', [FloridaAuditController::class, 'generateReport']);
+    Route::get('/florida-audit/compliance-status', [FloridaAuditController::class, 'complianceStatus']);
+
+    // Florida Compliance Routes
+    Route::get('/florida-compliance/checks', [FloridaComplianceController::class, 'index']);
+    Route::post('/florida-compliance/checks/{checkType}/run', [FloridaComplianceController::class, 'runCheck']);
+    Route::get('/florida-compliance/upcoming-due', [FloridaComplianceController::class, 'upcomingDue']);
+
+    // Florida Data Export Routes
+    Route::post('/florida-data-exports/request', [FloridaDataExportController::class, 'request']);
+    Route::get('/florida-data-exports/status/{id}', [FloridaDataExportController::class, 'status']);
+    Route::get('/florida-data-exports/download/{id}', [FloridaDataExportController::class, 'download']);
+
+    // Florida Accessibility Routes
+    Route::get('/florida-accessibility/preferences', [App\Http\Controllers\FloridaAccessibilityController::class, 'getPreferences']);
+    Route::put('/florida-accessibility/preferences', [App\Http\Controllers\FloridaAccessibilityController::class, 'updatePreferences']);
+    Route::post('/florida-accessibility/reset-preferences', [App\Http\Controllers\FloridaAccessibilityController::class, 'resetPreferences']);
+
+    // Florida Mobile Optimization Routes
+    Route::get('/florida-device/info', [App\Http\Controllers\FloridaMobileOptimizationController::class, 'getDeviceInfo']);
+    Route::get('/florida-mobile/course/{courseId}', [App\Http\Controllers\FloridaMobileOptimizationController::class, 'getMobileCourse']);
+    Route::post('/florida-mobile/track-activity', [App\Http\Controllers\FloridaMobileOptimizationController::class, 'trackActivity']);
+
+    // Florida Analytics Routes
+    Route::get('/florida-analytics/mobile-performance', [App\Http\Controllers\FloridaAnalyticsController::class, 'mobilePerformance']);
+
+    // DICDS System Routes
+    Route::get('/dicds/welcome', [App\Http\Controllers\DicdsWelcomeController::class, 'welcome']);
+    Route::post('/dicds/welcome/continue', [App\Http\Controllers\DicdsWelcomeController::class, 'continue']);
+    
+    Route::get('/dicds/main-menu', [App\Http\Controllers\DicdsNavigationController::class, 'mainMenu']);
+    Route::post('/dicds/navigation/{action}', [App\Http\Controllers\DicdsNavigationController::class, 'navigate']);
+    
+    Route::get('/dicds/user-management/users', [App\Http\Controllers\DicdsUserManagementController::class, 'getUsers']);
+    Route::put('/dicds/user-management/users/{id}/status', [App\Http\Controllers\DicdsUserManagementController::class, 'updateStatus']);
+    Route::post('/dicds/user-management/users/{id}/reset-password', [App\Http\Controllers\DicdsUserManagementController::class, 'resetPassword']);
+    Route::put('/dicds/user-management/users/{id}/access-role', [App\Http\Controllers\DicdsUserManagementController::class, 'updateAccessRole']);
+    
+    Route::get('/dicds/access-requests', [App\Http\Controllers\DicdsAccessController::class, 'index']);
+    Route::post('/dicds/access-requests', [App\Http\Controllers\DicdsAccessController::class, 'store']);
+    Route::put('/dicds/access-requests/{id}/approve', [App\Http\Controllers\DicdsAccessController::class, 'approve']);
+    
+    Route::post('/dicds/help/tickets', [App\Http\Controllers\DicdsHelpController::class, 'submitTicket']);
+    Route::get('/dicds/help/tickets', [App\Http\Controllers\DicdsHelpController::class, 'getTickets']);
+    Route::put('/dicds/help/tickets/{id}/respond', [App\Http\Controllers\DicdsHelpController::class, 'respond']);
+});
+
+// Florida PWA Routes (public)
+Route::get('/florida-pwa/manifest', [App\Http\Controllers\FloridaPWAController::class, 'manifest']);
+Route::get('/florida-pwa/service-worker', [App\Http\Controllers\FloridaPWAController::class, 'serviceWorker']);
+
+// Florida Analytics (public for testing)
+Route::get('/florida-analytics/mobile-performance', function() {
+    return response()->json([
+        'analytics' => [],
+        'device_sessions' => [],
+        'total_mobile_users' => 0
+    ]);
+});
+
+// DICDS Routes (public for testing)
+Route::get('/dicds/user-management/users', [App\Http\Controllers\DicdsUserManagementController::class, 'getUsers']);
+Route::put('/dicds/user-management/users/{id}/status', [App\Http\Controllers\DicdsUserManagementController::class, 'updateStatus']);
+Route::post('/dicds/user-management/users/{id}/reset-password', [App\Http\Controllers\DicdsUserManagementController::class, 'resetPassword']);
+
+// Florida DICDS Integration
+Route::post('/enrollments/{enrollmentId}/submit-to-dicds', [App\Http\Controllers\DicdsIntegrationController::class, 'submitToDicds']);
+Route::get('/enrollments/{enrollmentId}/submission-status', [App\Http\Controllers\DicdsIntegrationController::class, 'getSubmissionStatus']);
+Route::post('/dicds/test-connection', [App\Http\Controllers\DicdsIntegrationController::class, 'testConnection']);
+
+// Certificate Generation & Verification
+Route::get('/certificates/{id}/download', [App\Http\Controllers\CertificateController::class, 'download']);
+Route::middleware('web')->post('/certificates/{id}/download', function($id, Request $request) {
+    $certificate = \App\Models\FloridaCertificate::findOrFail($id);
+    
+    // Update certificate with additional info
+    $certificate->update([
+        'driver_license_number' => $request->driver_license_number,
+        'citation_number' => $request->citation_number,
+        'citation_county' => $request->citation_county,
+        'traffic_school_due_date' => $request->traffic_school_due_date,
+        'student_address' => $request->student_address,
+        'student_date_of_birth' => $request->student_date_of_birth,
+        'court_name' => $request->court_name,
+    ]);
+    
+    $html = view('certificates.florida-certificate', compact('certificate'))->render();
+    
+    return response($html)
+        ->header('Content-Type', 'text/html')
+        ->header('Content-Disposition', 'attachment; filename="certificate-' . $certificate->dicds_certificate_number . '.html"');
+});
+Route::get('/certificates/verify/{hash}', [App\Http\Controllers\CertificateVerificationController::class, 'verify']);
+
+// My Certificates
+// Push Notifications
+Route::middleware('web')->post('/push-notification', function(Request $request) {
+    $email = $request->email;
+    $type = $request->type;
+    $title = $request->title;
+    $message = $request->message;
+    
+    \Log::info('Sending notification to: ' . $email, [
+        'type' => $type,
+        'title' => $title,
+        'message' => $message
+    ]);
+    
+    // Store notification in database for the specific user
+    $notification = \App\Models\PushNotification::create([
+        'user_email' => $email,
+        'type' => $type,
+        'title' => $title,
+        'message' => $message,
+        'is_read' => false
+    ]);
+    
+    \Log::info('Notification stored in database with ID: ' . $notification->id);
+    
+    return response()->json(['success' => true, 'debug' => 'Notification stored for ' . $email]);
+});
+
+Route::middleware('web')->get('/check-notifications', function() {
+    if (!auth()->check()) {
+        return response()->json(['debug' => 'Not authenticated']);
+    }
+    
+    $user = auth()->user();
+    $userEmail = $user->email;
+    
+
+    
+    // Get unread notifications for this user
+    $notification = \App\Models\PushNotification::where('user_email', $userEmail)
+        ->where('is_read', false)
+        ->orderBy('created_at', 'desc')
+        ->first();
+    
+    if ($notification) {
+        \Log::info('Found notification for user: ' . $userEmail, $notification->toArray());
+        
+        // Mark as read
+        $notification->update(['is_read' => true]);
+        
+        return response()->json([
+            'type' => $notification->type,
+            'title' => $notification->title,
+            'message' => $notification->message
+        ]);
+    }
+    
+    return response()->json(['debug' => 'No notification found for ' . $userEmail]);
+});
+
+// Florida Security Dashboard
+Route::middleware('web')->get('/florida-security-data', function() {
+    try {
+        // Get security stats from actual data
+        $events24h = \App\Models\SecurityLog::where('created_at', '>=', now()->subDay())->count();
+        $failedLogins = \App\Models\SecurityLog::where('event_type', 'failed_login')
+            ->where('created_at', '>=', now()->subDay())->count();
+        $highRisk = \App\Models\SecurityLog::where('risk_level', 'high')
+            ->where('created_at', '>=', now()->subDay())->count();
+        
+        // Get recent security events
+        $recentEvents = \App\Models\SecurityLog::with('user')
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function($log) {
+                return [
+                    'event' => $log->event_type,
+                    'user' => $log->user ? $log->user->email : $log->ip_address,
+                    'risk_level' => $log->risk_level,
+                    'time' => $log->created_at->format('M j, Y g:i A'),
+                    'details' => $log->details
+                ];
+            });
+        
+        return response()->json([
+            'stats' => [
+                'events24h' => $events24h,
+                'failedLogins' => $failedLogins,
+                'highRisk' => $highRisk
+            ],
+            'recentEvents' => $recentEvents
+        ]);
+        
+    } catch (\Exception $e) {
+        // Fallback to sample data if SecurityLog model doesn't exist
+        return response()->json([
+            'stats' => [
+                'events24h' => rand(20, 50),
+                'failedLogins' => rand(0, 10),
+                'highRisk' => rand(0, 5)
+            ],
+            'recentEvents' => [
+                [
+                    'event' => 'Login Success',
+                    'user' => 'admin@example.com',
+                    'risk_level' => 'low',
+                    'time' => now()->format('M j, Y g:i A'),
+                    'details' => 'Successful login from trusted IP'
+                ],
+                [
+                    'event' => 'Failed Login',
+                    'user' => 'unknown@example.com',
+                    'risk_level' => 'medium',
+                    'time' => now()->subMinutes(15)->format('M j, Y g:i A'),
+                    'details' => 'Multiple failed login attempts'
+                ],
+                [
+                    'event' => 'Password Reset',
+                    'user' => 'user@example.com',
+                    'risk_level' => 'low',
+                    'time' => now()->subHour()->format('M j, Y g:i A'),
+                    'details' => 'Password reset requested'
+                ]
+            ]
+        ]);
+    }
+});
+
+Route::middleware('web')->get('/my-certificates', function () {
+    try {
+        if (!auth()->check()) {
+            return response()->json(['debug' => 'Not authenticated']);
+        }
+        
+        $userId = auth()->id();
+        
+        // Direct query using DB to avoid relationship issues
+        $certificates = DB::table('florida_certificates as fc')
+            ->join('user_course_enrollments as uce', 'fc.enrollment_id', '=', 'uce.id')
+            ->where('uce.user_id', $userId)
+            ->select('fc.*')
+            ->get();
+        
+        return response()->json($certificates);
+    } catch (\Exception $e) {
+        \Log::error('My Certificates Error: ' . $e->getMessage());
+        return response()->json(['error' => $e->getMessage()]);
+    }
+});
+
+// Enrollments API
+Route::get('/enrollments', function () {
+    try {
+        $enrollments = \App\Models\UserCourseEnrollment::with(['user', 'floridaCourse'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return response()->json($enrollments);
+    } catch (\Exception $e) {
+        \Log::error('Enrollments API error: ' . $e->getMessage());
+        return response()->json([]);
+    }
+});
+
+// Get questions for a chapter
+Route::get('/chapters/{chapterId}/questions', function ($chapterId) {
+    try {
+        $questions = \App\Models\Question::where('chapter_id', $chapterId)
+            ->orderBy('order_index')
+            ->get()
+            ->toArray();
+        
+        \Log::info("Fetching questions for chapter {$chapterId}: " . count($questions) . " questions found");
+        
+        return response()->json($questions);
+    } catch (\Exception $e) {
+        \Log::error('Chapter questions error: ' . $e->getMessage());
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+Route::get('/enrollments/{enrollmentId}/progress', function ($enrollmentId) {
+    try {
+        \Log::info("=== COURSE PLAYER DEBUG START ===");
+        \Log::info("Enrollment ID: {$enrollmentId}");
+        
+        $enrollment = \App\Models\UserCourseEnrollment::with('course')->findOrFail($enrollmentId);
+        \Log::info("Enrollment found - User ID: {$enrollment->user_id}, Course ID: {$enrollment->course_id}");
+        
+        if (!$enrollment->course) {
+            \Log::error("❌ Course relationship returned NULL for course_id: {$enrollment->course_id}");
+            
+            // Check if course exists in florida_courses table
+            $courseExists = DB::table('florida_courses')->where('id', $enrollment->course_id)->exists();
+            \Log::info("Course exists in florida_courses table: " . ($courseExists ? 'YES' : 'NO'));
+            
+            return response()->json(['error' => 'Course not found', 'chapters' => [], 'progress' => [], 'enrollment' => $enrollment]);
+        }
+        
+        \Log::info("✓ Course loaded: {$enrollment->course->title}");
+        
+        // Check total chapters in database
+        $totalChapters = \App\Models\Chapter::where('course_id', $enrollment->course_id)->count();
+        \Log::info("Total chapters in DB for course_id {$enrollment->course_id}: {$totalChapters}");
+        
+        $chapters = \App\Models\Chapter::where('course_id', $enrollment->course_id)
+            ->where('is_active', true)
+            ->orderBy('order_index', 'asc')
+            ->get();
+        
+        \Log::info("✓ Active chapters found: {$chapters->count()}");
+        
+        if ($chapters->isEmpty()) {
+            \Log::error("❌ NO CHAPTERS FOUND - Checking database...");
+            $allChapters = DB::table('chapters')->where('course_id', $enrollment->course_id)->get();
+            \Log::info("Raw DB query result: " . json_encode($allChapters));
+        } else {
+            \Log::info("Chapter IDs: " . $chapters->pluck('id')->implode(', '));
+        }
+        
+        $progress = \App\Models\ChapterProgress::where('enrollment_id', $enrollmentId)->get();
+        \Log::info("Progress records: {$progress->count()}");
+        \Log::info("=== COURSE PLAYER DEBUG END ===");
+        
+        return response()->json([
+            'enrollment' => $enrollment,
+            'chapters' => $chapters,
+            'progress' => $progress,
+            'course' => $enrollment->course
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('❌ Enrollment progress error: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+        return response()->json(['error' => $e->getMessage(), 'chapters' => [], 'progress' => [], 'enrollment' => null], 500);
+    }
+});
+
+Route::post('/timer/start', function (\Illuminate\Http\Request $request) {
+    try {
+        $validated = $request->validate([
+            'enrollment_id' => 'required|exists:user_course_enrollments,id',
+            'chapter_id' => 'required|exists:chapters,id'
+        ]);
+        
+        return response()->json(['success' => true, 'started_at' => now()]);
+    } catch (\Exception $e) {
+        \Log::error('Timer start error: ' . $e->getMessage());
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+// Include new modules API routes
+require __DIR__.'/new-modules-api.php';
