@@ -63,7 +63,12 @@ class ProgressController extends Controller
 
     private function updateEnrollmentProgress(UserCourseEnrollment $enrollment)
     {
+        // Try both chapter models to get total chapters
         $totalChapters = \App\Models\CourseChapter::where('course_id', $enrollment->course_id)->count();
+        if ($totalChapters == 0) {
+            $totalChapters = \App\Models\Chapter::where('course_id', $enrollment->course_id)->count();
+        }
+        
         $completedChapters = $enrollment->progress()->where('is_completed', true)->count();
         
         $progressPercentage = $totalChapters > 0 ? ($completedChapters / $totalChapters) * 100 : 0;
@@ -121,31 +126,69 @@ class ProgressController extends Controller
         }
     }
     
-    public function completeChapterWeb(UserCourseEnrollment $enrollment, $chapterId)
+    public function completeChapterWeb(UserCourseEnrollment $enrollment, $chapter)
     {
         // Ensure user can only access their own enrollments
         if ($enrollment->user_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
         
-        $chapter = \App\Models\CourseChapter::findOrFail($chapterId);
-        
-        $progress = UserCourseProgress::updateOrCreate(
-            [
-                'enrollment_id' => $enrollment->id,
-                'chapter_id' => $chapter->id
-            ],
-            [
-                'completed_at' => now(),
-                'is_completed' => true,
-                'time_spent' => $chapter->duration,
-                'last_accessed_at' => now()
-            ]
-        );
-        
-        // Update enrollment progress
-        $this->updateEnrollmentProgress($enrollment);
-        
-        return response()->json($progress);
+        try {
+            // First check if chapter exists in course_chapters table (required by foreign key)
+            $courseChapter = \App\Models\CourseChapter::find($chapter);
+            
+            if (!$courseChapter) {
+                // If not in course_chapters, check chapters table
+                $regularChapter = \App\Models\Chapter::find($chapter);
+                if (!$regularChapter) {
+                    return response()->json(['error' => 'Chapter not found'], 404);
+                }
+                
+                // Create a corresponding course_chapter record if it doesn't exist
+                $courseChapter = \App\Models\CourseChapter::create([
+                    'course_id' => $enrollment->course_id,
+                    'title' => $regularChapter->title,
+                    'content' => $regularChapter->content ?? '',
+                    'video_url' => $regularChapter->video_url,
+                    'order_index' => $regularChapter->order_index ?? 1,
+                    'duration' => $regularChapter->duration ?? 60,
+                    'required_min_time' => 60,
+                    'is_active' => true
+                ]);
+                
+                $chapterModel = $courseChapter;
+            } else {
+                $chapterModel = $courseChapter;
+            }
+            
+            $progress = UserCourseProgress::updateOrCreate(
+                [
+                    'enrollment_id' => $enrollment->id,
+                    'chapter_id' => $chapterModel->id
+                ],
+                [
+                    'completed_at' => now(),
+                    'is_completed' => true,
+                    'time_spent' => $chapterModel->duration ?? 60,
+                    'last_accessed_at' => now()
+                ]
+            );
+            
+            // Update enrollment progress
+            $this->updateEnrollmentProgress($enrollment);
+            
+            return response()->json([
+                'success' => true,
+                'progress' => $progress,
+                'message' => 'Chapter completed successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Chapter completion error: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Failed to complete chapter',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

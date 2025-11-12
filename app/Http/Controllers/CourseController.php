@@ -75,6 +75,67 @@ class CourseController extends Controller
         return response()->json(['message' => 'Course deleted successfully']);
     }
     
+    // Public course listing for all authenticated users
+    public function publicIndex(Request $request)
+    {
+        try {
+            // Fetch only active courses from both tables
+            $floridaCourses = DB::table('florida_courses')
+                ->where('is_active', true)
+                ->when($request->state_code, function($query, $state) {
+                    return $query->where('state', $state);
+                })
+                ->when($request->search, function($query, $search) {
+                    return $query->where('title', 'like', '%' . $search . '%');
+                })
+                ->get();
+
+            $regularCourses = DB::table('courses')
+                ->where('is_active', true)
+                ->when($request->state_code, function($query, $state) {
+                    return $query->where('state_code', $state);
+                })
+                ->when($request->search, function($query, $search) {
+                    return $query->where('title', 'like', '%' . $search . '%');
+                })
+                ->get();
+
+            // Combine and format courses for public view
+            $allCourses = collect();
+            
+            foreach ($floridaCourses as $course) {
+                $allCourses->push([
+                    'id' => $course->id,
+                    'title' => $course->title,
+                    'description' => $course->description,
+                    'state_code' => $course->state,
+                    'total_duration' => $course->duration,
+                    'price' => $course->price,
+                    'course_type' => $course->course_type ?? 'BDI',
+                    'table' => 'florida_courses'
+                ]);
+            }
+
+            foreach ($regularCourses as $course) {
+                $allCourses->push([
+                    'id' => $course->id,
+                    'title' => $course->title,
+                    'description' => $course->description,
+                    'state_code' => $course->state_code,
+                    'total_duration' => $course->total_duration,
+                    'price' => $course->price,
+                    'course_type' => 'Regular',
+                    'table' => 'courses'
+                ]);
+            }
+
+            return response()->json($allCourses);
+        } catch (\Exception $e) {
+            \Log::error('Course publicIndex error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load courses'], 500);
+        }
+    }
+    
     // Web-specific methods for session authentication
     public function storeWeb(Request $request)
     {

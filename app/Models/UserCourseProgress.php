@@ -31,6 +31,16 @@ class UserCourseProgress extends Model
 
     public function chapter(): BelongsTo
     {
-        return $this->belongsTo(Chapter::class);
+        // Try CourseChapter first, then Chapter
+        $courseChapter = CourseChapter::find($this->chapter_id);
+        if ($courseChapter) {
+            return $this->belongsTo(CourseChapter::class, 'chapter_id');
+        }
+        return $this->belongsTo(Chapter::class, 'chapter_id');
+    }
+    
+    public function courseChapter(): BelongsTo
+    {
+        return $this->belongsTo(CourseChapter::class, 'chapter_id');
     }
 }

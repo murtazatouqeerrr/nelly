@@ -10,6 +10,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="/css/themes.css" rel="stylesheet">
+    <style>
+        .course-list .card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .course-list .card:hover {
+            transform: translateY(-5px);
+        }
+        .course-details p {
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+    </style>
 </head>
 <body>
     <x-theme-switcher />
@@ -21,12 +37,17 @@
         </div>
         
         <!-- Fallback content -->
-        <div id="fallback-content">
+        <div id="fallback-content" style="display: none;">
             <h2>Available Courses</h2>
             <div class="row">
                 <div class="col-md-12">
-                    <p>Loading courses...</p>
-                    <div id="courses-container"></div>
+                    <div id="loading-indicator" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading courses...</p>
+                    </div>
+                    <div id="courses-container" class="row"></div>
                 </div>
             </div>
         </div>
@@ -36,6 +57,9 @@
         // Fallback course loading
         async function loadCourses() {
             try {
+                const loadingIndicator = document.getElementById('loading-indicator');
+                const container = document.getElementById('courses-container');
+                
                 const response = await fetch('/web/courses', {
                     headers: {
                         'Accept': 'application/json',
@@ -53,30 +77,35 @@
                 }
                 
                 const courses = await response.json();
-                const container = document.getElementById('courses-container');
+                
+                // Hide loading indicator
+                loadingIndicator.style.display = 'none';
                 
                 if (courses.length === 0) {
-                    container.innerHTML = '<p>No courses available.</p>';
+                    container.innerHTML = '<div class="col-12 text-center"><p>No courses available.</p></div>';
                     return;
                 }
                 
                 container.innerHTML = courses.map(course => `
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-body">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">${course.title}</h5>
-                                <p class="card-text">${course.description}</p>
-                                <p><strong>State:</strong> ${course.state_code}</p>
-                                <p><strong>Duration:</strong> ${course.total_duration} minutes</p>
-                                <p><strong>Price:</strong> $${course.price}</p>
-                                <button onclick="enrollCourse('${course.id}')" class="btn btn-primary">Enroll</button>
+                                <p class="card-text flex-grow-1">${course.description}</p>
+                                <div class="course-details mb-3">
+                                    <p class="mb-1"><strong>State:</strong> ${course.state_code}</p>
+                                    <p class="mb-1"><strong>Duration:</strong> ${course.total_duration} minutes</p>
+                                    <p class="mb-1"><strong>Price:</strong> $${course.price}</p>
+                                </div>
+                                <button onclick="enrollCourse('${course.id}')" class="btn btn-primary mt-auto">Enroll</button>
                             </div>
                         </div>
                     </div>
                 `).join('');
             } catch (error) {
                 console.error('Error loading courses:', error);
-                document.getElementById('courses-container').innerHTML = '<p>Error loading courses.</p>';
+                document.getElementById('loading-indicator').style.display = 'none';
+                document.getElementById('courses-container').innerHTML = '<div class="col-12 text-center"><p>Error loading courses.</p></div>';
             }
         }
         
@@ -112,11 +141,14 @@
         // Show fallback and load courses if Vue doesn't load
         setTimeout(() => {
             const vueApp = document.querySelector('#app course-list');
-            if (!vueApp || vueApp.children.length === 0) {
-                document.getElementById('fallback-content').style.display = 'block';
+            const fallbackContent = document.getElementById('fallback-content');
+            
+            // Check if Vue component loaded successfully
+            if (!vueApp || !vueApp.innerHTML.trim()) {
+                fallbackContent.style.display = 'block';
                 loadCourses();
             }
-        }, 1000);
+        }, 2000); // Increased timeout to 2 seconds
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

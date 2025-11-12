@@ -98,6 +98,30 @@ Route::get('/courses', function () {
     return view('courses');
 })->middleware('auth');
 
+Route::get('/api/courses/public', [App\Http\Controllers\CourseController::class, 'publicIndex'])->middleware('auth');
+
+Route::get('/certificates', function () {
+    return view('certificates');
+})->middleware('auth');
+
+Route::get('/generate-certificates', function () {
+    $user = auth()->user();
+    $enrollment = \App\Models\UserCourseEnrollment::where('user_id', $user->id)
+        ->where('status', 'completed')
+        ->with('course')
+        ->first();
+    
+    $params = [
+        'student_name' => $user->name,
+        'completion_date' => $enrollment ? $enrollment->completed_at->format('m/d/Y') : now()->format('m/d/Y'),
+        'score' => '95%',
+        'course_name' => $enrollment->course->title ?? 'Course',
+        'enrollment_id' => $enrollment->id ?? 1
+    ];
+    
+    return redirect('/certificate?' . http_build_query($params));
+})->middleware('auth');
+
 Route::get('/certificates/verify/{hash}', function ($hash) {
     $certificate = \App\Models\FloridaCertificate::where('verification_hash', $hash)->first();
     
@@ -122,74 +146,6 @@ Route::get('/files/{path}', function ($path) {
     
     return response()->file($filePath);
 })->where('path', '.*');
-
-Route::get('/generate-certificates', function () {
-    if (!auth()->check()) {
-        return redirect('/login');
-    }
-    
-    $userId = auth()->id();
-    $debug = "";
-    
-    // Find completed enrollments
-    $completedEnrollments = \App\Models\UserCourseEnrollment::with(['floridaCourse', 'user'])
-        ->where('user_id', $userId)
-        ->where(function($query) {
-            $query->where('status', 'completed')
-                  ->orWhere('progress_percentage', 100);
-        })
-        ->get();
-    
-    $debug .= "Found {$completedEnrollments->count()} completed enrollments<br>";
-    
-    $generated = 0;
-    
-    foreach ($completedEnrollments as $enrollment) {
-        $debug .= "Processing enrollment {$enrollment->id}<br>";
-        
-        // Check if certificate already exists
-        $existingCertificate = \App\Models\FloridaCertificate::where('enrollment_id', $enrollment->id)->first();
-        if ($existingCertificate) {
-            $debug .= "- Certificate already exists (ID: {$existingCertificate->id})<br>";
-            continue;
-        }
-        
-        $debug .= "- No existing certificate, creating new one<br>";
-        
-        try {
-            // Generate certificate number
-            $year = date('Y');
-            $lastCertificate = \App\Models\FloridaCertificate::whereYear('created_at', $year)
-                ->orderBy('id', 'desc')
-                ->first();
-            
-            $sequence = $lastCertificate ? 
-                (int) substr($lastCertificate->dicds_certificate_number, -6) + 1 : 1;
-            
-            $certificateNumber = 'FL' . $year . str_pad($sequence, 6, '0', STR_PAD_LEFT);
-            
-            $courseName = $enrollment->floridaCourse->title ?? 'Florida Traffic School Course';
-            
-            $certificate = \App\Models\FloridaCertificate::create([
-                'enrollment_id' => $enrollment->id,
-                'dicds_certificate_number' => $certificateNumber,
-                'student_name' => $enrollment->user->first_name . ' ' . $enrollment->user->last_name,
-                'course_name' => $courseName,
-                'completion_date' => $enrollment->completed_at ?? now(),
-                'verification_hash' => \Illuminate\Support\Str::random(32),
-                'status' => 'generated',
-            ]);
-            
-            $debug .= "- Created certificate ID: {$certificate->id}<br>";
-            $generated++;
-            
-        } catch (\Exception $e) {
-            $debug .= "- Error creating certificate: " . $e->getMessage() . "<br>";
-        }
-    }
-    
-    return $debug . "<br>Generated {$generated} certificates. <a href='/my-certificates'>View certificates</a>";
-})->middleware('auth');
 
 Route::get('/my-certificates', function () {
     return view('my-certificates');
@@ -226,7 +182,6 @@ Route::get('/create-course', function () {
 // Web routes for course operations (using session auth)
 Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::post('/web/courses', [App\Http\Controllers\CourseController::class, 'storeWeb']);
-    Route::get('/web/courses', [App\Http\Controllers\CourseController::class, 'indexWeb']);
     Route::match(['PUT', 'POST'], '/web/courses/{course}', [App\Http\Controllers\CourseController::class, 'updateWeb']);
     Route::post('/web/courses/{course}/chapters', [App\Http\Controllers\ChapterController::class, 'storeWeb']);
     Route::match(['PUT', 'POST'], '/web/chapters/{chapter}', [App\Http\Controllers\ChapterController::class, 'updateWeb']);
@@ -244,8 +199,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/web/user', [App\Http\Controllers\AuthController::class, 'userWeb']);
     Route::put('/web/user', [App\Http\Controllers\AuthController::class, 'updateProfileWeb']);
     Route::get('/web/enrollments/{enrollment}', [App\Http\Controllers\EnrollmentController::class, 'showWeb']);
+    Route::get('/web/courses', [App\Http\Controllers\CourseController::class, 'indexWeb']);
     Route::get('/web/courses/{course}/chapters', [App\Http\Controllers\ChapterController::class, 'indexWeb']);
-    Route::post('/web/enrollments/{enrollment}/complete-chapter/{chapter}', [App\Http\Controllers\ProgressController::class, 'completeChapterWeb']);
+    Route::match(['GET', 'POST'], '/web/enrollments/{enrollment}/complete-chapter/{chapter}', [App\Http\Controllers\ProgressController::class, 'completeChapterWeb']);
     Route::get('/web/my-payments', [App\Http\Controllers\PaymentController::class, 'myPaymentsWeb']);
 });
 
@@ -362,12 +318,6 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::get('/admin/support/tickets', [App\Http\Controllers\SupportTicketController::class, 'index']);
     Route::get('/admin/faqs', [App\Http\Controllers\FaqController::class, 'index']);
     Route::get('/admin/counties', function () { return view('admin.counties'); });
-    
-    // Coupon management routes
-    Route::get('/admin/coupons', [App\Http\Controllers\CouponController::class, 'index']);
-    Route::post('/admin/coupons', [App\Http\Controllers\CouponController::class, 'store']);
-    Route::put('/admin/coupons/{coupon}', [App\Http\Controllers\CouponController::class, 'update']);
-    Route::delete('/admin/coupons/{coupon}', [App\Http\Controllers\CouponController::class, 'destroy']);
     Route::get('/admin/question-banks', function () { return view('admin.question-banks'); });
 });
 
@@ -861,6 +811,11 @@ Route::middleware('auth')->group(function () {
 });
 
 // Public Pages
+Route::get('/register/{step?}', [App\Http\Controllers\RegistrationController::class, 'showStep'])->name('register.step');
+Route::post('/register/{step}', [App\Http\Controllers\RegistrationController::class, 'processStep'])->name('register.process');
+
+Route::get('/certificate', [App\Http\Controllers\CertificateController::class, 'generate']);
+
 Route::get('/faq', function () {
     return view('faq');
 });
@@ -879,15 +834,4 @@ Route::get('/terms-conditions', function () {
 
 Route::get('/refund-policy', function () {
     return view('legal.refund-policy');
-});
-
-
-Route::get('/debug/chapter11-questions', function() {
-    $ch11 = DB::table('chapters')->where('order', 11)->first();
-    $count = DB::table('questions')->where('chapter_id', $ch11->id)->count();
-    return response()->json([
-        'chapter_id' => $ch11->id,
-        'chapter_title' => $ch11->title,
-        'questions_count' => $count
-    ]);
 });

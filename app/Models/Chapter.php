@@ -24,7 +24,7 @@ class Chapter extends Model
 
     public function course(): BelongsTo
     {
-        return $this->belongsTo(FloridaCourse::class, 'course_id');
+        return $this->belongsTo(Course::class);
     }
 
     public function questions(): HasMany

@@ -9,16 +9,29 @@
       </select>
     </div>
     
-    <div class="row">
-      <div v-for="course in filteredCourses" :key="course.id" class="col-md-4 mb-3">
-        <div class="card">
-          <div class="card-body">
+    <div v-if="loading" class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading courses...</p>
+    </div>
+    
+    <div v-else-if="filteredCourses.length === 0" class="text-center">
+      <p>No courses available.</p>
+    </div>
+    
+    <div v-else class="row">
+      <div v-for="course in filteredCourses" :key="course.id" class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column">
             <h5 class="card-title">{{ course.title }}</h5>
-            <p class="card-text">{{ course.description }}</p>
-            <p><strong>State:</strong> {{ course.state_code }}</p>
-            <p><strong>Duration:</strong> {{ course.total_duration }} minutes</p>
-            <p><strong>Price:</strong> ${{ course.price }}</p>
-            <button @click="enrollCourse(course.id)" class="btn btn-primary">Enroll</button>
+            <p class="card-text flex-grow-1">{{ course.description }}</p>
+            <div class="course-details mb-3">
+              <p class="mb-1"><strong>State:</strong> {{ course.state_code }}</p>
+              <p class="mb-1"><strong>Duration:</strong> {{ course.total_duration }} minutes</p>
+              <p class="mb-1"><strong>Price:</strong> ${{ course.price }}</p>
+            </div>
+            <button @click="enrollCourse(course.id)" class="btn btn-primary mt-auto">Enroll</button>
           </div>
         </div>
       </div>
@@ -32,7 +45,8 @@ export default {
     return {
       courses: [],
       search: '',
-      stateFilter: ''
+      stateFilter: '',
+      loading: true
     }
   },
   computed: {
@@ -47,6 +61,7 @@ export default {
   methods: {
     async fetchCourses() {
       try {
+        this.loading = true
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
         
         const headers = {
@@ -73,6 +88,8 @@ export default {
         this.courses = await response.json()
       } catch (error) {
         console.error('Error fetching courses:', error)
+      } finally {
+        this.loading = false
       }
     },
     async enrollCourse(courseId) {

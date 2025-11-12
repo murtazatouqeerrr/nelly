@@ -29,7 +29,75 @@ class CertificateController extends Controller
         return response()->json($certificates);
     }
 
-    public function generate(UserCourseEnrollment $enrollment)
+    public function generate(Request $request)
+    {
+        $user = auth()->user();
+        
+        if (!$user) {
+            return redirect('/login')->with('error', 'Please login to generate certificate');
+        }
+        
+        // Get completed enrollment
+        $enrollment = UserCourseEnrollment::with(['floridaCourse', 'user'])
+            ->where('user_id', $user->id)
+            ->where(function($query) {
+                $query->where('status', 'completed')
+                      ->orWhere('progress_percentage', 100);
+            })
+            ->first();
+        
+        if (!$enrollment) {
+            return redirect('/dashboard')->with('error', 'No completed courses found');
+        }
+        
+        // Build student address
+        $addressParts = array_filter([
+            $user->mailing_address,
+            $user->city,
+            $user->state,
+            $user->zip
+        ]);
+        $student_address = implode(', ', $addressParts);
+        
+        // Build phone number
+        $phone_parts = array_filter([$user->phone_1, $user->phone_2, $user->phone_3]);
+        $phone = implode('-', $phone_parts);
+        
+        // Build birth date
+        $birth_date = null;
+        if ($user->birth_month && $user->birth_day && $user->birth_year) {
+            $birth_date = $user->birth_month . '/' . $user->birth_day . '/' . $user->birth_year;
+        }
+        
+        // Build due date
+        $due_date = null;
+        if ($user->due_month && $user->due_day && $user->due_year) {
+            $due_date = $user->due_month . '/' . $user->due_day . '/' . $user->due_year;
+        }
+        
+        $data = [
+            'student_name' => trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: null,
+            'student_address' => $student_address ?: null,
+            'completion_date' => $enrollment->completed_at ? $enrollment->completed_at->format('m/d/Y') : date('m/d/Y'),
+            'course_type' => $enrollment->floridaCourse->title ?? null,
+            'score' => $enrollment->final_exam_score ? $enrollment->final_exam_score . '%' : null,
+            'license_number' => $user->driver_license ?? null,
+            'birth_date' => $birth_date,
+            'citation_number' => $user->citation_number ?? null,
+            'due_date' => $due_date,
+            'court' => $user->court_selected ?? null,
+            'county' => $user->state ?? null,
+            'certificate_number' => $this->generateCertificateNumber(),
+            'phone' => $phone ?: null,
+            'city' => $user->city ?? null,
+            'state' => $user->state ?? null,
+            'zip' => $user->zip ?? null,
+        ];
+
+        return view('certificate', $data);
+    }
+
+    public function generateEnrollment(UserCourseEnrollment $enrollment)
     {
         // Check if enrollment is completed
         if (!$enrollment->completed_at) {
@@ -37,12 +105,12 @@ class CertificateController extends Controller
         }
 
         // Check if certificate already exists
-        $existingCertificate = Certificate::where('enrollment_id', $enrollment->id)->first();
+        $existingCertificate = FloridaCertificate::where('enrollment_id', $enrollment->id)->first();
         if ($existingCertificate) {
-            return response()->json($existingCertificate);
+            return view('certificates.florida-certificate', ['certificate' => $existingCertificate]);
         }
 
-        $certificate = Certificate::create([
+        $certificate = FloridaCertificate::create([
             'enrollment_id' => $enrollment->id,
             'certificate_number' => $this->generateCertificateNumber($enrollment->course->state_code ?? 'FL'),
             'student_name' => $enrollment->user->first_name . ' ' . $enrollment->user->last_name,
@@ -53,7 +121,7 @@ class CertificateController extends Controller
             'status' => 'generated',
         ]);
 
-        return response()->json($certificate);
+        return view('certificates.florida-certificate', ['certificate' => $certificate]);
     }
 
     public function verify($verificationHash)
@@ -148,17 +216,22 @@ class CertificateController extends Controller
             ->header('Content-Disposition', 'attachment; filename="certificate-' . $certificate->dicds_certificate_number . '.html"');
     }
 
-    private function generateCertificateNumber($stateCode)
+    private function generateCertificateNumber($stateCode = null)
     {
-        $year = date('Y');
-        $lastCertificate = Certificate::where('state_code', $stateCode)
-            ->whereYear('created_at', $year)
-            ->orderBy('id', 'desc')
-            ->first();
+        if ($stateCode) {
+            $year = date('Y');
+            $lastCertificate = Certificate::where('state_code', $stateCode)
+                ->whereYear('created_at', $year)
+                ->orderBy('id', 'desc')
+                ->first();
 
-        $sequence = $lastCertificate ? 
-            (int) substr($lastCertificate->certificate_number, -6) + 1 : 1;
+            $sequence = $lastCertificate ? 
+                (int) substr($lastCertificate->certificate_number, -6) + 1 : 1;
 
-        return $stateCode . '-' . $year . '-' . str_pad($sequence, 6, '0', STR_PAD_LEFT);
+            return $stateCode . '-' . $year . '-' . str_pad($sequence, 6, '0', STR_PAD_LEFT);
+        }
+        
+        // Default certificate number for /certificate route
+        return 'CERT-' . date('Y') . '-' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT);
     }
 }
