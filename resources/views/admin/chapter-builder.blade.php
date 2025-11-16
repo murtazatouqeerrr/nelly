@@ -15,7 +15,7 @@
     <x-theme-switcher />
     <x-navbar />
     
-    <div class="container-fluid">
+    <div class="container-fluid" style="margin-left: 280px; padding: 15px; max-width: calc(100% - 300px); overflow-x: hidden;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Chapter Builder</h2>
             <button class="btn btn-primary" onclick="showCreateModal()">
@@ -135,8 +135,8 @@
             }
             
             container.innerHTML = chapters.map(chapter => `
-                <div class="card mb-3">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card mb-2">
+                    <div class="card-header d-flex justify-content-between align-items-center py-2">
                         <h5>${chapter.title}</h5>
                         <div>
                             <span class="badge bg-info me-2">${chapter.duration} min</span>
@@ -151,11 +151,11 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body py-2">
                         <div class="row">
                             <div class="col-md-6">
                                 <small class="text-muted">Duration: ${chapter.duration} minutes</small><br>
-                                <small class="text-muted">Min Time: ${chapter.required_min_time} minutes</small>
+                                <small class="text-muted">Min Time: ${chapter.required_min_time || chapter.duration || 0} minutes</small>
                             </div>
                             <div class="col-md-6">
                                 <small class="text-muted">Order: ${chapter.order_index}</small><br>
@@ -189,7 +189,7 @@
         function fillChapterForm(chapter) {
             document.getElementById('chapterTitle').value = chapter.title;
             document.getElementById('chapterDuration').value = chapter.duration;
-            document.getElementById('chapterMinTime').value = chapter.required_min_time;
+            document.getElementById('chapterMinTime').value = chapter.required_min_time || chapter.duration || 0;
             document.getElementById('chapterVideo').value = chapter.video_url || '';
             document.getElementById('chapterContent').value = chapter.content;
             document.getElementById('chapterOrder').value = chapter.order_index;

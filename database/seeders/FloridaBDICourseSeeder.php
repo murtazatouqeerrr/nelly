@@ -19,7 +19,7 @@ class FloridaBDICourseSeeder extends Seeder
             'passing_score' => 80,
             'duration' => 240,
             'price' => 29.99,
-            'is_active' => true,
+            
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
@@ -33,7 +33,7 @@ class FloridaBDICourseSeeder extends Seeder
                 'content' => '',
                 'order_index' => $index + 1,
                 'duration' => $chapter['duration'],
-                'is_active' => true,
+                
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -68,7 +68,7 @@ class FloridaBDICourseSeeder extends Seeder
             'passing_score' => 80,
             'duration' => 240,
             'price' => 29.99,
-            'is_active' => true,
+            
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);

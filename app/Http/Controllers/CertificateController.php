@@ -37,17 +37,13 @@ class CertificateController extends Controller
             return redirect('/login')->with('error', 'Please login to generate certificate');
         }
         
-        // Get completed enrollment
-        $enrollment = UserCourseEnrollment::with(['floridaCourse', 'user'])
-            ->where('user_id', $user->id)
-            ->where(function($query) {
-                $query->where('status', 'completed')
-                      ->orWhere('progress_percentage', 100);
-            })
-            ->first();
-        
-        if (!$enrollment) {
-            return redirect('/dashboard')->with('error', 'No completed courses found');
+        // Use URL parameters if provided, otherwise fallback to database
+        $enrollment = null;
+        if ($request->enrollment_id) {
+            $enrollment = UserCourseEnrollment::with(['course', 'user'])
+                ->where('user_id', $user->id)
+                ->where('id', $request->enrollment_id)
+                ->first();
         }
         
         // Build student address
@@ -76,11 +72,11 @@ class CertificateController extends Controller
         }
         
         $data = [
-            'student_name' => trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: null,
+            'student_name' => $request->student_name ?: trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
             'student_address' => $student_address ?: null,
-            'completion_date' => $enrollment->completed_at ? $enrollment->completed_at->format('m/d/Y') : date('m/d/Y'),
-            'course_type' => $enrollment->floridaCourse->title ?? null,
-            'score' => $enrollment->final_exam_score ? $enrollment->final_exam_score . '%' : null,
+            'completion_date' => $request->completion_date ?: ($enrollment && $enrollment->completed_at ? $enrollment->completed_at->format('m/d/Y') : date('m/d/Y')),
+            'course_type' => $request->course_name ?: ($enrollment && $enrollment->course ? $enrollment->course->title : 'Course'),
+            'score' => $request->score ?: ($enrollment && $enrollment->final_exam_score ? $enrollment->final_exam_score . '%' : 'N/A'),
             'license_number' => $user->driver_license ?? null,
             'birth_date' => $birth_date,
             'citation_number' => $user->citation_number ?? null,
@@ -95,6 +91,77 @@ class CertificateController extends Controller
         ];
 
         return view('certificate', $data);
+    }
+
+    public function downloadPdf(Request $request)
+    {
+        $user = auth()->user();
+        
+        if (!$user) {
+            return redirect('/login')->with('error', 'Please login to download certificate');
+        }
+        
+        // Use URL parameters if provided, otherwise fallback to database
+        $enrollment = null;
+        if ($request->enrollment_id) {
+            $enrollment = UserCourseEnrollment::with(['course', 'user'])
+                ->where('user_id', $user->id)
+                ->where('id', $request->enrollment_id)
+                ->first();
+        }
+        
+        // Build student address
+        $addressParts = array_filter([
+            $user->mailing_address,
+            $user->city,
+            $user->state,
+            $user->zip
+        ]);
+        $student_address = implode(', ', $addressParts);
+        
+        // Build phone number
+        $phone_parts = array_filter([$user->phone_1, $user->phone_2, $user->phone_3]);
+        $phone = implode('-', $phone_parts);
+        
+        // Build birth date
+        $birth_date = null;
+        if ($user->birth_month && $user->birth_day && $user->birth_year) {
+            $birth_date = $user->birth_month . '/' . $user->birth_day . '/' . $user->birth_year;
+        }
+        
+        // Build due date
+        $due_date = null;
+        if ($user->due_month && $user->due_day && $user->due_year) {
+            $due_date = $user->due_month . '/' . $user->due_day . '/' . $user->due_year;
+        }
+        
+        $data = [
+            'student_name' => $request->student_name ?: trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
+            'student_address' => $student_address ?: null,
+            'completion_date' => $request->completion_date ?: ($enrollment && $enrollment->completed_at ? $enrollment->completed_at->format('m/d/Y') : date('m/d/Y')),
+            'course_type' => $request->course_name ?: ($enrollment && $enrollment->course ? $enrollment->course->title : 'Course'),
+            'score' => $request->score ?: ($enrollment && $enrollment->final_exam_score ? $enrollment->final_exam_score . '%' : 'N/A'),
+            'license_number' => $user->driver_license ?? null,
+            'birth_date' => $birth_date,
+            'citation_number' => $user->citation_number ?? null,
+            'due_date' => $due_date,
+            'court' => $user->court_selected ?? null,
+            'county' => $user->state ?? null,
+            'certificate_number' => $this->generateCertificateNumber(),
+            'phone' => $phone ?: null,
+        ];
+        
+        // Check if PDF package is available
+        if (class_exists('\Barryvdh\DomPDF\Facade\Pdf')) {
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('certificate-pdf', $data);
+            $filename = 'certificate-' . ($data['student_name'] ? str_replace(' ', '-', $data['student_name']) : 'user') . '-' . date('Y-m-d') . '.pdf';
+            return $pdf->download($filename);
+        }
+        
+        // Fallback: return HTML view that can be printed as PDF by browser
+        return response()->view('certificate-pdf', $data)
+            ->header('Content-Type', 'text/html')
+            ->header('Content-Disposition', 'inline; filename="certificate.html"');
     }
 
     public function generateEnrollment(UserCourseEnrollment $enrollment)

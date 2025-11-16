@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->integer('time_spent')->default(0);
             $table->boolean('is_completed')->default(false);
-            $table->timestamp('last_accessed_at');
+            $table->timestamp('last_accessed_at')->nullable();
             $table->timestamps();
         });
     }

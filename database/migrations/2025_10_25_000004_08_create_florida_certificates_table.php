@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('verification_hash')->unique();
             $table->boolean('is_sent_to_student')->default(false);
             $table->timestamp('sent_at')->nullable();
-            $table->timestamp('generated_at');
+            $table->timestamp('generated_at')->nullable();
             $table->timestamps();
         });
     }

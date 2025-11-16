@@ -3,7 +3,7 @@
 @section('title', 'Question Manager')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" style="margin-left: 33px; padding: 20px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Question Manager - Chapter {{ $chapterId }}</h2>
         <button class="btn btn-primary" onclick="showCreateModal()">
@@ -109,7 +109,7 @@ function displayQuestions(questions) {
                         </div>
                     </div>
                     <p class="mb-2"><strong>Type:</strong> ${q.question_type}</p>
-                    ${q.options ? `<p class="mb-2"><strong>Options:</strong> ${JSON.parse(q.options).join(', ')}</p>` : ''}
+                    ${q.options && Array.isArray(q.options) && q.options.length > 0 ? `<p class="mb-2"><strong>Options:</strong> ${q.options.join(', ')}</p>` : ''}
                     <p class="mb-2"><strong>Correct Answer:</strong> ${q.correct_answer}</p>
                     ${q.explanation ? `<p class="mb-2"><strong>Explanation:</strong> ${q.explanation}</p>` : ''}
                     <p class="mb-0"><strong>Points:</strong> ${q.points}</p>
@@ -132,18 +132,36 @@ async function editQuestion(id) {
         const response = await fetch(`/api/questions/${id}`);
         const question = await response.json();
         
+        console.log('Edit question data:', question);
+        console.log('Options data:', question.options);
+        
         editingQuestionId = id;
         document.getElementById('modalTitle').textContent = 'Edit Question';
         document.getElementById('questionId').value = question.id;
-        document.getElementById('questionText').value = question.question_text;
-        document.getElementById('questionType').value = question.question_type;
-        document.getElementById('options').value = question.options ? JSON.parse(question.options).join('\n') : '';
-        document.getElementById('correctAnswer').value = question.correct_answer;
+        document.getElementById('questionText').value = question.question_text || '';
+        document.getElementById('questionType').value = question.question_type || 'multiple_choice';
+        document.getElementById('correctAnswer').value = question.correct_answer || '';
         document.getElementById('explanation').value = question.explanation || '';
-        document.getElementById('points').value = question.points;
-        document.getElementById('orderIndex').value = question.order_index;
+        document.getElementById('points').value = question.points || 1;
+        document.getElementById('orderIndex').value = question.order_index || 1;
         
+        // Update options fields first to set up the UI
         updateOptionsFields();
+        
+        // Then set the options value after the UI is ready
+        setTimeout(() => {
+            let optionsText = '';
+            if (question.options && Array.isArray(question.options)) {
+                optionsText = question.options.join('\n');
+            }
+            
+            const optionsField = document.getElementById('options');
+            if (optionsField) {
+                optionsField.value = optionsText;
+                console.log('Set options field to:', optionsText);
+            }
+        }, 100);
+        
         new bootstrap.Modal(document.getElementById('questionModal')).show();
     } catch (error) {
         console.error('Error loading question:', error);

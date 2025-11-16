@@ -17,8 +17,8 @@ return new class extends Migration
             $table->integer('status_code')->nullable();
             $table->text('status_message')->nullable();
             $table->foreignId('submitted_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->timestamp('submitted_at');
-            $table->timestamp('created_at');
+            $table->timestamp('submitted_at')->nullable();
+            $table->timestamps();
         });
     }
 

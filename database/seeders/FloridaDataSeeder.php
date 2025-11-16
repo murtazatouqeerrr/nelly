@@ -16,7 +16,7 @@ class FloridaDataSeeder extends Seeder
                 'school_name' => 'Miami Traffic School',
                 'address' => '123 Ocean Drive, Miami, FL 33139',
                 'phone' => '305-555-0100',
-                'is_active' => true,
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -25,7 +25,7 @@ class FloridaDataSeeder extends Seeder
                 'school_name' => 'Orlando Driving Academy',
                 'address' => '456 Universal Blvd, Orlando, FL 32819',
                 'phone' => '407-555-0200',
-                'is_active' => true,
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -34,7 +34,7 @@ class FloridaDataSeeder extends Seeder
                 'school_name' => 'Tampa Bay Traffic Institute',
                 'address' => '789 Bay Street, Tampa, FL 33602',
                 'phone' => '813-555-0300',
-                'is_active' => true,
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -52,7 +52,7 @@ class FloridaDataSeeder extends Seeder
                 'total_duration' => 240,
                 'price' => 29.99,
                 'dicds_course_id' => 'BDI-001',
-                'is_active' => true,
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -66,7 +66,7 @@ class FloridaDataSeeder extends Seeder
                 'total_duration' => 720,
                 'price' => 59.99,
                 'dicds_course_id' => 'ADI-001',
-                'is_active' => true,
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -80,7 +80,7 @@ class FloridaDataSeeder extends Seeder
                 'total_duration' => 240,
                 'price' => 24.99,
                 'dicds_course_id' => 'TLSAE-001',
-                'is_active' => true,
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

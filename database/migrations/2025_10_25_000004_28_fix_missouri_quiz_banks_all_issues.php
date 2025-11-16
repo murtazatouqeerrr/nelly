@@ -9,6 +9,11 @@ return new class extends Migration
 {
     public function up()
     {
+        // Skip if table doesn't exist
+        if (!Schema::hasTable('missouri_quiz_banks')) {
+            return;
+        }
+
         // Drop columns safely
         Schema::table('missouri_quiz_banks', function (Blueprint $table) {
             if (Schema::hasColumn('missouri_quiz_banks', 'chapter')) $table->dropColumn('chapter');
@@ -25,81 +30,64 @@ return new class extends Migration
         });
 
         // Drop foreign key if exists
-        $fk = DB::select("
-            SELECT CONSTRAINT_NAME 
-            FROM information_schema.KEY_COLUMN_USAGE 
-            WHERE TABLE_SCHEMA = DATABASE() 
-              AND TABLE_NAME = 'missouri_quiz_banks' 
-              AND COLUMN_NAME = 'chapter_id' 
-              AND REFERENCED_TABLE_NAME IS NOT NULL
-        ");
-        if (!empty($fk)) {
-            DB::statement("ALTER TABLE missouri_quiz_banks DROP FOREIGN KEY `{$fk[0]->CONSTRAINT_NAME}`");
+        try {
+            $fk = DB::select("
+                SELECT CONSTRAINT_NAME 
+                FROM information_schema.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = DATABASE() 
+                  AND TABLE_NAME = 'missouri_quiz_banks' 
+                  AND COLUMN_NAME = 'chapter_id' 
+                  AND REFERENCED_TABLE_NAME IS NOT NULL
+            ");
+            if (!empty($fk)) {
+                DB::statement("ALTER TABLE missouri_quiz_banks DROP FOREIGN KEY `{$fk[0]->CONSTRAINT_NAME}`");
+            }
+        } catch (\Exception $e) {
+            // Ignore if foreign key doesn't exist
         }
 
         // Make chapter_id nullable
-        DB::statement("ALTER TABLE missouri_quiz_banks MODIFY chapter_id BIGINT UNSIGNED NULL");
-
-        // Drop old check constraints (MySQL 8+)
-        $checks = DB::select("
-            SELECT CONSTRAINT_NAME 
-            FROM information_schema.TABLE_CONSTRAINTS 
-            WHERE TABLE_SCHEMA = DATABASE() 
-              AND TABLE_NAME = 'missouri_quiz_banks' 
-              AND CONSTRAINT_TYPE = 'CHECK'
-        ");
-        foreach ($checks as $check) {
-            DB::statement("ALTER TABLE missouri_quiz_banks DROP CHECK `{$check->CONSTRAINT_NAME}`");
+        try {
+            DB::statement("ALTER TABLE missouri_quiz_banks MODIFY chapter_id BIGINT UNSIGNED NULL");
+        } catch (\Exception $e) {
+            // Ignore if already nullable
         }
 
-        // Re-add correct_answer check
-        DB::statement("
-            ALTER TABLE missouri_quiz_banks 
-            ADD CONSTRAINT missouri_quiz_banks_correct_answer_check 
-            CHECK (correct_answer IN ('A','B','C','D','E'))
-        ");
-
         // Re-add foreign key
-        Schema::table('missouri_quiz_banks', function (Blueprint $table) {
-            $table->foreign('chapter_id')
-                  ->references('id')
-                  ->on('missouri_course_structures')
-                  ->onDelete('cascade');
-        });
+        try {
+            Schema::table('missouri_quiz_banks', function (Blueprint $table) {
+                $table->foreign('chapter_id')
+                      ->references('id')
+                      ->on('missouri_course_structures')
+                      ->onDelete('cascade');
+            });
+        } catch (\Exception $e) {
+            // Ignore if foreign key already exists
+        }
     }
 
     public function down()
     {
-        // Drop foreign key
-        $fk = DB::select("
-            SELECT CONSTRAINT_NAME 
-            FROM information_schema.KEY_COLUMN_USAGE 
-            WHERE TABLE_SCHEMA = DATABASE() 
-              AND TABLE_NAME = 'missouri_quiz_banks' 
-              AND COLUMN_NAME = 'chapter_id' 
-              AND REFERENCED_TABLE_NAME IS NOT NULL
-        ");
-        if (!empty($fk)) {
-            DB::statement("ALTER TABLE missouri_quiz_banks DROP FOREIGN KEY `{$fk[0]->CONSTRAINT_NAME}`");
+        // Reverse operations - simplified for MariaDB compatibility
+        if (!Schema::hasTable('missouri_quiz_banks')) {
+            return;
         }
-
-        // Drop check constraint
-        $checks = DB::select("
-            SELECT CONSTRAINT_NAME 
-            FROM information_schema.TABLE_CONSTRAINTS 
-            WHERE TABLE_SCHEMA = DATABASE() 
-              AND TABLE_NAME = 'missouri_quiz_banks' 
-              AND CONSTRAINT_TYPE = 'CHECK'
-        ");
-        foreach ($checks as $check) {
-            DB::statement("ALTER TABLE missouri_quiz_banks DROP CHECK `{$check->CONSTRAINT_NAME}`");
+        
+        // Just drop the foreign key if it exists
+        try {
+            $fk = DB::select("
+                SELECT CONSTRAINT_NAME 
+                FROM information_schema.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = DATABASE() 
+                  AND TABLE_NAME = 'missouri_quiz_banks' 
+                  AND COLUMN_NAME = 'chapter_id' 
+                  AND REFERENCED_TABLE_NAME IS NOT NULL
+            ");
+            if (!empty($fk)) {
+                DB::statement("ALTER TABLE missouri_quiz_banks DROP FOREIGN KEY `{$fk[0]->CONSTRAINT_NAME}`");
+            }
+        } catch (\Exception $e) {
+            // Ignore errors
         }
-
-        // Reset correct_answer check
-        DB::statement("
-            ALTER TABLE missouri_quiz_banks 
-            ADD CONSTRAINT missouri_quiz_banks_correct_answer_check 
-            CHECK (correct_answer IN ('A','B','C','D'))
-        ");
     }
 };

@@ -220,12 +220,13 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Title</th>
                             <th>Type</th>
-                            <th>Delivery</th>
+                            <th>State</th>
                             <th>Duration</th>
                             <th>Price</th>
-                            <th>DICDS ID</th>
+                            <th>Passing Score</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -233,27 +234,30 @@
                     <tbody>
                         ${courses.map(course => `
                             <tr>
-                                <td>${course.title}</td>
-                                <td><span class="badge bg-info">${course.course_type}</span></td>
-                                <td>${course.delivery_type}</td>
-                                <td>${course.total_duration} min</td>
-                                <td>$${course.price}</td>
-                                <td>${course.dicds_course_id}</td>
+                                <td>${course.id || 'N/A'}</td>
+                                <td>${course.title || 'N/A'}</td>
+                                <td><span class="badge bg-info">${course.course_type || 'N/A'}</span></td>
+                                <td>${course.state || 'N/A'}</td>
+                                <td>${course.duration || 0} min</td>
+                                <td>$${course.price || '0.00'}</td>
+                                <td>${course.passing_score || 80}%</td>
                                 <td>
                                     <span class="${course.is_active ? 'badge bg-success' : 'badge bg-danger'}">
                                         ${course.is_active ? 'Active' : 'Inactive'}
                                     </span>
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="editCourse(${course.id})">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-success me-1" onclick="manageChapters(${course.id})">
-                                        <i class="fas fa-book"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteCourse(${course.id})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                <td class="text-nowrap">
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editCourse(${course.id})" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success" onclick="manageChapters(${course.id})" title="Chapters">
+                                            <i class="fas fa-book"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCourse(${course.id})" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         `).join('')}

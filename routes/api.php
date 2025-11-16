@@ -293,18 +293,53 @@ Route::get('/enrollments', function () {
 
 // Get questions for a chapter
 Route::get('/chapters/{chapterId}/questions', function ($chapterId) {
+    \Log::info("API: Fetching questions for chapter {$chapterId}");
+    
     try {
         $questions = \App\Models\Question::where('chapter_id', $chapterId)
             ->orderBy('order_index')
-            ->get()
-            ->toArray();
+            ->get();
+            
+        \Log::info("API: Found {$questions->count()} questions for chapter {$chapterId}");
         
-        \Log::info("Fetching questions for chapter {$chapterId}: " . count($questions) . " questions found");
+        $processedQuestions = $questions->map(function ($question) {
+            $data = $question->toArray();
+            
+            \Log::info("API: Processing question {$question->id}, options raw: " . json_encode($data['options'] ?? null));
+            
+            // Handle options field safely
+            if (isset($data['options'])) {
+                if (is_string($data['options'])) {
+                    $cleaned = trim($data['options']);
+                    \Log::info("API: Cleaned options string: '{$cleaned}'");
+                    
+                    if (empty($cleaned) || $cleaned === 'null') {
+                        $data['options'] = [];
+                    } else {
+                        $decoded = json_decode($cleaned, true);
+                        if (json_last_error() !== JSON_ERROR_NONE) {
+                            \Log::error("API: JSON decode error: " . json_last_error_msg() . " for string: '{$cleaned}'");
+                            $data['options'] = [];
+                        } else {
+                            $data['options'] = $decoded !== null ? $decoded : [];
+                        }
+                    }
+                } elseif (!is_array($data['options'])) {
+                    $data['options'] = [];
+                }
+            } else {
+                $data['options'] = [];
+            }
+            
+            return $data;
+        });
         
-        return response()->json($questions);
+        \Log::info("API: Response created successfully");
+        
+        return response()->json($processedQuestions);
     } catch (\Exception $e) {
-        \Log::error('Chapter questions error: ' . $e->getMessage());
-        return response()->json(['error' => $e->getMessage()], 500);
+        \Log::error("API: Chapter questions error: " . $e->getMessage());
+        return response()->json([]);
     }
 });
 

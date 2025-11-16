@@ -10,6 +10,18 @@ class PrivacyPolicySeeder extends Seeder
 {
     public function run()
     {
+        // Create admin user first if it doesn't exist
+        $adminUser = \App\Models\User::firstOrCreate(
+            ['email' => 'admin@dummiestrafficschool.com'],
+            [
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'password' => \Hash::make('password'),
+                'role_id' => 1,
+                'status' => 'active'
+            ]
+        );
+
         LegalDocument::create([
             'document_type' => 'privacy_policy',
             'title' => 'Dummies Traffic School Privacy Statement',
@@ -20,7 +32,7 @@ Governing Law: You agree that by using our website or our services, your use is 
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => true,
-            'created_by' => 1
+            'created_by' => $adminUser->id
         ]);
 
         LegalDocument::create([
@@ -43,7 +55,7 @@ Governing Law: You agree that by using our website or our services, your use is 
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => true,
-            'created_by' => 1
+            'created_by' => $adminUser->id
         ]);
 
         LegalDocument::create([
@@ -74,7 +86,7 @@ Hours: Monday-Friday 8am-4pm PST',
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => false,
-            'created_by' => 1
+            'created_by' => $adminUser->id
         ]);
 
         LegalDocument::create([
@@ -85,7 +97,7 @@ Hours: Monday-Friday 8am-4pm PST',
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => false,
-            'created_by' => 1
+            'created_by' => $adminUser->id
         ]);
 
         LegalDocument::create([
@@ -100,7 +112,7 @@ Changes: Dummies Traffic School reserves the right to change these terms and con
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => false,
-            'created_by' => 1
+            'created_by' => $adminUser->id
         ]);
     }
 }

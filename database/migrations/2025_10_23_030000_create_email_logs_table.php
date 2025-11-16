@@ -21,8 +21,8 @@ return new class extends Migration
             $table->json('gateway_response')->nullable();
             $table->timestamp('opened_at')->nullable();
             $table->timestamp('delivered_at')->nullable();
-            $table->timestamp('sent_at');
-            $table->timestamp('created_at');
+            $table->timestamp('sent_at')->nullable();
+            $table->timestamps();
         });
     }
 

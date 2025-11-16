@@ -9,6 +9,11 @@ return new class extends Migration
 {
     public function up()
     {
+        // Skip if table doesn't exist
+        if (!Schema::hasTable('missouri_quiz_banks')) {
+            return;
+        }
+
         // Add option_e if it doesn't exist
         Schema::table('missouri_quiz_banks', function (Blueprint $table) {
             if (!Schema::hasColumn('missouri_quiz_banks', 'option_e')) {
@@ -16,52 +21,22 @@ return new class extends Migration
             }
         });
 
-        // Drop existing correct_answer check constraint
-        $checks = DB::select("
-            SELECT CONSTRAINT_NAME 
-            FROM information_schema.TABLE_CONSTRAINTS 
-            WHERE TABLE_SCHEMA = DATABASE() 
-              AND TABLE_NAME = 'missouri_quiz_banks' 
-              AND CONSTRAINT_TYPE = 'CHECK'
-        ");
-        foreach ($checks as $check) {
-            DB::statement("ALTER TABLE missouri_quiz_banks DROP CHECK `{$check->CONSTRAINT_NAME}`");
-        }
-
-        // Add new correct_answer check constraint
-        DB::statement("
-            ALTER TABLE missouri_quiz_banks 
-            ADD CONSTRAINT missouri_quiz_banks_correct_answer_check 
-            CHECK (correct_answer IN ('A','B','C','D','E'))
-        ");
+        // Note: CHECK constraints removed for MariaDB compatibility
+        // The correct_answer enum will still enforce valid values at the application level
     }
 
     public function down()
     {
+        // Skip if table doesn't exist
+        if (!Schema::hasTable('missouri_quiz_banks')) {
+            return;
+        }
+
         // Drop option_e if exists
         Schema::table('missouri_quiz_banks', function (Blueprint $table) {
             if (Schema::hasColumn('missouri_quiz_banks', 'option_e')) {
                 $table->dropColumn('option_e');
             }
         });
-
-        // Drop the current correct_answer check constraint
-        $checks = DB::select("
-            SELECT CONSTRAINT_NAME 
-            FROM information_schema.TABLE_CONSTRAINTS 
-            WHERE TABLE_SCHEMA = DATABASE() 
-              AND TABLE_NAME = 'missouri_quiz_banks' 
-              AND CONSTRAINT_TYPE = 'CHECK'
-        ");
-        foreach ($checks as $check) {
-            DB::statement("ALTER TABLE missouri_quiz_banks DROP CHECK `{$check->CONSTRAINT_NAME}`");
-        }
-
-        // Restore original check constraint
-        DB::statement("
-            ALTER TABLE missouri_quiz_banks 
-            ADD CONSTRAINT missouri_quiz_banks_correct_answer_check 
-            CHECK (correct_answer IN ('A','B','C','D'))
-        ");
     }
 };

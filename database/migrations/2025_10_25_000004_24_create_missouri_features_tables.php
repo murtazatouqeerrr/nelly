@@ -9,7 +9,8 @@ return new class extends Migration
     public function up()
     {
         // Missouri Form 4444 Management
-        Schema::create('missouri_form4444s', function (Blueprint $table) {
+        if (!Schema::hasTable('missouri_form4444s')) {
+            Schema::create('missouri_form4444s', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('enrollment_id')->constrained('user_course_enrollments')->onDelete('cascade');
@@ -24,44 +25,49 @@ return new class extends Migration
             $table->string('pdf_path')->nullable();
             $table->timestamps();
         });
+        }
 
         // Missouri Course Structure
-        Schema::create('missouri_course_structures', function (Blueprint $table) {
-            $table->id();
-            $table->integer('chapter_number');
-            $table->string('chapter_title');
-            $table->longText('content')->nullable();
-            $table->integer('quiz_questions_count')->default(10);
-            $table->integer('passing_score')->default(80);
-            $table->integer('time_requirement_minutes')->default(30);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('missouri_course_structures')) {
+            Schema::create('missouri_course_structures', function (Blueprint $table) {
+                $table->id();
+                $table->integer('chapter_number');
+                $table->string('chapter_title');
+                $table->longText('content')->nullable();
+                $table->integer('quiz_questions_count')->default(10);
+                $table->integer('passing_score')->default(80);
+                $table->integer('time_requirement_minutes')->default(30);
+                $table->timestamps();
+            });
+        }
 
         // Missouri Quiz Bank
-        Schema::create('missouri_quiz_banks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('chapter_id')->nullable()->constrained('missouri_course_structures')->onDelete('cascade');
-            $table->text('question_text');
-            $table->string('option_a');
-            $table->string('option_b');
-            $table->string('option_c');
-            $table->string('option_d');
-            $table->string('option_e')->nullable();
-            $table->enum('correct_answer', ['A', 'B', 'C', 'D', 'E']);
-            $table->enum('category', ['traffic_laws', 'road_signs', 'safe_driving', 'alcohol_drugs', 'defensive_driving'])->nullable();
-            $table->enum('difficulty_level', ['easy', 'medium', 'hard'])->default('medium');
-            $table->boolean('state_required')->default(true);
-            $table->boolean('is_final_exam')->default(false);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('missouri_quiz_banks')) {
+            Schema::create('missouri_quiz_banks', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('chapter_id')->nullable()->constrained('missouri_course_structures')->onDelete('cascade');
+                $table->text('question_text');
+                $table->string('option_a');
+                $table->string('option_b');
+                $table->string('option_c');
+                $table->string('option_d');
+                $table->string('option_e')->nullable();
+                $table->enum('correct_answer', ['A', 'B', 'C', 'D', 'E']);
+                $table->enum('category', ['traffic_laws', 'road_signs', 'safe_driving', 'alcohol_drugs', 'defensive_driving'])->nullable();
+                $table->enum('difficulty_level', ['easy', 'medium', 'hard'])->default('medium');
+                $table->boolean('state_required')->default(true);
+                $table->boolean('is_final_exam')->default(false);
+                $table->timestamps();
+            });
+        }
 
         // Missouri Submission Tracker
         Schema::create('missouri_submission_trackers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('form_4444_id')->constrained('missouri_form4444s')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->timestamp('completion_date');
-            $table->timestamp('submission_deadline');
+            $table->timestamp('completion_date')->nullable();
+            $table->timestamp('submission_deadline')->nullable();
             $table->integer('days_remaining')->nullable();
             $table->boolean('reminder_sent')->default(false);
             $table->enum('status', ['active', 'submitted', 'expired'])->default('active');

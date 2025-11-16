@@ -106,17 +106,26 @@ Route::get('/certificates', function () {
 
 Route::get('/generate-certificates', function () {
     $user = auth()->user();
-    $enrollment = \App\Models\UserCourseEnrollment::where('user_id', $user->id)
-        ->where('status', 'completed')
+    $enrollments = \App\Models\UserCourseEnrollment::where('user_id', $user->id)
         ->with('course')
-        ->first();
+        ->get();
+    
+    return view('certificates.select', compact('enrollments'));
+})->middleware('auth');
+
+Route::get('/generate-certificate/{enrollment_id}', function ($enrollment_id) {
+    $user = auth()->user();
+    $enrollment = \App\Models\UserCourseEnrollment::where('user_id', $user->id)
+        ->where('id', $enrollment_id)
+        ->with('course')
+        ->firstOrFail();
     
     $params = [
         'student_name' => $user->name,
-        'completion_date' => $enrollment ? $enrollment->completed_at->format('m/d/Y') : now()->format('m/d/Y'),
+        'completion_date' => $enrollment->completed_at ? $enrollment->completed_at->format('m/d/Y') : now()->format('m/d/Y'),
         'score' => '95%',
-        'course_name' => $enrollment->course->title ?? 'Course',
-        'enrollment_id' => $enrollment->id ?? 1
+        'course_name' => $enrollment->course->title,
+        'enrollment_id' => $enrollment->id
     ];
     
     return redirect('/certificate?' . http_build_query($params));
@@ -815,6 +824,7 @@ Route::get('/register/{step?}', [App\Http\Controllers\RegistrationController::cl
 Route::post('/register/{step}', [App\Http\Controllers\RegistrationController::class, 'processStep'])->name('register.process');
 
 Route::get('/certificate', [App\Http\Controllers\CertificateController::class, 'generate']);
+Route::get('/certificate/download', [App\Http\Controllers\CertificateController::class, 'downloadPdf'])->middleware('auth');
 
 Route::get('/faq', function () {
     return view('faq');

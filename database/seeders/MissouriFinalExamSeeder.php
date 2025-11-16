@@ -20,9 +20,10 @@ class MissouriFinalExamSeeder extends Seeder
 
         $finalExamChapter = DB::table('chapters')
             ->where('course_id', $course->id)
-            ->where('title', 'like', '%Final Exam%')
-            ->orWhere('order', 11)
-            ->orWhere('order_index', 11)
+            ->where(function($query) {
+                $query->where('title', 'like', '%Final Exam%')
+                      ->orWhere('order_index', 11);
+            })
             ->first();
 
         if (!$finalExamChapter) {
