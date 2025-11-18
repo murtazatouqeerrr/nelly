@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Mail\WelcomeMail;
+use Illuminate\Support\Facades\Mail;
 
 class RegistrationController extends Controller
 {
@@ -95,6 +97,9 @@ class RegistrationController extends Controller
         
         // Clear session data
         session()->forget(['registration_step_1', 'registration_step_2', 'registration_step_3', 'registration_step_4']);
+        
+        // Send welcome email
+        Mail::to($user->email)->send(new WelcomeMail($user));
         
         return redirect()->route('login')->with('success', 'Registration completed successfully! Please login with your credentials.');
     }

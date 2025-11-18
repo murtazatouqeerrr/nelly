@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\FloridaCertificate;
 use App\Models\UserCourseEnrollment;
 use App\Models\StateSubmissionLog;
+use App\Events\CertificateGenerated;
+use App\Services\CertificateAccessService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -135,6 +137,8 @@ class CertificateController extends Controller
             $due_date = $user->due_month . '/' . $user->due_day . '/' . $user->due_year;
         }
         
+        $certificateNumber = $this->generateCertificateNumber();
+        
         $data = [
             'student_name' => $request->student_name ?: trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
             'student_address' => $student_address ?: null,
@@ -147,7 +151,7 @@ class CertificateController extends Controller
             'due_date' => $due_date,
             'court' => $user->court_selected ?? null,
             'county' => $user->state ?? null,
-            'certificate_number' => $this->generateCertificateNumber(),
+            'certificate_number' => $certificateNumber,
             'phone' => $phone ?: null,
         ];
         
@@ -155,6 +159,29 @@ class CertificateController extends Controller
         if (class_exists('\Barryvdh\DomPDF\Facade\Pdf')) {
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('certificate-pdf', $data);
             $filename = 'certificate-' . ($data['student_name'] ? str_replace(' ', '-', $data['student_name']) : 'user') . '-' . date('Y-m-d') . '.pdf';
+            
+            // Send certificate email with PDF
+            try {
+                $course = $enrollment ? $enrollment->course : null;
+                \Mail::to($user->email)->send(new \App\Mail\CertificateGenerated(
+                    $user,
+                    $course,
+                    $certificateNumber,
+                    $pdf->output()
+                ));
+            } catch (\Exception $e) {
+                \Log::error('Certificate email error: ' . $e->getMessage());
+            }
+            
+            // Handle access revocation after download
+            $accessService = new CertificateAccessService();
+            $result = $accessService->handleCertificateDownload($user);
+            
+            if ($result['status'] === 'account_locked') {
+                auth()->logout();
+                return redirect('/login')->with('error', $result['message']);
+            }
+            
             return $pdf->download($filename);
         }
         
@@ -187,6 +214,9 @@ class CertificateController extends Controller
             'verification_hash' => Str::random(32),
             'status' => 'generated',
         ]);
+
+        // Dispatch certificate generated event
+        event(new CertificateGenerated($certificate));
 
         return view('certificates.florida-certificate', ['certificate' => $certificate]);
     }

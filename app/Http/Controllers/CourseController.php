@@ -151,13 +151,20 @@ class CourseController extends Controller
                 'is_active' => 'boolean'
             ]);
             
-            $validated['course_type'] = 'BDI';
-            $validated['delivery_type'] = 'internet';
-            $validated['dicds_course_id'] = 'BDI-' . time();
-            $validated['is_active'] = $validated['is_active'] ?? true;
-            $validated['copyright_protected'] = true;
+            // Map form fields to actual database columns
+            $courseData = [
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'state_code' => $validated['state_code'],
+                'passing_score' => $validated['min_pass_score'],
+                'duration' => $validated['total_duration'],
+                'price' => $validated['price'],
+                'certificate_type' => $validated['certificate_template'] ?? null,
+                'is_active' => $validated['is_active'] ?? true,
+                'course_type' => 'BDI',
+            ];
             
-            $course = \App\Models\FloridaCourse::create($validated);
+            $course = \App\Models\FloridaCourse::create($courseData);
             
             if ($request->wantsJson()) {
                 return response()->json($course, 201);
@@ -178,7 +185,9 @@ class CourseController extends Controller
             // Fetch from both tables
             $floridaCourses = DB::table('florida_courses')
                 ->when($request->state_code, function($query, $state) {
-                    return $query->where('state', $state);
+                    return $query->where(function($q) use ($state) {
+                        $q->where('state_code', $state)->orWhere('state', $state);
+                    });
                 })
                 ->when($request->has('is_active'), function($query) use ($request) {
                     return $query->where('is_active', $request->is_active);
@@ -190,7 +199,9 @@ class CourseController extends Controller
 
             $regularCourses = DB::table('courses')
                 ->when($request->state_code, function($query, $state) {
-                    return $query->where('state', $state);
+                    return $query->where(function($q) use ($state) {
+                        $q->where('state_code', $state)->orWhere('state', $state);
+                    });
                 })
                 ->when($request->has('is_active'), function($query) use ($request) {
                     return $query->where('is_active', $request->is_active);
@@ -205,34 +216,34 @@ class CourseController extends Controller
             
             foreach ($floridaCourses as $course) {
                 $allCourses->push([
-                    'id' => $course->id, // Use numeric ID only
+                    'id' => $course->id,
                     'real_id' => $course->id,
                     'title' => $course->title,
-                    'description' => $course->description,
-                    'state_code' => $course->state,
-                    'total_duration' => $course->duration,
-                    'price' => $course->price,
-                    'passing_score' => $course->passing_score,
-                    'is_active' => $course->is_active,
-                    'course_type' => $course->course_type,
-                    'certificate_type' => $course->certificate_type,
+                    'description' => $course->description ?? '',
+                    'state_code' => $course->state_code ?? $course->state ?? 'FL',
+                    'total_duration' => $course->total_duration ?? $course->duration ?? 0,
+                    'price' => $course->price ?? 0,
+                    'passing_score' => $course->min_pass_score ?? $course->passing_score ?? 80,
+                    'is_active' => $course->is_active ?? true,
+                    'course_type' => $course->course_type ?? 'BDI',
+                    'certificate_type' => $course->certificate_template ?? $course->certificate_type ?? null,
                     'table' => 'florida_courses'
                 ]);
             }
 
             foreach ($regularCourses as $course) {
                 $allCourses->push([
-                    'id' => $course->id, // Use numeric ID only
+                    'id' => $course->id,
                     'real_id' => $course->id,
                     'title' => $course->title,
-                    'description' => $course->description,
-                    'state_code' => $course->state,
-                    'total_duration' => $course->duration,
-                    'price' => $course->price,
-                    'passing_score' => $course->passing_score,
-                    'is_active' => $course->is_active,
-                    'course_type' => $course->course_type,
-                    'certificate_type' => $course->certificate_type,
+                    'description' => $course->description ?? '',
+                    'state_code' => $course->state_code ?? $course->state ?? 'FL',
+                    'total_duration' => $course->total_duration ?? $course->duration ?? 0,
+                    'price' => $course->price ?? 0,
+                    'passing_score' => $course->min_pass_score ?? $course->passing_score ?? 80,
+                    'is_active' => $course->is_active ?? true,
+                    'course_type' => $course->course_type ?? 'BDI',
+                    'certificate_type' => $course->certificate_template ?? $course->certificate_type ?? null,
                     'table' => 'courses'
                 ]);
             }

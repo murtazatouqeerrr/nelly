@@ -54,6 +54,9 @@ class User extends Authenticatable implements JWTSubject
         'agreement_name',
         'terms_agreement',
         'registration_completed_at',
+        'account_locked',
+        'lock_reason',
+        'locked_at',
     ];
 
     protected $hidden = [
@@ -95,6 +98,11 @@ class User extends Authenticatable implements JWTSubject
     public function createdCourses()
     {
         return $this->hasMany(Course::class, 'created_by');
+    }
+    
+    public function scopeNotLocked($query)
+    {
+        return $query->where('account_locked', false);
     }
     
     // JWT methods

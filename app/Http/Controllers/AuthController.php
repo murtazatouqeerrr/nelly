@@ -43,6 +43,15 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
+        // Check if user exists and is not locked
+        $user = User::where('email', $credentials['email'])->first();
+        
+        if ($user && $user->account_locked) {
+            return back()->withErrors([
+                'email' => 'Your account has been locked. Please contact support to regain access.',
+            ])->onlyInput('email');
+        }
+
         // Check if this is a web request (expects HTML) or API request (expects JSON)
         if ($request->expectsJson()) {
             $success = (bool) JWTAuth::attempt($credentials);

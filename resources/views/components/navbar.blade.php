@@ -86,6 +86,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/user-access') ? 'bg-primary rounded' : '' }}" href="/admin/user-access">
+                            <i class="fas fa-lock me-2"></i> User Access
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/florida-courses*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-courses">
                             <i class="fas fa-flag-usa me-2"></i> Florida Courses
                         </a>

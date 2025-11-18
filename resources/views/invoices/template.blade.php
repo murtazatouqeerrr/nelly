@@ -66,7 +66,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="company-name">Traffic School Pro</div>
+        <div class="company-name">DummiesTrafficSchool.com</div>
         <div>Professional Driver Education Services</div>
     </div>
 
@@ -112,8 +112,8 @@
     </div>
 
     <div class="footer">
-        <p>Thank you for choosing Traffic School Pro!</p>
-        <p>For questions about this invoice, please contact us at support@trafficschoolpro.com</p>
+        <p>Thank you for choosing DummiesTrafficSchool.com!</p>
+        <p>For questions about this invoice, please contact us at support@dummiestrafficschool.com</p>
     </div>
 </body>
 </html>

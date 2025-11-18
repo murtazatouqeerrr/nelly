@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\SupportTicket;
 use App\Models\SupportTicketReply;
+use App\Models\TicketRecipient;
+use App\Mail\TicketMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class SupportTicketController extends Controller
 {
@@ -15,7 +18,7 @@ class SupportTicketController extends Controller
             \Log::info('User authenticated: ' . (auth()->check() ? 'yes' : 'no'));
             \Log::info('User ID: ' . (auth()->id() ?? 'null'));
             
-            $query = SupportTicket::with(['user', 'replies']);
+            $query = SupportTicket::with(['user']);
 
             if (auth()->check() && auth()->user()->role_id != 1) {
                 \Log::info('Filtering tickets for user: ' . auth()->id());
@@ -73,6 +76,24 @@ class SupportTicketController extends Controller
             ]);
 
             \Log::info('Ticket created: ' . $ticket->id);
+            
+            // Send email to all active recipients
+            try {
+                $recipients = TicketRecipient::where('is_active', true)->get();
+                \Log::info('Found ' . $recipients->count() . ' active recipients');
+                
+                foreach ($recipients as $recipient) {
+                    try {
+                        Mail::to($recipient->email)->send(new TicketMail($ticket));
+                        \Log::info('Email sent to: ' . $recipient->email);
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to send email to ' . $recipient->email . ': ' . $e->getMessage());
+                    }
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error sending emails: ' . $e->getMessage());
+            }
+            
             \Log::info('=== Support Ticket Store END ===');
 
             return response()->json(['success' => true, 'ticket' => $ticket]);
@@ -87,7 +108,7 @@ class SupportTicketController extends Controller
 
     public function show($id)
     {
-        $ticket = SupportTicket::with(['user', 'replies.user'])->findOrFail($id);
+        $ticket = SupportTicket::with(['user'])->findOrFail($id);
 
         if (auth()->user()->role_id != 1 && $ticket->user_id != auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);

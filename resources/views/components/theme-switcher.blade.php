@@ -2,7 +2,7 @@
 <div class="theme-switcher">
 <div id="google_translate_element" style="margin-top: 9px; "></div>
 
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 function googleTranslateElementInit() {
   new google.translate.TranslateElement(
     {
@@ -17,7 +17,7 @@ function googleTranslateElementInit() {
 
 <script type="text/javascript" 
   src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
-</script>
+</script> -->
     
     <button class="theme-btn" onclick="setTheme('dark-blue')" title="Dark Blue">
         <span style="background: linear-gradient(135deg, #1e3a8a 50%, #ffffff 50%);"></span>
@@ -36,7 +36,7 @@ function googleTranslateElementInit() {
 <style>
 .theme-switcher {       
     position: fixed;
-    top: 20px;
+    top: 30px;
     right: 20px;
     z-index: 10000;
     display: flex;

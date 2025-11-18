@@ -99,4 +99,33 @@ class PaymentGatewayController extends Controller
         
         return response()->json(['received' => true]);
     }
-}
+
+    public function processDummyPayment(Request $request)
+    {
+        $request->validate([
+            'payment_id' => 'required|exists:payments,id',
+            'amount' => 'required|numeric|min:0.01'
+        ]);
+
+        try {
+            $payment = \App\Models\Payment::findOrFail($request->payment_id);
+            
+            // Update payment status to completed
+            $payment->update([
+                'status' => 'completed',
+                'gateway' => 'dummy',
+                'gateway_payment_id' => 'dummy_' . time() . '_' . auth()->id()
+            ]);
+
+            \Log::info('Dummy payment processed', ['payment_id' => $payment->id, 'amount' => $request->amount]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment processed successfully',
+                'payment' => $payment
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Dummy payment error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }

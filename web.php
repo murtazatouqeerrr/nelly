@@ -129,35 +129,20 @@ Route::get('/generate-certificates', function () {
     }
     
     $userId = auth()->id();
-    $debug = "";
     
-    // Find completed enrollments
+    // Find only truly completed enrollments - exclude active status
     $completedEnrollments = \App\Models\UserCourseEnrollment::with(['floridaCourse', 'user'])
         ->where('user_id', $userId)
-        ->where(function($query) {
-            $query->where('status', 'completed')
-                  ->orWhere('progress_percentage', 100);
-        })
+        ->where('status', 'completed')
+        ->where('progress_percentage', '>=', 100)
+        ->whereNotNull('completed_at')
+        ->whereDoesntHave('floridaCertificate')
         ->get();
-    
-    $debug .= "Found {$completedEnrollments->count()} completed enrollments<br>";
     
     $generated = 0;
     
     foreach ($completedEnrollments as $enrollment) {
-        $debug .= "Processing enrollment {$enrollment->id}<br>";
-        
-        // Check if certificate already exists
-        $existingCertificate = \App\Models\FloridaCertificate::where('enrollment_id', $enrollment->id)->first();
-        if ($existingCertificate) {
-            $debug .= "- Certificate already exists (ID: {$existingCertificate->id})<br>";
-            continue;
-        }
-        
-        $debug .= "- No existing certificate, creating new one<br>";
-        
         try {
-            // Generate certificate number
             $year = date('Y');
             $lastCertificate = \App\Models\FloridaCertificate::whereYear('created_at', $year)
                 ->orderBy('id', 'desc')
@@ -168,27 +153,24 @@ Route::get('/generate-certificates', function () {
             
             $certificateNumber = 'FL' . $year . str_pad($sequence, 6, '0', STR_PAD_LEFT);
             
-            $courseName = $enrollment->floridaCourse->title ?? 'Florida Traffic School Course';
-            
-            $certificate = \App\Models\FloridaCertificate::create([
+            \App\Models\FloridaCertificate::create([
                 'enrollment_id' => $enrollment->id,
                 'dicds_certificate_number' => $certificateNumber,
                 'student_name' => $enrollment->user->first_name . ' ' . $enrollment->user->last_name,
-                'course_name' => $courseName,
-                'completion_date' => $enrollment->completed_at ?? now(),
+                'course_name' => $enrollment->floridaCourse->title ?? 'Florida Traffic School Course',
+                'completion_date' => $enrollment->completed_at,
                 'verification_hash' => \Illuminate\Support\Str::random(32),
                 'status' => 'generated',
             ]);
             
-            $debug .= "- Created certificate ID: {$certificate->id}<br>";
             $generated++;
             
         } catch (\Exception $e) {
-            $debug .= "- Error creating certificate: " . $e->getMessage() . "<br>";
+            \Log::error('Certificate generation error: ' . $e->getMessage());
         }
     }
     
-    return $debug . "<br>Generated {$generated} certificates. <a href='/my-certificates'>View certificates</a>";
+    return redirect('/my-certificates')->with('success', "Generated {$generated} certificates for completed courses.");
 })->middleware('auth');
 
 Route::get('/my-certificates', function () {
@@ -228,9 +210,19 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::delete('/web/chapters/{chapter}', [App\Http\Controllers\ChapterController::class, 'destroyWeb']);
 });
 
-// Web routes for enrollments (using session auth)
+// Payment routes
 Route::middleware('auth')->group(function () {
-    Route::post('/web/enrollments', [App\Http\Controllers\EnrollmentController::class, 'storeWeb']);
+    Route::get('/payment/create', [App\Http\Controllers\PaymentPageController::class, 'create'])->name('payment.create');
+    Route::get('/payment/{enrollment}', [App\Http\Controllers\PaymentPageController::class, 'show'])->name('payment.show');
+    Route::post('/payment/stripe', [App\Http\Controllers\PaymentPageController::class, 'processStripe']);
+    Route::post('/payment/paypal', [App\Http\Controllers\PaymentPageController::class, 'processPaypal']);
+    Route::get('/payment/success', [App\Http\Controllers\PaymentPageController::class, 'success'])->name('payment.success');
+    Route::get('/payment/cancel', [App\Http\Controllers\PaymentPageController::class, 'cancel'])->name('payment.cancel');
+});
+
+// Web routes for enrollments (using session auth with payment middleware)
+Route::middleware(['auth', 'payment'])->group(function () {
+    Route::post('/web/enrollments', [App\Http\Controllers\EnrollmentController::class, 'storeWeb'])->name('enrollment.store');
     Route::get('/web/my-enrollments', [App\Http\Controllers\EnrollmentController::class, 'myEnrollmentsWeb']);
 });
 

@@ -23,6 +23,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link text-white" href="/admin/user-access">
+                    <i class="fas fa-lock me-2"></i>User Access
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link text-white" href="/admin/enrollments">
                     <i class="fas fa-graduation-cap me-2"></i>Enrollments
                 </a>

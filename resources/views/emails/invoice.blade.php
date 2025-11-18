@@ -50,13 +50,13 @@
 <body>
     <div class="header">
         <h1>Invoice {{ $invoice->invoice_number }}</h1>
-        <p>Traffic School Pro</p>
+        <p>DummiesTrafficSchool.com</p>
     </div>
     
     <div class="content">
         <p>Dear {{ $invoice->payment->user->first_name }} {{ $invoice->payment->user->last_name }},</p>
         
-        <p>Thank you for your enrollment with Traffic School Pro. Please find your invoice attached to this email.</p>
+        <p>Thank you for your enrollment with DummiesTrafficSchool.com. Please find your invoice attached to this email.</p>
         
         <div class="invoice-details">
             <h3>Invoice Summary</h3>
@@ -68,15 +68,15 @@
         
         <p>If you have any questions about this invoice, please don't hesitate to contact our support team.</p>
         
-        <p>Thank you for choosing Traffic School Pro!</p>
+        <p>Thank you for choosing DummiesTrafficSchool.com!</p>
         
         <p>Best regards,<br>
-        The Traffic School Pro Team</p>
+        The DummiesTrafficSchool.com Team</p>
     </div>
     
     <div class="footer">
-        <p>Traffic School Pro | Professional Driver Education Services</p>
-        <p>Email: support@trafficschoolpro.com | Phone: (555) 123-4567</p>
+        <p>DummiesTrafficSchool.com | Professional Driver Education Services</p>
+        <p>Email: support@dummiestrafficschool.com | Phone: (555) 123-4567</p>
     </div>
 </body>
 </html>

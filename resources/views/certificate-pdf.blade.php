@@ -5,13 +5,34 @@
     <title>Traffic School Certificate</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 12px; }
-        .certificate { width: 100%; border: 2px solid #000; }
+        .certificate { 
+            width: 100%; 
+            border: 2px solid #000; 
+            position: relative;
+            overflow: hidden;
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 48px;
+            font-weight: bold;
+            color: rgba(200, 200, 200, 0.15);
+            text-align: center;
+            z-index: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .content { position: relative; z-index: 1; }
         .top-section { display: table; width: 100%; border-bottom: 2px solid #000; }
         .school-info { display: table-cell; width: 33%; padding: 10px; border-right: 2px solid #000; vertical-align: top; }
         .middle-section { display: table-cell; width: 34%; padding: 10px; border-right: 2px solid #000; }
-        .cert-number { display: table-cell; width: 33%; padding: 10px; text-align: center; }
-        .student-info { padding: 10px; border-right: 2px solid #000; border-top: 2px solid #000; }
-        .photo-section { padding: 10px; text-align: center; }
+        .cert-number { display: table-cell; width: 33%; padding: 10px; text-align: center; vertical-align: top; }
+        .student-info { display: table; width: 100%; border-bottom: 2px solid #000; }
+        .student-name { display: table-cell; width: 33%; padding: 10px; border-right: 2px solid #000; }
+        .photo-section { display: table-cell; width: 67%; padding: 10px; text-align: center; vertical-align: middle; border-left: 2px solid #000; }
         .completion-section { padding: 10px; border-bottom: 2px solid #000; }
         .details-section { display: table; width: 100%; }
         .details-left, .details-right { display: table-cell; width: 50%; }
@@ -23,11 +44,13 @@
         .signature-row { display: table; width: 100%; margin-bottom: 20px; }
         .signature-box { display: table-cell; width: 50%; text-align: center; }
         .highlight { background: #90EE90; padding: 2px; }
-        .photo-placeholder { width: 120px; height: 140px; background: #f0f0f0; border: 1px solid #ccc; margin: 0 auto; }
+        .photo-placeholder { width: 100px; height: 120px; background: #f0f0f0; border: 1px solid #ccc; margin: 0 auto; display: none }
     </style>
 </head>
 <body>
     <div class="certificate">
+        <div class="watermark">DummiesTrafficSchool.com</div>
+        <div class="content">
         <!-- Top Section -->
         <div class="top-section">
             <div class="school-info">
@@ -47,12 +70,13 @@
         </div>
         
         <div class="student-info">
-            <span class="highlight">{{ $student_name ?? 'N/A' }}</span><br>
-            <span class="highlight">{!! $student_address ? str_replace("\n", "<br>", $student_address) : 'N/A' !!}</span>
-        </div>
-        
-        <div class="photo-section">
-            <div class="photo-placeholder"></div>
+            <div class="student-name">
+                <span class="highlight">{{ $student_name ?? 'N/A' }}</span><br>
+                <span class="highlight">{!! $student_address ? str_replace("\n", "<br>", $student_address) : 'N/A' !!}</span>
+            </div>
+            <div class="photo-section">
+                <div class="photo-placeholder"></div>
+            </div>
         </div>
 
         <!-- Completion Section -->
@@ -138,6 +162,7 @@
                     Signed under penalty of perjury.
                 </div>
             </div>
+        </div>
         </div>
     </div>
 </body>

@@ -5,11 +5,35 @@
     <title>Traffic School Certificate</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .certificate { width: 800px; margin: 0 auto; border: 2px solid #000; }
+        .certificate { 
+            width: 800px; 
+            margin: 0 auto; 
+            border: 2px solid #000; 
+            position: relative;
+            overflow: hidden;
+        }
+        .certificate::before {
+            content: 'DummiesTrafficSchool.com';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 72px;
+            font-weight: bold;
+            color: rgba(200, 200, 200, 0.15);
+            white-space: nowrap;
+            z-index: 0;
+            pointer-events: none;
+            width: 150%;
+        }
+        .certificate > * {
+            position: relative;
+            z-index: 1;
+        }
         .top-section { display: grid; grid-template-columns: 2fr 2fr 1fr; grid-template-rows: auto auto; border-bottom: 2px solid #000; }
         .school-info { grid-column: 1; grid-row: 1; padding: 10px; border-right: 2px solid #000; }
         .middle-section { grid-column: 2; grid-row: 1 / 3; padding: 10px; border-right: 2px solid #000; }
-        .cert-number { grid-column: 3; grid-row: 1; padding: 10px; text-align: center; border-bottom: 2px solid #000; }
+        .cert-number { grid-column: 3; grid-row: 1; padding: 10px; text-align: center; }
         .student-info { grid-column: 1; grid-row: 2; padding: 10px; border-right: 2px solid #000; border-top: 2px solid #000; }
         .photo-section { grid-column: 3; grid-row: 2; padding: 10px; text-align: center; display: flex; align-items: center; justify-content: center; }
         .completion-section { padding: 10px; border-bottom: 2px solid #000; }
@@ -23,7 +47,7 @@
         .signature-row { display: flex; margin-bottom: 20px; }
         .signature-box { flex: 1; text-align: center; }
         .highlight { background: #90EE90; padding: 2px; }
-        .photo-placeholder { width: 120px; height: 140px; background: #f0f0f0; border: 1px solid #ccc; }
+        .photo-placeholder { width: 120px; height: 140px; background: #f0f0f0; border: 1px solid #ccc; display: none !important }
         .action-buttons { 
             position: fixed; 
             top: 20px; 

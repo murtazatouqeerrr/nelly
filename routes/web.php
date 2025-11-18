@@ -197,6 +197,16 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::delete('/web/chapters/{chapter}', [App\Http\Controllers\ChapterController::class, 'destroyWeb']);
 });
 
+// Payment routes
+Route::middleware('auth')->group(function () {
+    Route::get('/payment', [App\Http\Controllers\PaymentPageController::class, 'create'])->name('payment.create');
+    Route::post('/payment/stripe', [App\Http\Controllers\PaymentPageController::class, 'processStripe'])->name('payment.stripe');
+    Route::post('/payment/paypal', [App\Http\Controllers\PaymentPageController::class, 'processPaypal'])->name('payment.paypal');
+    Route::post('/payment/dummy', [App\Http\Controllers\PaymentPageController::class, 'processDummy'])->name('payment.dummy');
+    Route::get('/payment/success', [App\Http\Controllers\PaymentPageController::class, 'success'])->name('payment.success');
+    Route::get('/payment/cancel', [App\Http\Controllers\PaymentPageController::class, 'cancel'])->name('payment.cancel');
+});
+
 // Web routes for enrollments (using session auth)
 Route::middleware('auth')->group(function () {
     Route::post('/web/enrollments', [App\Http\Controllers\EnrollmentController::class, 'storeWeb']);
@@ -325,6 +335,12 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::get('/admin/payments/paypal', function () { return view('admin.payments.paypal'); });
     Route::get('/admin/course-timers', function () { return view('admin.course-timers'); });
     Route::get('/admin/support/tickets', [App\Http\Controllers\SupportTicketController::class, 'index']);
+    Route::get('/admin/support/recipients', [App\Http\Controllers\TicketRecipientController::class, 'index'])->name('ticket-recipients.index');
+    Route::post('/admin/support/recipients', [App\Http\Controllers\TicketRecipientController::class, 'store'])->name('ticket-recipients.store');
+    Route::delete('/admin/support/recipients/{recipient}', [App\Http\Controllers\TicketRecipientController::class, 'destroy'])->name('ticket-recipients.destroy');
+    Route::patch('/admin/support/recipients/{recipient}/toggle', [App\Http\Controllers\TicketRecipientController::class, 'toggle'])->name('ticket-recipients.toggle');
+    Route::get('/admin/user-access', [App\Http\Controllers\UserAccessController::class, 'index'])->name('user-access.index');
+    Route::patch('/admin/user-access/{user}/unlock', [App\Http\Controllers\UserAccessController::class, 'unlock'])->name('user-access.unlock');
     Route::get('/admin/faqs', [App\Http\Controllers\FaqController::class, 'index']);
     Route::get('/admin/counties', function () { return view('admin.counties'); });
     Route::get('/admin/question-banks', function () { return view('admin.question-banks'); });
@@ -586,6 +602,9 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::get('/api/questions/{id}', [App\Http\Controllers\QuestionController::class, 'show']);
     Route::put('/api/questions/{id}', [App\Http\Controllers\QuestionController::class, 'update']);
     Route::delete('/api/questions/{id}', [App\Http\Controllers\QuestionController::class, 'destroy']);
+    
+    // Chapter Quiz Results
+    Route::post('/api/chapter-quiz-results', [App\Http\Controllers\ChapterController::class, 'saveQuizResults']);
     
     // Certificate Lookup
     Route::post('/web/certificate-lookup', [App\Http\Controllers\CertificateLookupController::class, 'search']);

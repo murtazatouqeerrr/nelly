@@ -35,6 +35,9 @@ Route::prefix('payment')->group(function () {
     Route::post('/paypal/create-order', [PaymentGatewayController::class, 'createPayPalOrder'])->middleware('auth:sanctum');
     Route::post('/paypal/capture', [PaymentGatewayController::class, 'capturePayPalOrder'])->middleware('auth:sanctum');
     Route::post('/paypal/webhook', [PaymentGatewayController::class, 'paypalWebhook']);
+    
+    // Dummy Payment (for testing)
+    Route::post('/dummy/process', [PaymentGatewayController::class, 'processDummyPayment'])->middleware('auth:sanctum');
 });
 
 // Course Timer Routes
@@ -242,7 +245,7 @@ Route::prefix('counties')->middleware('web')->group(function () {
 });
 
 // Support Ticket Routes
-Route::prefix('support-tickets')->middleware('auth:sanctum')->group(function () {
+Route::prefix('support/tickets')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [SupportTicketController::class, 'index']);
     Route::post('/', [SupportTicketController::class, 'store']);
     Route::get('/{id}', [SupportTicketController::class, 'show']);
@@ -250,7 +253,7 @@ Route::prefix('support-tickets')->middleware('auth:sanctum')->group(function () 
     Route::put('/{id}/status', [SupportTicketController::class, 'updateStatus']);
 });
 
-// Alternative route for support/tickets
+// Alternative route for support/tickets (web middleware)
 Route::prefix('support')->middleware('web')->group(function () {
     Route::get('/tickets', [SupportTicketController::class, 'index']);
     Route::post('/tickets', [SupportTicketController::class, 'store']);

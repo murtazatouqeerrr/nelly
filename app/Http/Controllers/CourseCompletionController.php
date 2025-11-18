@@ -7,6 +7,7 @@ use App\Models\ChapterProgress;
 use App\Models\QuizAttempt;
 use App\Models\MissouriForm4444;
 use App\Models\UserCourseEnrollment;
+use App\Events\CourseCompleted;
 
 class CourseCompletionController extends Controller
 {
@@ -54,6 +55,9 @@ class CourseCompletionController extends Controller
             'status' => 'completed',
             'completion_date' => now()
         ]);
+
+        // Dispatch course completed event
+        event(new CourseCompleted($enrollment));
 
         // Generate Form 4444
         $form = MissouriForm4444::create([

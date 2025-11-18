@@ -95,7 +95,7 @@
                 
                 <div class="form-row">
                     <div class="form-group full-width">
-                        <label for="mailing_address">Mailing Address</label>
+                        <label for="mailing_address">Address</label>
                         <input type="text" id="mailing_address" name="mailing_address" value="{{ old('mailing_address', session('registration_step_2.mailing_address')) }}" required>
                     </div>
                 </div>

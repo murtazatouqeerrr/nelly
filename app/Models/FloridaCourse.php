@@ -7,23 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class FloridaCourse extends Model
 {
     protected $fillable = [
-        'course_type',
-        'delivery_type',
         'title',
         'description',
         'state_code',
-        'min_pass_score',
-        'total_duration',
+        'duration',
         'price',
-        'dicds_course_id',
-        'certificate_template',
+        'passing_score',
         'is_active',
-        'copyright_protected',
+        'course_type',
+        'certificate_type',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
-        'copyright_protected' => 'boolean',
         'price' => 'decimal:2',
     ];
 

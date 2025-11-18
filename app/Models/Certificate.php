@@ -35,6 +35,11 @@ class Certificate extends Model
         return $this->belongsTo(UserCourseEnrollment::class, 'enrollment_id');
     }
 
+    public function user()
+    {
+        return $this->hasOneThrough(User::class, UserCourseEnrollment::class, 'id', 'id', 'enrollment_id', 'user_id');
+    }
+
     public function submissionLogs()
     {
         return $this->hasMany(StateSubmissionLog::class);

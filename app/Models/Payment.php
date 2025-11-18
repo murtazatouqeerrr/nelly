@@ -19,6 +19,11 @@ class Payment extends Model
         'billing_name',
         'billing_email',
         'billing_address',
+        'address',
+        'city',
+        'state',
+        'country',
+        'zipcode',
         'refund_reason',
         'refunded_at',
         'metadata'

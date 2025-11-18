@@ -2,7 +2,16 @@
 
 @section('content')
 <div class="container-fluid">
-    <h2>Support Tickets</h2>
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>Support Tickets</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ route('ticket-recipients.index') }}" class="btn btn-secondary">
+                <i class="fas fa-envelope"></i> Manage Recipients
+            </a>
+        </div>
+    </div>
     <div id="support-tickets"></div>
 </div>
 
@@ -10,33 +19,35 @@
 document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/support/tickets', {
         headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
             'Accept': 'application/json'
         }
     })
     .then(response => response.json())
     .then(data => {
         const container = document.getElementById('support-tickets');
-        if (data.data && data.data.length > 0) {
-            let html = '<table class="table"><thead><tr><th>ID</th><th>Subject</th><th>User</th><th>Status</th><th>Priority</th><th>Date</th></tr></thead><tbody>';
-            data.data.forEach(ticket => {
+        let tickets = data.data || data;
+        
+        if (Array.isArray(tickets) && tickets.length > 0) {
+            let html = '<table class="table"><thead><tr><th>ID</th><th>Subject</th><th>Email</th><th>Status</th><th>Priority</th><th>Date</th></tr></thead><tbody>';
+            tickets.forEach(ticket => {
                 html += `<tr>
-                    <td>${ticket.id}</td>
+                    <td>#${ticket.id}</td>
                     <td>${ticket.subject}</td>
-                    <td>${ticket.user ? ticket.user.name : 'N/A'}</td>
+                    <td>${ticket.email || 'N/A'}</td>
                     <td><span class="badge bg-${ticket.status === 'open' ? 'warning' : 'success'}">${ticket.status}</span></td>
-                    <td>${ticket.priority}</td>
+                    <td><span class="badge bg-info">${ticket.priority}</span></td>
                     <td>${new Date(ticket.created_at).toLocaleDateString()}</td>
                 </tr>`;
             });
             html += '</tbody></table>';
             container.innerHTML = html;
         } else {
-            container.innerHTML = '<p>No tickets found.</p>';
+            container.innerHTML = '<p class="text-muted">No tickets found.</p>';
         }
     })
     .catch(error => {
-        document.getElementById('support-tickets').innerHTML = '<p class="text-danger">Error loading tickets</p>';
+        console.error('Error:', error);
+        document.getElementById('support-tickets').innerHTML = '<p class="text-danger">Error loading tickets: ' + error.message + '</p>';
     });
 });
 </script>

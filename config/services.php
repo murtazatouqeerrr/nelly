@@ -35,6 +35,17 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+    ],
+
+    'paypal' => [
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_CLIENT_SECRET'),
+        'mode' => env('PAYPAL_MODE', 'sandbox'), // sandbox or live
+    ],
+
     'florida_dicds' => [
         'wsdl' => env('FLORIDA_DICDS_WSDL', 'https://services.flhsmv.gov/DriverSchoolWebService/DriverSchoolWebService.asmx?WSDL'),
         'username' => env('FLORIDA_DICDS_USERNAME'),

@@ -109,33 +109,8 @@
             }
         }
         
-        async function enrollCourse(courseId) {
-            try {
-                const response = await fetch('/web/enrollments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    credentials: 'same-origin',
-                    body: JSON.stringify({ course_id: courseId })
-                });
-                
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        window.location.href = '/login';
-                        return;
-                    }
-                    const data = await response.json();
-                    throw new Error(data.error || 'Failed to enroll');
-                }
-                
-                alert('Enrolled successfully!');
-            } catch (error) {
-                console.error('Error enrolling:', error);
-                alert(error.message || 'Failed to enroll in course');
-            }
+        function enrollCourse(courseId) {
+            window.location.href = `/payment?course_id=${courseId}`;
         }
         
         // Show fallback and load courses if Vue doesn't load

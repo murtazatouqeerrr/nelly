@@ -111,44 +111,65 @@ class ChapterController extends Controller
                 'content' => 'required|string',
                 'duration' => 'required|integer|min:1',
                 'required_min_time' => 'nullable|integer|min:0',
-                'order_index' => 'required|integer|min:0',
+                'order_index' => 'nullable|integer|min:0',
                 'video_url' => 'nullable|string',
-                'media' => 'nullable|file|max:51200'
+                'media.*' => 'nullable|file|max:51200'
             ]);
             
             $validated['course_id'] = $courseId;
             $validated['required_min_time'] = $validated['required_min_time'] ?? $validated['duration'];
             
+            // Auto-generate order_index if not provided
+            if (!isset($validated['order_index'])) {
+                $maxOrder = Chapter::where('course_id', $courseId)->max('order_index') ?? 0;
+                $validated['order_index'] = $maxOrder + 1;
+            }
+            
             // Handle file upload if present
             if ($request->hasFile('media')) {
-                $file = $request->file('media');
-                $originalName = $file->getClientOriginalName();
-                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
+                $files = $request->file('media');
                 
-                if (!file_exists(storage_path('app/public/course-media'))) {
-                    mkdir(storage_path('app/public/course-media'), 0755, true);
+                // Handle single file or array of files
+                if (!is_array($files)) {
+                    $files = [$files];
                 }
                 
-                $path = $file->storeAs('course-media', $filename, 'public');
-                $mimeType = $file->getClientMimeType();
-                
-                if (in_array($mimeType, ['video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo', 'video/webm'])) {
-                    if (!$validated['video_url']) {
-                        $validated['video_url'] = '/files/' . $filename;
+                foreach ($files as $file) {
+                    $originalName = $file->getClientOriginalName();
+                    $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
+                    
+                    if (!file_exists(storage_path('app/public/course-media'))) {
+                        mkdir(storage_path('app/public/course-media'), 0755, true);
                     }
-                } else {
-                    $fileUrl = '/files/' . $filename;
-                    if (in_array($mimeType, ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'])) {
-                        $validated['content'] .= "\n\n<div class='chapter-media'><img src='{$fileUrl}' alt='{$originalName}' class='img-fluid'></div>";
-                    } else {
+                    
+                    $path = $file->storeAs('course-media', $filename, 'public');
+                    $mimeType = $file->getClientMimeType();
+                    $fileUrl = '/storage/course-media/' . $filename;
+                    
+                    // Handle videos
+                    if (in_array($mimeType, ['video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo', 'video/webm'])) {
+                        if (!isset($validated['video_url']) || !$validated['video_url']) {
+                            $validated['video_url'] = $fileUrl;
+                        }
+                    }
+                    // Handle images - add to content
+                    elseif (in_array($mimeType, ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])) {
+                        $validated['content'] .= "\n\n<div class='chapter-media'><img src='{$fileUrl}' alt='{$originalName}' class='img-fluid' style='max-width: 100%;'></div>";
+                    }
+                    // Handle other files (PDFs, docs) - add download link
+                    else {
                         $validated['content'] .= "\n\n<div class='chapter-media'><a href='{$fileUrl}' target='_blank' class='btn btn-outline-primary'><i class='fas fa-download'></i> Download {$originalName}</a></div>";
                     }
+                    
+                    // Only process first file for now
+                    break;
                 }
             }
             
+            
             unset($validated['media']);
             
-            $chapter = \App\Models\CourseChapter::create($validated);
+            $chapter = \App\Models\Chapter::create($validated);
             
             \Log::info('Chapter created successfully', ['chapter' => $chapter]);
             
@@ -169,7 +190,7 @@ class ChapterController extends Controller
     public function updateWeb(Request $request, $id)
     {
         try {
-            $chapter = \App\Models\CourseChapter::findOrFail($id);
+            $chapter = \App\Models\Chapter::findOrFail($id);
             
             \Log::info('Chapter update request received', [
                 'chapter_id' => $chapter->id,
@@ -236,6 +257,37 @@ class ChapterController extends Controller
                 'error' => $e->getMessage()
             ]);
             return response()->json(['error' => 'Failed to update chapter: ' . $e->getMessage()], 500);
+        }
+    }
+    
+    public function saveQuizResults(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'chapter_id' => 'required|integer',
+                'total_questions' => 'required|integer',
+                'correct_answers' => 'required|integer',
+                'wrong_answers' => 'required|integer',
+                'percentage' => 'required|numeric',
+                'answers' => 'required|array'
+            ]);
+            
+            $result = \DB::table('chapter_quiz_results')->insert([
+                'user_id' => auth()->id(),
+                'chapter_id' => $validated['chapter_id'],
+                'total_questions' => $validated['total_questions'],
+                'correct_answers' => $validated['correct_answers'],
+                'wrong_answers' => $validated['wrong_answers'],
+                'percentage' => $validated['percentage'],
+                'answers' => json_encode($validated['answers']),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            
+            return response()->json(['success' => true, 'message' => 'Quiz results saved']);
+        } catch (\Exception $e) {
+            \Log::error('Failed to save quiz results: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to save results'], 500);
         }
     }
 }

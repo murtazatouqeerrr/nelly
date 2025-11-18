@@ -291,7 +291,7 @@
                 <div class="chapter-text">${processedContent}</div>
                 <div id="questions-section" class="mt-4"></div>
                 <div class="mt-4">
-                    <button onclick="completeChapter(${chapter.id})" class="btn btn-success">Complete Chapter</button>
+                    <button onclick="submitQuizAndComplete()" class="btn btn-success btn-lg">Complete Chapter & Submit Quiz</button>
                 </div>
             `;
             
@@ -377,33 +377,175 @@
             container.innerHTML = `
                 <div class="card">
                     <div class="card-header bg-info text-white">
-                        <h5>Chapter Quiz</h5>
+                        <h5>Chapter Quiz - ${currentQuestions.length} Questions</h5>
                     </div>
                     <div class="card-body">
-                        ${currentQuestions.map((q, index) => {
-                            // Handle options - it might be already an array or a JSON string
-                            const options = Array.isArray(q.options) ? q.options : JSON.parse(q.options);
-                            return `
-                                <div class="mb-4">
-                                    <h6>${index + 1}. ${q.question_text}</h6>
-                                    ${options.map((opt, optIndex) => `
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="question_${q.id}" id="q${q.id}_opt${optIndex}" value="${opt}">
-                                            <label class="form-check-label" for="q${q.id}_opt${optIndex}">
-                                                ${opt}
-                                            </label>
-                                        </div>
-                                    `).join('')}
-                                    <button onclick="checkAnswer(${q.id})" class="btn btn-sm btn-primary mt-2" id="checkBtn_${q.id}">Check Answer</button>
-                                    <button onclick="showAnswer(${q.id})" class="btn btn-sm btn-warning mt-2" id="showBtn_${q.id}" style="display:none;">Show Answer</button>
-                                    <div id="result_${q.id}" class="mt-2"></div>
-                                </div>
-                            `;
-                        }).join('')}
-                        <button onclick="restartQuiz()" class="btn btn-secondary mt-3">Restart Quiz</button>
+                        <form id="quiz-form">
+                            ${currentQuestions.map((q, index) => {
+                                const options = Array.isArray(q.options) ? q.options : JSON.parse(q.options);
+                                return `
+                                    <div class="mb-4 question-item" data-question-id="${q.id}" data-correct="${q.correct_answer}">
+                                        <h6>${index + 1}. ${q.question_text}</h6>
+                                        ${options.map((opt, optIndex) => `
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="question_${q.id}" id="q${q.id}_opt${optIndex}" value="${opt}" required>
+                                                <label class="form-check-label" for="q${q.id}_opt${optIndex}">
+                                                    ${opt}
+                                                </label>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </form>
                     </div>
                 </div>
             `;
+        }
+        
+        async function submitQuizAndComplete() {
+            const form = document.getElementById('quiz-form');
+            if (!form) {
+                completeChapter();
+                return;
+            }
+            
+            // Check if all questions are answered
+            const unanswered = currentQuestions.filter(q => {
+                return !document.querySelector(`input[name="question_${q.id}"]:checked`);
+            });
+            
+            if (unanswered.length > 0) {
+                alert(`Please answer all questions before completing. ${unanswered.length} question(s) remaining.`);
+                return;
+            }
+            
+            // Collect answers
+            const results = currentQuestions.map(q => {
+                const selected = document.querySelector(`input[name="question_${q.id}"]:checked`);
+                const userAnswer = selected ? selected.value : null;
+                const isCorrect = userAnswer === q.correct_answer;
+                
+                return {
+                    question_id: q.id,
+                    question_text: q.question_text,
+                    user_answer: userAnswer,
+                    correct_answer: q.correct_answer,
+                    is_correct: isCorrect,
+                    explanation: q.explanation || ''
+                };
+            });
+            
+            const correctCount = results.filter(r => r.is_correct).length;
+            const wrongCount = results.length - correctCount;
+            const percentage = ((correctCount / results.length) * 100).toFixed(2);
+            
+            // Save results to database
+            try {
+                await fetch('/api/chapter-quiz-results', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        chapter_id: currentChapterId,
+                        total_questions: results.length,
+                        correct_answers: correctCount,
+                        wrong_answers: wrongCount,
+                        percentage: percentage,
+                        answers: results
+                    })
+                });
+            } catch (error) {
+                console.error('Error saving quiz results:', error);
+            }
+            
+            // Show results popup
+            showQuizResults(results, correctCount, wrongCount, percentage);
+        }
+        
+        function showQuizResults(results, correctCount, wrongCount, percentage) {
+            const modalHtml = `
+                <div class="modal fade show" id="quizResultsModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Quiz Results</h5>
+                                <button type="button" class="btn-close" onclick="closeQuizResults()"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <div class="card text-center border-success">
+                                            <div class="card-body">
+                                                <h2 class="text-success">${correctCount}</h2>
+                                                <p class="mb-0">Correct</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card text-center border-danger">
+                                            <div class="card-body">
+                                                <h2 class="text-danger">${wrongCount}</h2>
+                                                <p class="mb-0">Wrong</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card text-center border-primary">
+                                            <div class="card-body">
+                                                <h2 class="text-primary">${percentage}%</h2>
+                                                <p class="mb-0">Score</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <h6 class="mb-3">Detailed Results:</h6>
+                                ${results.map((r, i) => `
+                                    <div class="card mb-3 ${r.is_correct ? 'border-success' : 'border-danger'}">
+                                        <div class="card-body">
+                                            <h6 class="card-title">${i + 1}. ${r.question_text}</h6>
+                                            <p class="mb-2">
+                                                <strong>Your Answer:</strong> 
+                                                <span class="${r.is_correct ? 'text-success' : 'text-danger'}">${r.user_answer}</span>
+                                                ${r.is_correct ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>'}
+                                            </p>
+                                            ${!r.is_correct ? `
+                                                <p class="mb-2">
+                                                    <strong>Correct Answer:</strong> 
+                                                    <span class="text-success">${r.correct_answer}</span>
+                                                </p>
+                                            ` : ''}
+                                            ${r.explanation ? `
+                                                <div class="alert alert-info mt-2 mb-0">
+                                                    <strong>Explanation:</strong> ${r.explanation}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary btn-lg" onclick="closeQuizResults()">Continue to Next Chapter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Mark chapter as complete after showing results
+            completeChapter();
+        }
+        
+        function closeQuizResults() {
+            const modal = document.getElementById('quizResultsModal');
+            if (modal) {
+                modal.remove();
+            }
         }
         
         function checkAnswer(questionId) {

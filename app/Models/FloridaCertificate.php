@@ -44,6 +44,11 @@ class FloridaCertificate extends Model
         return $this->belongsTo(UserCourseEnrollment::class, 'enrollment_id');
     }
 
+    public function user()
+    {
+        return $this->hasOneThrough(User::class, UserCourseEnrollment::class, 'id', 'id', 'enrollment_id', 'user_id');
+    }
+
     public function verificationLogs()
     {
         return $this->hasMany(CertificateVerificationLog::class, 'certificate_id');

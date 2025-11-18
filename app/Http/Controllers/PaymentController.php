@@ -43,7 +43,7 @@ class PaymentController extends Controller
             
             $request->validate([
                 'user_email' => 'required|email|exists:users,email',
-                'course_id' => 'required|exists:courses,id',
+                'course_id' => 'required|exists:florida_courses,id',
                 'amount' => 'required|numeric|min:0',
                 'payment_method' => 'required|string',
                 'status' => 'required|in:completed,pending,failed',
@@ -78,7 +78,16 @@ class PaymentController extends Controller
             $payment = Payment::create($paymentData);
             \Log::info('Payment created successfully', ['payment_id' => $payment->id]);
 
-            return response()->json($payment->load(['user', 'enrollment.course']));
+            // Auto-create invoice
+            $invoice = Invoice::create([
+                'payment_id' => $payment->id,
+                'invoice_number' => 'INV-' . date('Y') . '-' . str_pad($payment->id, 6, '0', STR_PAD_LEFT),
+                'total_amount' => $payment->amount,
+                'invoice_date' => now(),
+            ]);
+            \Log::info('Invoice created automatically', ['invoice_id' => $invoice->id]);
+
+            return response()->json($payment->load(['user', 'enrollment.course', 'invoice']));
         } catch (\Exception $e) {
             \Log::error('Error creating payment: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
