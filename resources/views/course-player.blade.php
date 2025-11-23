@@ -74,6 +74,17 @@
         .form-check-label {
             margin-left: 0.5rem;
         }
+        .chapter-text {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .chapter-text img {
+            order: -1;
+            margin-left: auto;
+            max-width: 40%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -260,11 +271,11 @@
                                 <p>Your browser does not support PDFs. <a href="${pdfUrl}" target="_blank">Download the PDF</a>.</p>
                             </iframe>
                         </div>
-                        <div class="mt-2">
+                        <div class="mt-2 d-flex justify-content-end gap-2">
                             <a href="${pdfUrl}" target="_blank" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-external-link-alt"></i> Open in New Tab
                             </a>
-                            <a href="${pdfUrl}" download class="btn btn-sm btn-outline-secondary ms-2">
+                            <a href="${pdfUrl}" download class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-download"></i> Download PDF
                             </a>
                         </div>

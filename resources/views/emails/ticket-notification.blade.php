@@ -1,57 +1,53 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <style>
-        body { font-family: Arial, sans-serif; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #0d6efd; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 5px 5px; }
-        .ticket-details { background: white; padding: 20px; margin: 20px 0; border-left: 4px solid #0d6efd; }
-        .detail-row { margin: 10px 0; }
-        .label { font-weight: bold; color: #0d6efd; }
-        .button { display: inline-block; background: #0d6efd; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-        .footer { text-align: center; color: #6c757d; font-size: 12px; margin-top: 20px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>New Support Ticket</h1>
-        </div>
-        <div class="content">
-            <p>A new support ticket has been created. Here are the details:</p>
-            
-            <div class="ticket-details">
-                <div class="detail-row">
-                    <span class="label">Ticket ID:</span> #{{ $ticket->id }}
-                </div>
-                <div class="detail-row">
-                    <span class="label">Subject:</span> {{ $ticket->subject }}
-                </div>
-                <div class="detail-row">
-                    <span class="label">Priority:</span> <strong>{{ ucfirst($ticket->priority) }}</strong>
-                </div>
-                <div class="detail-row">
-                    <span class="label">Status:</span> {{ ucfirst($ticket->status) }}
-                </div>
-                <div class="detail-row">
-                    <span class="label">From:</span> {{ $ticket->user->first_name ?? 'N/A' }} ({{ $ticket->email }})
-                </div>
-                <div class="detail-row">
-                    <span class="label">Created:</span> {{ $ticket->created_at->format('M d, Y H:i A') }}
-                </div>
-                <div class="detail-row" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #dee2e6;">
-                    <span class="label">Description:</span><br>
-                    <p>{{ $ticket->description }}</p>
-                </div>
-            </div>
-            
-            <a href="{{ url('/admin/support/tickets') }}" class="button">View Ticket</a>
-        </div>
-        <div class="footer">
-            <p>&copy; {{ date('Y') }} Support System. All rights reserved.</p>
-        </div>
+@extends('emails.layout')
+
+@section('content')
+<div class="header">
+    <h1>📧 Support Ticket Update</h1>
+    <p>We've Received Your Message</p>
+</div>
+
+<div class="content">
+    <p>Hi <span class="highlight">{{ $user->first_name }}</span>,</p>
+    
+    <p>Thank you for contacting our support team. We've received your support ticket and will get back to you shortly.</p>
+    
+    <div class="details">
+        <h3>Ticket Information</h3>
+        <p><strong>Ticket ID:</strong> <span class="highlight">#{{ $ticket->id ?? 'N/A' }}</span></p>
+        <p><strong>Subject:</strong> {{ $ticket->subject ?? 'Support Request' }}</p>
+        <p><strong>Status:</strong> <span class="accent-gold">Open</span></p>
+        <p><strong>Created:</strong> {{ $ticket->created_at->format('M d, Y H:i A') }}</p>
     </div>
-</body>
-</html>
+    
+    <h3>Your Message</h3>
+    <div style="background: white; padding: 15px; border-left: 4px solid #6B8E23; margin: 15px 0; border-radius: 4px;">
+        <p>{{ $ticket->message ?? 'Your support request has been recorded.' }}</p>
+    </div>
+    
+    <div style="text-align: center;">
+        <a href="{{ url('/support/tickets/' . ($ticket->id ?? '')) }}" class="button">View Ticket</a>
+    </div>
+    
+    <div class="alert alert-info">
+        <strong>⏱️ Response Time:</strong> Our support team typically responds within 24 hours during business days.
+    </div>
+    
+    <h3>What Happens Next</h3>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>Our support team will review your ticket</li>
+        <li>We'll investigate your issue thoroughly</li>
+        <li>You'll receive a response via email</li>
+        <li>We'll work with you to resolve the issue</li>
+    </ul>
+    
+    <div class="details">
+        <h3>Track Your Ticket</h3>
+        <p>You can track the status of your support ticket anytime by logging into your account and visiting the Support section. Use your Ticket ID <span class="highlight">#{{ $ticket->id ?? 'N/A' }}</span> to reference your request.</p>
+    </div>
+    
+    <p style="margin-top: 30px;">If you need to add more information to your ticket, please reply to this email or log into your account.</p>
+    
+    <p>Best regards,<br>
+    <strong>{{ config('app.name', 'E-Learning Platform') }} Support Team</strong></p>
+</div>
+@endsection

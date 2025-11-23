@@ -1,48 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #2563eb; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-        .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
-        .course-box { background: white; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #2563eb; }
-        .btn { display: inline-block; padding: 12px 30px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
-        .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 14px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🎉 Enrollment Confirmed!</h1>
-        </div>
-        
-        <div class="content">
-            <p>Hi {{ $user->first_name }},</p>
-            
-            <p>Congratulations! You have successfully enrolled in:</p>
-            
-            <div class="course-box">
-                <h2 style="margin: 0 0 10px 0; color: #2563eb;">{{ $course->title }}</h2>
-                <p style="margin: 5px 0;"><strong>Start Date:</strong> {{ $enrollment->enrolled_at->format('F d, Y') }}</p>
-                <p style="margin: 5px 0;"><strong>Duration:</strong> {{ $course->total_duration ?? 'Self-paced' }} minutes</p>
-                @if($enrollment->citation_number)
-                <p style="margin: 5px 0;"><strong>Citation #:</strong> {{ $enrollment->citation_number }}</p>
-                @endif
-            </div>
-            
-            <p>You can now access your course materials and begin learning at your own pace.</p>
-            
-            <center>
-                <a href="{{ url('/my-enrollments') }}" class="btn">Access Your Course</a>
-            </center>
-            
-            <p style="margin-top: 30px;">Need help? Contact our support team at <a href="mailto:support@example.com">support@example.com</a></p>
-        </div>
-        
-        <div class="footer">
-            <p>&copy; {{ date('Y') }} E-Learning Platform. All rights reserved.</p>
-        </div>
+@extends('emails.layout')
+
+@section('content')
+<div class="header">
+    <h1>Welcome to Your Course! 📚</h1>
+    <p>Your Learning Adventure Begins Now</p>
+</div>
+
+<div class="content">
+    <p>Hi <span class="highlight">{{ $user->first_name }}</span>,</p>
+    
+    <p>Thank you for enrolling in our course! We're thrilled to have you as a student.</p>
+    
+    <div class="details">
+        <h3>Course Information</h3>
+        <p><strong>Course:</strong> {{ $course->title }}</p>
+        <p><strong>Enrollment Date:</strong> {{ now()->format('M d, Y') }}</p>
+        <p><strong>Duration:</strong> {{ $course->total_duration ?? 'Self-paced' }}</p>
     </div>
-</body>
-</html>
+    
+    <p>You now have full access to all course materials. Learn at your own pace and progress through the modules at a speed that works for you.</p>
+    
+    <div style="text-align: center;">
+        <a href="{{ url('/my-enrollments') }}" class="button">Access Your Course</a>
+    </div>
+    
+    <h3>Course Highlights</h3>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>Comprehensive video lessons and materials</li>
+        <li>Interactive quizzes and assessments</li>
+        <li>Certificate upon completion</li>
+        <li>Lifetime access to course content</li>
+        <li>24/7 support from our team</li>
+    </ul>
+    
+    <div class="alert alert-info">
+        <strong>💡 Pro Tip:</strong> Set aside dedicated time each week to complete the course modules. Consistency is key to success!
+    </div>
+    
+    <h3>Getting Started</h3>
+    <p>Log in to your account and navigate to "My Enrollments" to begin. Start with the first module and work your way through at your own pace.</p>
+    
+    <p style="margin-top: 30px;">If you have any questions or need technical support, our team is here to help!</p>
+    
+    <p>Best regards,<br>
+    <strong>{{ config('app.name', 'E-Learning Platform') }} Team</strong></p>
+</div>
+@endsection

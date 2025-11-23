@@ -1,51 +1,51 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <style>
-        body { font-family: Arial, sans-serif; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #28a745; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 5px 5px; }
-        .congratulations { background: white; padding: 20px; margin: 20px 0; border-left: 4px solid #28a745; text-align: center; }
-        .congratulations h2 { color: #28a745; margin: 0; }
-        .details { background: white; padding: 20px; margin: 20px 0; border-left: 4px solid #0d6efd; }
-        .button { display: inline-block; background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-        .footer { text-align: center; color: #6c757d; font-size: 12px; margin-top: 20px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🎉 Congratulations!</h1>
-        </div>
-        <div class="content">
-            <p>Dear {{ $user->first_name }},</p>
-            
-            <div class="congratulations">
-                <h2>You Have Successfully Completed Your Course!</h2>
-                <p style="font-size: 18px; margin: 10px 0;">Your certificate is ready for download</p>
-            </div>
-            
-            <div class="details">
-                <h3>Certificate Details</h3>
-                <p><strong>Course:</strong> {{ $course->title }}</p>
-                <p><strong>Completion Date:</strong> {{ now()->format('M d, Y') }}</p>
-                <p><strong>Certificate Number:</strong> {{ $certificateNumber }}</p>
-            </div>
-            
-            <p>Your certificate has been attached to this email. You can also download it from your account dashboard.</p>
-            
-            <a href="{{ url('/my-certificates') }}" class="button">View My Certificates</a>
-            
-            <p style="margin-top: 30px;">Thank you for completing your course with DummiesTrafficSchool.com. We hope you found the course valuable!</p>
-            
-            <p>Best regards,<br>
-            <strong>DummiesTrafficSchool.com Team</strong></p>
-        </div>
-        <div class="footer">
-            <p>&copy; {{ date('Y') }} DummiesTrafficSchool.com. All rights reserved.</p>
-        </div>
+@extends('emails.layout')
+
+@section('content')
+<div class="header">
+    <h1>🎓 Your Certificate is Ready!</h1>
+    <p>Celebrate Your Achievement</p>
+</div>
+
+<div class="content">
+    <p>Hi <span class="highlight">{{ $user->first_name }}</span>,</p>
+    
+    <p>Excellent news! Your certificate of completion has been generated and is ready for download.</p>
+    
+    <div class="achievement-box">
+        <h2>Certificate of Completion</h2>
+        <p style="color: #666; margin: 10px 0;">This certifies that you have successfully completed the course requirements.</p>
     </div>
-</body>
-</html>
+    
+    <div class="details">
+        <h3>Certificate Information</h3>
+        <p><strong>Name:</strong> {{ $user->first_name }} {{ $user->last_name }}</p>
+        <p><strong>Issued Date:</strong> {{ now()->format('M d, Y') }}</p>
+        @if(isset($certificate_number))
+        <p><strong>Certificate Number:</strong> {{ $certificate_number }}</p>
+        @endif
+    </div>
+    
+    <div style="text-align: center;">
+        <a href="{{ url('/certificates') }}" class="button button-success">View My Certificates</a>
+        <a href="{{ url('/my-certificates') }}" class="button">Download Certificate</a>
+    </div>
+    
+    <h3>Share Your Achievement</h3>
+    <p>You can now:</p>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>Download the certificate as a PDF</li>
+        <li>Share it on LinkedIn and social media</li>
+        <li>Add it to your professional portfolio</li>
+        <li>Include it in job applications</li>
+    </ul>
+    
+    <div class="alert alert-success">
+        <strong>🌟 Verified Credential:</strong> This certificate is a verified proof of your course completion and can be shared with confidence.
+    </div>
+    
+    <p style="margin-top: 30px;">Thank you for your dedication and hard work. We're proud of your achievement!</p>
+    
+    <p>Best regards,<br>
+    <strong>{{ config('app.name', 'E-Learning Platform') }} Team</strong></p>
+</div>
+@endsection

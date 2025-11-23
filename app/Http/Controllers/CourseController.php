@@ -222,6 +222,7 @@ class CourseController extends Controller
                     'description' => $course->description ?? '',
                     'state_code' => $course->state_code ?? $course->state ?? 'FL',
                     'total_duration' => $course->total_duration ?? $course->duration ?? 0,
+                    'duration' => $course->duration ?? 0,
                     'price' => $course->price ?? 0,
                     'passing_score' => $course->min_pass_score ?? $course->passing_score ?? 80,
                     'is_active' => $course->is_active ?? true,
@@ -237,13 +238,14 @@ class CourseController extends Controller
                     'real_id' => $course->id,
                     'title' => $course->title,
                     'description' => $course->description ?? '',
-                    'state_code' => $course->state_code ?? $course->state ?? 'FL',
-                    'total_duration' => $course->total_duration ?? $course->duration ?? 0,
+                    'state_code' => $course->state ?? 'FL',
+                    'total_duration' => $course->duration ?? 0,
+                    'duration' => $course->duration ?? 0,
                     'price' => $course->price ?? 0,
-                    'passing_score' => $course->min_pass_score ?? $course->passing_score ?? 80,
+                    'passing_score' => $course->passing_score ?? 80,
                     'is_active' => $course->is_active ?? true,
-                    'course_type' => $course->course_type ?? 'BDI',
-                    'certificate_type' => $course->certificate_template ?? $course->certificate_type ?? null,
+                    'course_type' => $course->course_type ?? 'Regular',
+                    'certificate_type' => $course->certificate_type ?? null,
                     'table' => 'courses'
                 ]);
             }

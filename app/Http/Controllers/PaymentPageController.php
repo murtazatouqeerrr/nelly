@@ -19,6 +19,15 @@ class PaymentPageController extends Controller
     public function create(Request $request)
     {
         $courseId = $request->course_id;
+        $table = $request->table ?? 'courses';
+        
+        // Prefix the course ID with table name for disambiguation
+        if ($table === 'florida_courses') {
+            $courseId = 'florida_' . $courseId;
+        } else {
+            $courseId = 'courses_' . $courseId;
+        }
+        
         $course = $this->findCourse($courseId);
         
         if (!$course) {

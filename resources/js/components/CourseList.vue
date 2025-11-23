@@ -28,10 +28,10 @@
             <p class="card-text flex-grow-1">{{ course.description }}</p>
             <div class="course-details mb-3">
               <p class="mb-1"><strong>State:</strong> {{ course.state_code }}</p>
-              <p class="mb-1"><strong>Duration:</strong> {{ course.total_duration }} minutes</p>
+              <p class="mb-1"><strong>Duration:</strong> {{ course.total_duration || course.duration }} minutes</p>
               <p class="mb-1"><strong>Price:</strong> ${{ course.price }}</p>
             </div>
-            <button @click="enrollCourse(course.id)" class="btn btn-primary mt-auto">Enroll</button>
+            <button @click="enrollCourse(course.id, course.table)" class="btn btn-primary mt-auto">Enroll</button>
           </div>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default {
         this.loading = false
       }
     },
-    async enrollCourse(courseId) {
+    async enrollCourse(courseId, table) {
       try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
         
@@ -109,7 +109,7 @@ export default {
           method: 'POST',
           headers: headers,
           credentials: 'same-origin',
-          body: JSON.stringify({ course_id: courseId })
+          body: JSON.stringify({ course_id: courseId, table: table })
         })
         
         if (!response.ok) {

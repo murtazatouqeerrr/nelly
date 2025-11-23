@@ -15,9 +15,9 @@ return new class extends Migration
             }
             
             // Add missing columns if they don't exist
-            if (!Schema::hasColumn('florida_courses', 'state_code')) {
-                $table->string('state_code', 50)->nullable()->after('description');
-            }
+            // if (!Schema::hasColumn('florida_courses', 'state_code')) {
+            //     $table->string('state_code', 50)->nullable()->after('description');
+            // }
             
             if (!Schema::hasColumn('florida_courses', 'min_pass_score')) {
                 $table->integer('min_pass_score')->default(80)->after('state_code');

@@ -1,82 +1,72 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Invoice {{ $invoice->invoice_number }}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 5px 5px 0 0;
-        }
-        .content {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 0 0 5px 5px;
-        }
-        .invoice-details {
-            background-color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-        }
-        .button {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>Invoice {{ $invoice->invoice_number }}</h1>
-        <p>DummiesTrafficSchool.com</p>
+@extends('emails.layout')
+
+@section('content')
+<div class="header">
+    <h1>📋 Invoice</h1>
+    <p>Your Payment Receipt</p>
+</div>
+
+<div class="content">
+    <p>Hi <span class="highlight">{{ $user->first_name }}</span>,</p>
+    
+    <p>Thank you for your payment. Please find your invoice details below.</p>
+    
+    <div class="details">
+        <h3>Invoice Details</h3>
+        <p><strong>Invoice Number:</strong> {{ $invoice->invoice_number ?? 'N/A' }}</p>
+        <p><strong>Invoice Date:</strong> {{ $invoice->created_at->format('M d, Y') }}</p>
+        <p><strong>Due Date:</strong> {{ $invoice->due_date->format('M d, Y') ?? 'Paid' }}</p>
+        <p><strong>Status:</strong> <span class="accent-green">Paid</span></p>
     </div>
     
-    <div class="content">
-        <p>Dear {{ $invoice->payment->user->first_name }} {{ $invoice->payment->user->last_name }},</p>
-        
-        <p>Thank you for your enrollment with DummiesTrafficSchool.com. Please find your invoice attached to this email.</p>
-        
-        <div class="invoice-details">
-            <h3>Invoice Summary</h3>
-            <p><strong>Invoice Number:</strong> {{ $invoice->invoice_number }}</p>
-            <p><strong>Invoice Date:</strong> {{ $invoice->invoice_date->format('M d, Y') }}</p>
-            <p><strong>Course:</strong> {{ $invoice->payment->enrollment->course->title ?? 'N/A' }}</p>
-            <p><strong>Amount:</strong> ${{ number_format($invoice->total_amount, 2) }}</p>
-        </div>
-        
-        <p>If you have any questions about this invoice, please don't hesitate to contact our support team.</p>
-        
-        <p>Thank you for choosing DummiesTrafficSchool.com!</p>
-        
-        <p>Best regards,<br>
-        The DummiesTrafficSchool.com Team</p>
+    <h3>Billing Information</h3>
+    <div style="background: white; padding: 15px; border-left: 4px solid #6B8E23; margin: 15px 0; border-radius: 4px;">
+        <p><strong>Bill To:</strong><br>
+        {{ $user->first_name }} {{ $user->last_name }}<br>
+        {{ $user->email }}</p>
     </div>
     
-    <div class="footer">
-        <p>DummiesTrafficSchool.com | Professional Driver Education Services</p>
-        <p>Email: support@dummiestrafficschool.com | Phone: (555) 123-4567</p>
+    <h3>Invoice Items</h3>
+    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+        <tr style="background: #f5f5f5; border-bottom: 2px solid #ddd;">
+            <th style="padding: 10px; text-align: left; color: #556B2F;">Description</th>
+            <th style="padding: 10px; text-align: right; color: #556B2F;">Amount</th>
+        </tr>
+        @if(isset($invoice->items))
+            @foreach($invoice->items as $item)
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px;">{{ $item->description ?? 'Course Enrollment' }}</td>
+                <td style="padding: 10px; text-align: right;">${{ number_format($item->amount, 2) }}</td>
+            </tr>
+            @endforeach
+        @else
+        <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px;">Course Enrollment</td>
+            <td style="padding: 10px; text-align: right;">${{ number_format($invoice->amount ?? 0, 2) }}</td>
+        </tr>
+        @endif
+        <tr style="background: #f5f5f5; border-top: 2px solid #ddd;">
+            <td style="padding: 10px; font-weight: 600; color: #556B2F;">Total</td>
+            <td style="padding: 10px; text-align: right; font-weight: 600; color: #DAA520;">${{ number_format($invoice->total ?? $invoice->amount ?? 0, 2) }}</td>
+        </tr>
+    </table>
+    
+    <div style="text-align: center;">
+        <a href="{{ url('/invoices/' . ($invoice->id ?? '')) }}" class="button">View Full Invoice</a>
+        <a href="{{ url('/invoices/' . ($invoice->id ?? '') . '/download') }}" class="button button-secondary">Download PDF</a>
     </div>
-</body>
-</html>
+    
+    <div class="alert alert-success">
+        <strong>✓ Payment Confirmed:</strong> Your payment has been successfully processed. Your course access is now active.
+    </div>
+    
+    <h3>Payment Method</h3>
+    <p><strong>Payment Method:</strong> {{ $invoice->payment_method ?? 'Credit Card' }}</p>
+    <p><strong>Transaction ID:</strong> {{ $invoice->transaction_id ?? 'N/A' }}</p>
+    
+    <p style="margin-top: 30px;">If you have any questions about this invoice or need a receipt, please don't hesitate to contact us.</p>
+    
+    <p>Best regards,<br>
+    <strong>{{ config('app.name', 'E-Learning Platform') }} Billing Team</strong></p>
+</div>
+@endsection

@@ -11,6 +11,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="/css/themes.css" rel="stylesheet">
+    <style>
+        .btn-sm {
+            color: white !important;
+            border-color: white !important;
+            background-color: transparent !important;
+            padding: 0.35rem 0.65rem;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .btn-sm:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border-color: white !important;
+        }
+        td {
+            vertical-align: middle;
+        }
+        .table tbody tr td:last-child {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <x-theme-switcher />

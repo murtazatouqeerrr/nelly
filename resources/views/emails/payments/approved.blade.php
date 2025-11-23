@@ -1,72 +1,55 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #059669; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-        .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
-        .invoice-box { background: white; padding: 20px; border-radius: 6px; margin: 20px 0; }
-        .invoice-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e5e7eb; }
-        .total { font-size: 20px; font-weight: bold; color: #059669; }
-        .btn { display: inline-block; padding: 12px 30px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
-        .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 14px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>✅ Payment Approved</h1>
-        </div>
-        
-        <div class="content">
-            <p>Hi {{ $user->first_name }},</p>
-            
-            <p>Your payment has been successfully processed!</p>
-            
-            <div class="invoice-box">
-                <h3 style="margin-top: 0;">Order Summary</h3>
-                
-                <div class="invoice-row">
-                    <span>Order ID:</span>
-                    <strong>#{{ $payment->id }}</strong>
-                </div>
-                
-                <div class="invoice-row">
-                    <span>Payment Method:</span>
-                    <strong>{{ ucfirst($payment->gateway) }}</strong>
-                </div>
-                
-                <div class="invoice-row">
-                    <span>Transaction ID:</span>
-                    <strong>{{ $payment->gateway_payment_id }}</strong>
-                </div>
-                
-                <div class="invoice-row">
-                    <span>Date:</span>
-                    <strong>{{ $payment->created_at->format('F d, Y h:i A') }}</strong>
-                </div>
-                
-                <div class="invoice-row" style="border: none; margin-top: 10px;">
-                    <span class="total">Total Paid:</span>
-                    <span class="total">${{ number_format($payment->amount, 2) }}</span>
-                </div>
-            </div>
-            
-            <p>You now have full access to your enrolled course.</p>
-            
-            <center>
-                <a href="{{ url('/my-enrollments') }}" class="btn">Access Your Course</a>
-            </center>
-            
-            <p style="margin-top: 30px; font-size: 14px; color: #6b7280;">
-                A receipt has been sent to {{ $payment->billing_email }}
-            </p>
-        </div>
-        
-        <div class="footer">
-            <p>&copy; {{ date('Y') }} E-Learning Platform. All rights reserved.</p>
-        </div>
+@extends('emails.layout')
+
+@section('content')
+<div class="header">
+    <h1>✓ Payment Confirmed!</h1>
+    <p>Your Transaction is Complete</p>
+</div>
+
+<div class="content">
+    <p>Hi <span class="highlight">{{ $user->first_name }}</span>,</p>
+    
+    <p>Thank you! Your payment has been successfully processed and confirmed.</p>
+    
+    <div class="details">
+        <h3>Payment Details</h3>
+        <p><strong>Transaction ID:</strong> {{ $payment->transaction_id ?? 'N/A' }}</p>
+        <p><strong>Amount:</strong> <span class="accent-gold">${{ number_format($payment->amount, 2) }}</span></p>
+        <p><strong>Payment Date:</strong> {{ $payment->created_at->format('M d, Y H:i A') }}</p>
+        <p><strong>Status:</strong> <span class="accent-green">Approved</span></p>
     </div>
-</body>
-</html>
+    
+    <h3>Course Access</h3>
+    <p>Your course enrollment is now active. You have immediate access to all course materials.</p>
+    
+    <div style="text-align: center;">
+        <a href="{{ url('/my-enrollments') }}" class="button button-dark-blue">Start Learning Now</a>
+        <a href="{{ url('/courses') }}" class="button">Browse More Courses</a>
+    </div>
+    
+    <div class="alert alert-info">
+        <strong>📧 Invoice:</strong> A detailed invoice has been sent to your email. You can also access it from your account dashboard.
+    </div>
+    
+    <h3>Next Steps</h3>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>Log in to your account</li>
+        <li>Navigate to "My Enrollments"</li>
+        <li>Start with the first course module</li>
+        <li>Complete lessons at your own pace</li>
+    </ul>
+    
+    <div class="details">
+        <h3>Course Information</h3>
+        @if(isset($payment->enrollment->course))
+        <p><strong>Course:</strong> {{ $payment->enrollment->course->title }}</p>
+        <p><strong>Duration:</strong> {{ $payment->enrollment->course->total_duration ?? 'Self-paced' }}</p>
+        @endif
+    </div>
+    
+    <p style="margin-top: 30px;">If you have any questions about your payment or need technical support, please don't hesitate to contact us.</p>
+    
+    <p>Best regards,<br>
+    <strong>{{ config('app.name', 'E-Learning Platform') }} Team</strong></p>
+</div>
+@endsection

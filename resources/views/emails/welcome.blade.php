@@ -1,41 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <style>
-        body { font-family: Arial, sans-serif; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #0d6efd; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 5px 5px; }
-        .content h2 { color: #0d6efd; }
-        .button { display: inline-block; background: #0d6efd; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-        .footer { text-align: center; color: #6c757d; font-size: 12px; margin-top: 20px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Welcome to Our Platform!</h1>
-        </div>
-        <div class="content">
-            <p>Hi {{ $user->first_name }},</p>
-            
-            <p>Thank you for registering with us! We're excited to have you on board.</p>
-            
-            <h2>Get Started</h2>
-            <p>Browse our comprehensive course catalog and start learning today. Whether you're looking to improve your driving skills or complete a traffic school requirement, we have the right course for you.</p>
-            
-            <p>Your account is now active and ready to use. Simply log in with your credentials to access all available courses.</p>
-            
-            <a href="{{ route('login') }}" class="button">Browse Courses Now</a>
-            
-            <p style="margin-top: 30px; color: #6c757d; font-size: 14px;">
-                If you have any questions or need assistance, please don't hesitate to contact our support team.
-            </p>
-        </div>
-        <div class="footer">
-            <p>&copy; {{ date('Y') }} Our Platform. All rights reserved.</p>
-        </div>
+@extends('emails.layout')
+
+@section('content')
+<div class="header">
+    <h1>Welcome! 🎓</h1>
+    <p>Your Learning Journey Starts Here</p>
+</div>
+
+<div class="content">
+    <p>Hi <span class="highlight">{{ $user->first_name }}</span>,</p>
+    
+    <p>Thank you for registering with us! We're thrilled to have you join our learning community.</p>
+    
+    <div class="details">
+        <h3>Your Account is Ready</h3>
+        <p>Your account has been successfully created and is ready to use. You can now:</p>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+            <li>Browse our comprehensive course catalog</li>
+            <li>Enroll in courses that match your goals</li>
+            <li>Track your learning progress</li>
+            <li>Earn certificates upon completion</li>
+        </ul>
     </div>
-</body>
-</html>
+    
+    <p>Whether you're looking to improve your skills or complete a specific requirement, we have the perfect course for you.</p>
+    
+    <div style="text-align: center;">
+        <a href="{{ route('login') }}" class="button button-dark-blue">Start Learning Now</a>
+    </div>
+    
+    <div class="alert alert-info">
+        <strong>💡 Tip:</strong> Check out our featured courses to get started quickly. Most courses can be completed at your own pace.
+    </div>
+    
+    <p style="margin-top: 30px;">If you have any questions or need assistance, our support team is here to help.</p>
+    
+    <p>Best regards,<br>
+    <strong>{{ config('app.name', 'E-Learning Platform') }} Team</strong></p>
+</div>
+@endsection

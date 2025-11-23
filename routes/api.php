@@ -343,6 +343,205 @@ Route::get('/chapters/{chapterId}/questions', function ($chapterId) {
     }
 });
 
+// Export sample DOCX
+Route::get('/chapters/{chapterId}/questions/export-sample', function ($chapterId) {
+    try {
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+        $section = $phpWord->addSection();
+        
+        $section->addTitle('Question Import Template', 1);
+        $section->addText('Instructions: Fill in the table below with your questions. Each row represents one question.');
+        $section->addTextBreak();
+        
+        $table = $section->addTable();
+        $table->addRow();
+        $table->addCell(1500)->addText('Question Text');
+        $table->addCell(1500)->addText('Type');
+        $table->addCell(2000)->addText('Options');
+        $table->addCell(1500)->addText('Correct Answer');
+        $table->addCell(1500)->addText('Explanation');
+        $table->addCell(1000)->addText('Points');
+        $table->addCell(1000)->addText('Order');
+        
+        // Add sample row
+        $table->addRow();
+        $table->addCell(1500)->addText('What is 2+2?');
+        $table->addCell(1500)->addText('multiple_choice');
+        $table->addCell(2000)->addText('3|4|5|6');
+        $table->addCell(1500)->addText('4');
+        $table->addCell(1500)->addText('Basic arithmetic');
+        $table->addCell(1000)->addText('1');
+        $table->addCell(1000)->addText('1');
+        
+        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+        $filename = 'questions_sample_chapter_' . $chapterId . '.docx';
+        $path = storage_path('app/temp/' . $filename);
+        
+        if (!is_dir(storage_path('app/temp'))) {
+            mkdir(storage_path('app/temp'), 0755, true);
+        }
+        
+        $objWriter->save($path);
+        
+        return response()->download($path)->deleteFileAfterSend(true);
+    } catch (\Exception $e) {
+        \Log::error("Export error: " . $e->getMessage());
+        return response()->json(['error' => 'Export failed'], 500);
+    }
+});
+
+// Import DOCX
+Route::post('/chapters/{chapterId}/questions/import', function ($chapterId) {
+    try {
+        \Log::info("=== IMPORT START ===");
+        \Log::info("Chapter ID: {$chapterId}");
+        
+        if (!request()->hasFile('file')) {
+            \Log::error("No file uploaded");
+            return response()->json(['message' => 'No file uploaded'], 400);
+        }
+        
+        $file = request()->file('file');
+        \Log::info("File received: " . $file->getClientOriginalName());
+        
+        $phpWord = \PhpOffice\PhpWord\IOFactory::load($file->path());
+        \Log::info("DOCX loaded successfully");
+        
+        $count = 0;
+        $sectionCount = 0;
+        $tableCount = 0;
+        $rowCount = 0;
+        
+        foreach ($phpWord->getSections() as $section) {
+            $sectionCount++;
+            \Log::info("Processing section {$sectionCount}");
+            
+            foreach ($section->getElements() as $element) {
+                \Log::info("Element type: " . get_class($element));
+                
+                if ($element instanceof \PhpOffice\PhpWord\Element\Table) {
+                    $tableCount++;
+                    \Log::info("Found table {$tableCount}");
+                    
+                    $rows = $element->getRows();
+                    \Log::info("Total rows in table: " . count($rows));
+                    
+                    foreach ($rows as $index => $row) {
+                        $rowCount++;
+                        \Log::info("Processing row {$index}");
+                        
+                        if ($index === 0) {
+                            \Log::info("Skipping header row");
+                            continue;
+                        }
+                        
+                        $cells = $row->getCells();
+                        \Log::info("Row {$index} has " . count($cells) . " cells");
+                        
+                        if (count($cells) < 7) {
+                            \Log::warning("Row {$index} has less than 7 cells, skipping");
+                            continue;
+                        }
+                        
+                        $questionText = '';
+                        $type = '';
+                        $optionsStr = '';
+                        $correctAnswer = '';
+                        $explanation = '';
+                        $points = 1;
+                        $order = 1;
+                        
+                        // Extract from each cell
+                        for ($i = 0; $i < 7; $i++) {
+                            $cellText = '';
+                            foreach ($cells[$i]->getElements() as $elem) {
+                                if ($elem instanceof \PhpOffice\PhpWord\Element\Paragraph) {
+                                    foreach ($elem->getElements() as $paraElem) {
+                                        if ($paraElem instanceof \PhpOffice\PhpWord\Element\TextRun) {
+                                            foreach ($paraElem->getElements() as $textElem) {
+                                                if ($textElem instanceof \PhpOffice\PhpWord\Element\Text) {
+                                                    $cellText .= $textElem->getText();
+                                                }
+                                            }
+                                        } elseif ($paraElem instanceof \PhpOffice\PhpWord\Element\Text) {
+                                            $cellText .= $paraElem->getText();
+                                        }
+                                    }
+                                } elseif ($elem instanceof \PhpOffice\PhpWord\Element\TextRun) {
+                                    foreach ($elem->getElements() as $textElem) {
+                                        if ($textElem instanceof \PhpOffice\PhpWord\Element\Text) {
+                                            $cellText .= $textElem->getText();
+                                        }
+                                    }
+                                } elseif ($elem instanceof \PhpOffice\PhpWord\Element\Text) {
+                                    $cellText .= $elem->getText();
+                                }
+                            }
+                            \Log::info("Cell {$i}: '" . $cellText . "'");
+                            
+                            if ($i === 0) $questionText = $cellText;
+                            elseif ($i === 1) $type = $cellText;
+                            elseif ($i === 2) $optionsStr = $cellText;
+                            elseif ($i === 3) $correctAnswer = $cellText;
+                            elseif ($i === 4) $explanation = $cellText;
+                            elseif ($i === 5) $points = (int)$cellText ?: 1;
+                            elseif ($i === 6) $order = (int)$cellText ?: 1;
+                        }
+                        
+                        $questionText = trim($questionText);
+                        \Log::info("Trimmed question text: '{$questionText}'");
+                        
+                        if (empty($questionText)) {
+                            \Log::warning("Question text is empty, skipping row");
+                            continue;
+                        }
+                        
+                        $options = array_map('trim', array_filter(explode('|', $optionsStr)));
+                        \Log::info("Options: " . json_encode($options));
+                        
+                        // Get course_id from chapter
+                        $chapter = \App\Models\Chapter::find($chapterId);
+                        $courseId = $chapter ? $chapter->course_id : null;
+                        
+                        if (!$courseId) {
+                            \Log::error("Could not find course_id for chapter {$chapterId}");
+                            continue;
+                        }
+                        
+                        $question = \App\Models\Question::create([
+                            'chapter_id' => $chapterId,
+                            'course_id' => $courseId,
+                            'question_text' => $questionText,
+                            'question_type' => trim($type) ?: 'multiple_choice',
+                            'options' => json_encode($options),
+                            'correct_answer' => trim($correctAnswer),
+                            'explanation' => trim($explanation),
+                            'points' => $points,
+                            'order_index' => $order
+                        ]);
+                        
+                        \Log::info("Question created with ID: " . $question->id);
+                        $count++;
+                    }
+                }
+            }
+        }
+        
+        \Log::info("=== IMPORT END ===");
+        \Log::info("Total questions imported: {$count}");
+        
+        return response()->json(['count' => $count, 'message' => 'Import successful', 'debug' => [
+            'sections' => $sectionCount,
+            'tables' => $tableCount,
+            'rows' => $rowCount
+        ]]);
+    } catch (\Exception $e) {
+        \Log::error("Import error: " . $e->getMessage());
+        \Log::error("Stack trace: " . $e->getTraceAsString());
+        return response()->json(['message' => 'Import failed: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
+    }
+});
+
 Route::get('/enrollments/{enrollmentId}/progress', function ($enrollmentId) {
     try {
         \Log::info("=== COURSE PLAYER DEBUG START ===");
@@ -410,6 +609,50 @@ Route::post('/timer/start', function (\Illuminate\Http\Request $request) {
     } catch (\Exception $e) {
         \Log::error('Timer start error: ' . $e->getMessage());
         return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+// Public Courses API (no authentication required)
+Route::get('/public/courses', function () {
+    try {
+        $floridaCourses = DB::table('florida_courses')
+            ->where('is_active', true)
+            ->select('id', 'title', 'description', 'state', 'duration', 'price')
+            ->get();
+
+        $regularCourses = DB::table('courses')
+            ->where('is_active', true)
+            ->select('id', 'title', 'description', 'state', 'duration', 'price')
+            ->get();
+
+        $allCourses = collect();
+        
+        foreach ($floridaCourses as $course) {
+            $allCourses->push([
+                'id' => $course->id,
+                'title' => $course->title,
+                'description' => $course->description ?? '',
+                'state_code' => $course->state ?? 'FL',
+                'price' => (float) $course->price,
+                'duration' => (int) $course->duration
+            ]);
+        }
+
+        foreach ($regularCourses as $course) {
+            $allCourses->push([
+                'id' => $course->id,
+                'title' => $course->title,
+                'description' => $course->description ?? '',
+                'state_code' => $course->state ?? 'FL',
+                'price' => (float) $course->price,
+                'duration' => (int) $course->duration
+            ]);
+        }
+
+        return response()->json($allCourses);
+    } catch (\Exception $e) {
+        \Log::error('Public courses API error: ' . $e->getMessage());
+        return response()->json(['error' => 'Failed to load courses'], 500);
     }
 });
 

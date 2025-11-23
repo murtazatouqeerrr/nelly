@@ -1,46 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <style>
-        body { font-family: Arial, sans-serif; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #0d6efd; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 5px 5px; }
-        .details { background: white; padding: 20px; margin: 20px 0; border-left: 4px solid #0d6efd; }
-        .button { display: inline-block; background: #0d6efd; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-        .footer { text-align: center; color: #6c757d; font-size: 12px; margin-top: 20px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Welcome to DummiesTrafficSchool.com!</h1>
-        </div>
-        <div class="content">
-            <p>Dear {{ $user->first_name }},</p>
-            
-            <p>Thank you for enrolling in our course! We're excited to have you as a student.</p>
-            
-            <div class="details">
-                <h3>Enrollment Details</h3>
-                <p><strong>Course:</strong> {{ $course->title }}</p>
-                <p><strong>Enrollment Date:</strong> {{ now()->format('M d, Y') }}</p>
-                <p><strong>Amount Paid:</strong> ${{ number_format($enrollment->amount_paid, 2) }}</p>
-            </div>
-            
-            <p>You can now access the course and start learning. Click the button below to begin:</p>
-            
-            <a href="{{ url('/my-enrollments') }}" class="button">Start Learning</a>
-            
-            <p style="margin-top: 30px;">If you have any questions, please don't hesitate to contact our support team.</p>
-            
-            <p>Best regards,<br>
-            <strong>DummiesTrafficSchool.com Team</strong></p>
-        </div>
-        <div class="footer">
-            <p>&copy; {{ date('Y') }} DummiesTrafficSchool.com. All rights reserved.</p>
-        </div>
+@extends('emails.layout')
+
+@section('content')
+<div class="header">
+    <h1>Enrollment Confirmed! ✓</h1>
+    <p>You're Ready to Start Learning</p>
+</div>
+
+<div class="content">
+    <p>Hi <span class="highlight">{{ $user->first_name }}</span>,</p>
+    
+    <p>Thank you for enrolling! We're excited to have you as a student in our course.</p>
+    
+    <div class="details">
+        <h3>Enrollment Details</h3>
+        <p><strong>Course:</strong> {{ $course->title }}</p>
+        <p><strong>Enrollment Date:</strong> {{ now()->format('M d, Y') }}</p>
+        @if(isset($enrollment->amount_paid))
+        <p><strong>Amount Paid:</strong> <span class="accent-gold">${{ number_format($enrollment->amount_paid, 2) }}</span></p>
+        @endif
     </div>
-</body>
-</html>
+    
+    <p>You now have full access to all course materials. Start learning at your own pace and progress through the modules.</p>
+    
+    <div style="text-align: center;">
+        <a href="{{ url('/my-enrollments') }}" class="button button-dark-blue">Start Learning</a>
+        <a href="{{ url('/courses') }}" class="button button-dark-blue">Browse More Courses</a>
+    </div>
+    
+    <div class="alert alert-success">
+        <strong>🎯 Getting Started:</strong> Access your course materials, watch videos, and complete quizzes. Your progress is automatically saved.
+    </div>
+    
+    <h3>What to Expect</h3>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>Structured course modules with clear learning objectives</li>
+        <li>Interactive quizzes to test your knowledge</li>
+        <li>Certificate upon successful completion</li>
+        <li>Lifetime access to course materials</li>
+    </ul>
+    
+    <p style="margin-top: 30px;">If you have any questions or encounter any issues, please don't hesitate to contact our support team.</p>
+    
+    <p>Best regards,<br>
+    <strong>{{ config('app.name', 'E-Learning Platform') }} Team</strong></p>
+</div>
+@endsection

@@ -3,15 +3,24 @@
 @section('title', 'Question Manager')
 
 @section('content')
-<div class="container-fluid py-4" style="margin-left: 33px; padding: 20px;">
+<div class="container-fluid py-2" style="margin-left: 10px; padding: 10px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Question Manager - Chapter {{ $chapterId }}</h2>
-        <button class="btn btn-primary" onclick="showCreateModal()">
-            <i class="fas fa-plus"></i> Add Question
-        </button>
+        <div>
+            <button class="btn btn-success" onclick="exportSampleDocx()">
+                <i class="fas fa-download"></i> Export Sample DOCX
+            </button>
+            <button class="btn btn-info" onclick="document.getElementById('importFile').click()">
+                <i class="fas fa-upload"></i> Import
+            </button>
+            <input type="file" id="importFile" accept=".docx" style="display:none;" onchange="importDocx(event)">
+            <button class="btn btn-primary" onclick="showCreateModal()">
+                <i class="fas fa-plus"></i> Add Question
+            </button>
+        </div>
     </div>
 
-    <div id="questions-list" class="row">
+    <div id="questions-list" class="row justify-content-center">
         <p>Loading questions...</p>
     </div>
 </div>
@@ -94,25 +103,27 @@ function displayQuestions(questions) {
     }
     
     container.innerHTML = questions.map((q, index) => `
-        <div class="col-md-12 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <h5>${index + 1}. ${q.question_text}</h5>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary" onclick="editQuestion(${q.id})">
+        <div class="col-md-9 mb-2">
+            <div class="card" style="padding: 10px;">
+                <div class="card-body" style="padding: 8px;">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div style="flex: 1; min-width: 0;">
+                            <h6 style="margin: 0; font-size: 14px;">${index + 1}. ${q.question_text}</h6>
+                            <small class="text-muted" style="display: block; margin-top: 4px;"><strong>Type:</strong> ${q.question_type}</small>
+                            ${q.options && Array.isArray(q.options) && q.options.length > 0 ? `<small class="text-muted" style="display: block;"><strong>Options:</strong> ${q.options.join(', ')}</small>` : ''}
+                            <small class="text-muted" style="display: block;"><strong>Answer:</strong> ${q.correct_answer}</small>
+                            ${q.explanation ? `<small class="text-muted" style="display: block;"><strong>Exp:</strong> ${q.explanation}</small>` : ''}
+                            <small class="text-muted" style="display: block;"><strong>Points:</strong> ${q.points}</small>
+                        </div>
+                        <div style="margin-left: 10px; white-space: nowrap;">
+                            <button class="btn btn-sm btn-outline-primary" onclick="editQuestion(${q.id})" style="padding: 4px 8px; font-size: 12px;">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteQuestion(${q.id})">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteQuestion(${q.id})" style="padding: 4px 8px; font-size: 12px;">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
-                    <p class="mb-2"><strong>Type:</strong> ${q.question_type}</p>
-                    ${q.options && Array.isArray(q.options) && q.options.length > 0 ? `<p class="mb-2"><strong>Options:</strong> ${q.options.join(', ')}</p>` : ''}
-                    <p class="mb-2"><strong>Correct Answer:</strong> ${q.correct_answer}</p>
-                    ${q.explanation ? `<p class="mb-2"><strong>Explanation:</strong> ${q.explanation}</p>` : ''}
-                    <p class="mb-0"><strong>Points:</strong> ${q.points}</p>
                 </div>
             </div>
         </div>
@@ -250,5 +261,70 @@ async function deleteQuestion(id) {
 }
 
 loadQuestions();
+
+async function exportSampleDocx() {
+    try {
+        const response = await fetch(`/api/chapters/${chapterId}/questions/export-sample`, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        });
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `questions_sample_chapter_${chapterId}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } else {
+            alert('Error exporting sample');
+        }
+    } catch (error) {
+        console.error('Error exporting sample:', error);
+        alert('Error exporting sample');
+    }
+}
+
+async function importDocx(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    console.log('Starting import with file:', file.name);
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+        const response = await fetch(`/api/chapters/${chapterId}/questions/import`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: formData
+        });
+        
+        const result = await response.json();
+        console.log('Import response:', result);
+        
+        if (response.ok) {
+            console.log(`Successfully imported ${result.count} questions`);
+            console.log('Debug info:', result.debug);
+            alert(`Successfully imported ${result.count} questions!\nDebug: ${JSON.stringify(result.debug)}`);
+            loadQuestions();
+            document.getElementById('importFile').value = '';
+        } else {
+            console.error('Import error:', result);
+            alert('Error importing: ' + (result.message || 'Unknown error') + '\n' + (result.trace || ''));
+        }
+    } catch (error) {
+        console.error('Error importing:', error);
+        alert('Error importing file: ' + error.message);
+    }
+}
 </script>
 @endsection

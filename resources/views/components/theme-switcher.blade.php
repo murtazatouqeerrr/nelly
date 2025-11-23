@@ -1,57 +1,90 @@
 
-<div class="theme-switcher">
-<div id="google_translate_element" style="margin-top: 9px; "></div>
-
-<!-- <script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement(
-    {
-      pageLanguage: 'en', // Change 'en' to your website's default language
-      includedLanguages: 'en,ur,fr,es,de,ar,hi,zh-CN', // Optional: limit to specific languages
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    },
-    'google_translate_element'
-  );
-}
-</script>
-
-<script type="text/javascript" 
-  src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
-</script> -->
+<div class="theme-switcher-container">
+    <button class="theme-toggle-btn" id="themeToggle" title="Theme Switcher">
+        <i class="fas fa-palette"></i>
+    </button>
     
-    <button class="theme-btn" onclick="setTheme('dark-blue')" title="Dark Blue">
-        <span style="background: linear-gradient(135deg, #1e3a8a 50%, #ffffff 50%);"></span>
-    </button>
-    <button class="theme-btn" onclick="setTheme('dark')" title="Dark Mode">
-        <span style="background: linear-gradient(135deg, #000000 50%, #ffffff 50%);"></span>
-    </button>
-    <button class="theme-btn" onclick="setTheme('light')" title="Light Mode">
-        <span style="background: linear-gradient(135deg, #ffffff 50%, #3b82f6 50%);"></span>
-    </button>
-    <button class="theme-btn" onclick="setTheme('olive-gold')" title="Olive Gold">
-        <span style="background: linear-gradient(135deg, #556905 50%, #F1C705 50%);"></span>
-    </button>
+    <div class="theme-switcher" id="themeSwitcher">
+        <button class="theme-btn" onclick="setTheme('dark-blue')" title="Dark Blue">
+            <span style="background: linear-gradient(135deg, #1e3a8a 50%, #ffffff 50%);"></span>
+        </button>
+        <button class="theme-btn" onclick="setTheme('dark')" title="Dark Mode">
+            <span style="background: linear-gradient(135deg, #000000 50%, #ffffff 50%);"></span>
+        </button>
+        <button class="theme-btn" onclick="setTheme('light')" title="Light Mode">
+            <span style="background: linear-gradient(135deg, #ffffff 50%, #3b82f6 50%);"></span>
+        </button>
+        <button class="theme-btn" onclick="setTheme('olive-gold')" title="Olive Gold">
+            <span style="background: linear-gradient(135deg, #556905 50%, #F1C705 50%);"></span>
+        </button>
+    </div>
 </div>
 
 <style>
-.theme-switcher {       
+.theme-switcher-container {
     position: fixed;
-    top: 30px;
+    bottom: 30px;
     right: 20px;
     z-index: 10000;
+}
+
+.theme-toggle-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    cursor: pointer;
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--text);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+}
+
+.theme-switcher {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
     background: var(--bg-card);
     backdrop-filter: blur(10px);
-    padding: 12px;
-    border-radius: 50px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     border: 1px solid var(--border);
+    animation: slideUp 0.3s ease;
+}
+
+.theme-switcher.active {
+    display: flex;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .theme-btn {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border: 2px solid var(--border);
     border-radius: 50%;
     cursor: pointer;
@@ -76,9 +109,24 @@ function googleTranslateElementInit() {
 </style>
 
 <script>
+const themeToggle = document.getElementById('themeToggle');
+const themeSwitcher = document.getElementById('themeSwitcher');
+
+themeToggle.addEventListener('click', () => {
+    themeSwitcher.classList.toggle('active');
+});
+
+// Close switcher when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.theme-switcher-container')) {
+        themeSwitcher.classList.remove('active');
+    }
+});
+
 function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
+    themeSwitcher.classList.remove('active');
 }
 
 // Load saved theme

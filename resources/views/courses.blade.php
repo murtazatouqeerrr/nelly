@@ -94,10 +94,10 @@
                                 <p class="card-text flex-grow-1">${course.description}</p>
                                 <div class="course-details mb-3">
                                     <p class="mb-1"><strong>State:</strong> ${course.state_code}</p>
-                                    <p class="mb-1"><strong>Duration:</strong> ${course.total_duration} minutes</p>
+                                    <p class="mb-1"><strong>Duration:</strong> ${course.duration} minutes</p>
                                     <p class="mb-1"><strong>Price:</strong> $${course.price}</p>
                                 </div>
-                                <button onclick="enrollCourse('${course.id}')" class="btn btn-primary mt-auto">Enroll</button>
+                                <button onclick="enrollCourse('${course.id}', '${course.table}')" class="btn btn-primary mt-auto">Enroll</button>
                             </div>
                         </div>
                     </div>
@@ -109,8 +109,8 @@
             }
         }
         
-        function enrollCourse(courseId) {
-            window.location.href = `/payment?course_id=${courseId}`;
+        function enrollCourse(courseId, table) {
+            window.location.href = `/payment?course_id=${courseId}&table=${table}`;
         }
         
         // Show fallback and load courses if Vue doesn't load
