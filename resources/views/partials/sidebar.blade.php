@@ -61,11 +61,6 @@
                     <i class="fab fa-stripe me-2"></i>Stripe Payments
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link text-white" href="/admin/payments/paypal">
-                    <i class="fab fa-paypal me-2"></i>PayPal Payments
-                </a>
-            </li>
             
             <li class="nav-item mt-3">
                 <h6 class="text-muted px-3">Course Management</h6>
@@ -102,6 +97,11 @@
             
             <li class="nav-item mt-3">
                 <h6 class="text-muted px-3">Reference Data</h6>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="/admin/state-stamps">
+                    <i class="fas fa-stamp me-2"></i>State Stamps
+                </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-white" href="/admin/counties">

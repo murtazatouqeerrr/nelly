@@ -59,6 +59,8 @@
         .btn-continue:hover { background: #0b5ed7; }
         .btn-back { background: #6c757d; color: white; }
         .btn-back:hover { background: #5c636a; }
+        .validation-errors { background: #f8d7da; border: 1px solid #f5c2c7; color: #842029; padding: 15px; border-radius: 0.375rem; margin-bottom: 20px; }
+        .validation-errors ul { margin: 10px 0 0 20px; padding: 0; }
     </style>
 </head>
 <body>
@@ -70,6 +72,24 @@
         
         <form method="POST" action="{{ route('register.process', 3) }}">
             @csrf
+            
+            @if(session('error'))
+                <div style="background: #f8d7da; border: 1px solid #f5c2c7; color: #842029; padding: 15px; border-radius: 0.375rem; margin-bottom: 20px;">
+                    <strong>Error:</strong> {{ session('error') }}
+                </div>
+            @endif
+            
+            @if($errors->any())
+                <div class="validation-errors">
+                    <strong>Please fix the following errors:</strong>
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            
             <div class="registration-form">
                 <div class="info-text">
                     We are required by the DMV/Courts to include various identification checkpoints throughout the course. These checkpoints enable us to verify the identity of the test taker. The individual who takes and completes the course must be the same person who begins the course. The information below will be used in each checkpoint. Please remember your answers to the questions below, they will be the same questions on the verification checkpoints. If you answer any question wrong, your account will be locked and you'll have to contact us for ID verification and account unlock. When registering to take this course, you are saying to the court that you are the ticket holder and have elected to traffic school.
@@ -86,61 +106,61 @@
                 <div class="question-row">
                     <div class="question-number">1.</div>
                     <div class="question-text">When does your driver's license expire? ONLY THE YEAR ( exe. 2018 )</div>
-                    <input type="text" name="q1" class="answer-input" value="{{ old('q1', session('registration_step_3.q1')) }}" required>
+                    <input type="text" name="q1" class="answer-input" data-type="year" pattern="\d{4}" maxlength="4" title="4 digits only (e.g., 2025)" value="{{ old('q1', session('registration_step_3.q1')) }}" required>
                 </div>
                 
                 <div class="question-row">
                     <div class="question-number">2.</div>
                     <div class="question-text">What is the weight listed on your driver's license? (Only in numbers exe. 162)</div>
-                    <input type="text" name="q2" class="answer-input" value="{{ old('q2', session('registration_step_3.q2')) }}" required>
+                    <input type="text" name="q2" class="answer-input" data-type="number" pattern="\d+" maxlength="10" title="Numbers only" value="{{ old('q2', session('registration_step_3.q2')) }}" required>
                 </div>
                 
                 <div class="question-row">
                     <div class="question-number">3.</div>
                     <div class="question-text">How many cars do you own? (Only in Numbers exe. 1)</div>
-                    <input type="text" name="q3" class="answer-input" value="{{ old('q3', session('registration_step_3.q3')) }}" required>
+                    <input type="text" name="q3" class="answer-input" data-type="number" pattern="\d+" maxlength="5" title="Numbers only" value="{{ old('q3', session('registration_step_3.q3')) }}" required>
                 </div>
                 
                 <div class="question-row">
                     <div class="question-number">4.</div>
                     <div class="question-text">What are the last four digits of your Drivers License Number? (6374)</div>
-                    <input type="text" name="q4" class="answer-input" value="{{ old('q4', session('registration_step_3.q4')) }}" required>
+                    <input type="text" name="q4" class="answer-input" data-type="number" pattern="\d{4}" maxlength="4" title="4 digits only" value="{{ old('q4', session('registration_step_3.q4')) }}" required>
                 </div>
                 
                 <div class="question-row">
                     <div class="question-number">5.</div>
                     <div class="question-text">What is your age? (Only in numbers exe. 31 )</div>
-                    <input type="text" name="q5" class="answer-input" value="{{ old('q5', session('registration_step_3.q5')) }}" required>
+                    <input type="text" name="q5" class="answer-input" data-type="number" pattern="\d+" maxlength="3" title="Numbers only" value="{{ old('q5', session('registration_step_3.q5')) }}" required>
                 </div>
                 
                 <div class="question-row">
                     <div class="question-number">6.</div>
                     <div class="question-text">How old were you when you got your Drivers License? (Only in numbers exe. 16 )</div>
-                    <input type="text" name="q6" class="answer-input" value="{{ old('q6', session('registration_step_3.q6')) }}" required>
+                    <input type="text" name="q6" class="answer-input" data-type="number" pattern="\d+" maxlength="3" title="Numbers only" value="{{ old('q6', session('registration_step_3.q6')) }}" required>
                 </div>
                 
                 <div class="question-row">
                     <div class="question-number">7.</div>
                     <div class="question-text">What zip code do you live in? ( exe. 90210 )</div>
-                    <input type="text" name="q7" class="answer-input" value="{{ old('q7', session('registration_step_3.q7')) }}" required>
+                    <input type="text" name="q7" class="answer-input" data-type="zip" pattern="\d{5}" maxlength="5" title="5 digits only" value="{{ old('q7', session('registration_step_3.q7')) }}" required>
                 </div>
                 
                 <div class="question-row">
                     <div class="question-number">8.</div>
                     <div class="question-text">In what year were you born? (exe. 1980 )</div>
-                    <input type="text" name="q8" class="answer-input" value="{{ old('q8', session('registration_step_3.q8')) }}" required>
+                    <input type="text" name="q8" class="answer-input" data-type="year" pattern="\d{4}" maxlength="4" title="4 digits only (e.g., 1980)" value="{{ old('q8', session('registration_step_3.q8')) }}" required>
                 </div>
                 
                 <div class="question-row">
                     <div class="question-number">9.</div>
                     <div class="question-text">What color is your hair?</div>
-                    <input type="text" name="q9" class="answer-input" value="{{ old('q9', session('registration_step_3.q9')) }}" required>
+                    <input type="text" name="q9" class="answer-input" data-type="text" pattern="[a-zA-Z\s]+" title="Letters and spaces only" value="{{ old('q9', session('registration_step_3.q9')) }}" required>
                 </div>
                 
                 <div class="question-row">
                     <div class="question-number">10.</div>
                     <div class="question-text">What city do you live in?</div>
-                    <input type="text" name="q10" class="answer-input" value="{{ old('q10', session('registration_step_3.q10')) }}" required>
+                    <input type="text" name="q10" class="answer-input" data-type="text" pattern="[a-zA-Z\s\-']+" title="Letters, spaces, hyphens, and apostrophes only" value="{{ old('q10', session('registration_step_3.q10')) }}" required>
                 </div>
                 
                 <div class="button-row">
@@ -150,5 +170,28 @@
             </div>
         </form>
     </div>
+    
+    <script>
+        // Real-time validation for all answer inputs
+        document.querySelectorAll('.answer-input').forEach(input => {
+            input.addEventListener('input', function(e) {
+                const type = e.target.dataset.type;
+                let value = e.target.value;
+                
+                switch(type) {
+                    case 'number':
+                    case 'year':
+                    case 'zip':
+                        // Only allow digits
+                        e.target.value = value.replace(/\D/g, '');
+                        break;
+                    case 'text':
+                        // Only allow letters, spaces, hyphens, apostrophes
+                        e.target.value = value.replace(/[^a-zA-Z\s\-']/g, '');
+                        break;
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -15,13 +15,13 @@ class FloridaDefensiveDrivingSeeder extends Seeder
         
         // Create Florida Defensive Driving Course
         $courseId = DB::table('florida_courses')->insertGetId([
-            'course_type' => 'BDI',
-            'title' => 'Florida 6-Hour Defensive Driving Course',
+            'course_type' => 'Insurance Discount',
+            'title' => 'Florida Insurance Discount - Defensive Driving Course',
             'description' => 'Complete this 6-hour course to reduce points, meet court requirements, or qualify for insurance discounts.',
             'state' => 'FL',
             'passing_score' => 80,
             'duration' => 360,
-            'price' => 34.95,
+            'price' => 16.95,
             
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

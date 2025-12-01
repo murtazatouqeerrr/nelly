@@ -55,6 +55,8 @@
         }
         .checkbox-row { margin: 20px 0; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .checkbox-label { color: #212529; margin: 0; }
+        .error-message { color: #dc3545; font-size: 14px; margin-top: 5px; display: none; }
+        .form-group.error .agreement-name-input { border-color: #dc3545; }
         .button-row { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
         .btn { 
             padding: 12px 30px; 
@@ -87,6 +89,19 @@
         
         <form method="POST" action="{{ route('register.process', 4) }}">
             @csrf
+            
+            @if(session('error'))
+                <div style="background: #f8d7da; border: 1px solid #f5c2c7; color: #842029; padding: 15px; border-radius: 0.375rem; margin-bottom: 20px;">
+                    <strong>Error:</strong> {{ session('error') }}
+                </div>
+            @endif
+            
+            @if(session('success'))
+                <div style="background: #d1e7dd; border: 1px solid #badbcc; color: #0f5132; padding: 15px; border-radius: 0.375rem; margin-bottom: 20px;">
+                    <strong>Success:</strong> {{ session('success') }}
+                </div>
+            @endif
+            
             <div class="registration-form">
                 <div class="instruction">
                     Take your time and make sure it is accurate!
@@ -197,7 +212,10 @@
                     </div>
                     
                     <div class="name-input-row">
-                        <input type="text" name="agreement_name" class="agreement-name-input" placeholder="Type your full name here" required>
+                        <div class="form-group">
+                            <input type="text" name="agreement_name" class="agreement-name-input" placeholder="Type your full name here" pattern="[a-zA-Z\s\-']+" title="Only letters, spaces, hyphens, and apostrophes allowed" required>
+                            <div class="error-message">Only letters, spaces, hyphens, and apostrophes allowed</div>
+                        </div>
                     </div>
                     
                     <div class="checkbox-row">
@@ -217,5 +235,24 @@
             Have an account? <a href="/login">Sign In</a>
         </div>
     </div>
+    
+    <script>
+        // Real-time validation for agreement name field
+        document.querySelector('input[name="agreement_name"]').addEventListener('input', function(e) {
+            const value = e.target.value;
+            const regex = /^[a-zA-Z\s\-']*$/;
+            const parent = e.target.closest('.form-group');
+            const errorMsg = parent.querySelector('.error-message');
+            
+            if (!regex.test(value)) {
+                parent.classList.add('error');
+                errorMsg.style.display = 'block';
+                e.target.value = value.replace(/[^a-zA-Z\s\-']/g, '');
+            } else {
+                parent.classList.remove('error');
+                errorMsg.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

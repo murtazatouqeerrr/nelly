@@ -26,10 +26,53 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">User Email</label>
-                                <select class="form-control" id="userEmail" required>
-                                    <option value="">Select User</option>
-                                </select>
+                                <label class="form-label">Recipients</label>
+                                <div class="mb-2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="recipientType" id="recipientSingle" value="single" checked onchange="toggleRecipientType()">
+                                        <label class="form-check-label" for="recipientSingle">
+                                            Single User
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="recipientType" id="recipientMultiple" value="multiple" onchange="toggleRecipientType()">
+                                        <label class="form-check-label" for="recipientMultiple">
+                                            Multiple Users
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="recipientType" id="recipientAll" value="all" onchange="toggleRecipientType()">
+                                        <label class="form-check-label" for="recipientAll">
+                                            All Users
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div id="singleUserSelect">
+                                    <select class="form-control" id="userEmail">
+                                        <option value="">Select User</option>
+                                    </select>
+                                </div>
+                                
+                                <div id="multipleUserSelect" style="display: none;">
+                                    <div class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="selectAllUsers" onchange="toggleAllUsers()">
+                                            <label class="form-check-label fw-bold" for="selectAllUsers">
+                                                Select All
+                                            </label>
+                                        </div>
+                                        <hr class="my-2">
+                                        <div id="userCheckboxList"></div>
+                                    </div>
+                                    <small class="text-muted">Selected: <span id="selectedCount">0</span> user(s)</small>
+                                </div>
+                                
+                                <div id="allUsersMessage" style="display: none;">
+                                    <div class="alert alert-info mb-0">
+                                        <i class="fas fa-users"></i> Notification will be sent to <strong>all users</strong> in the system.
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -76,6 +119,32 @@
     </div>
 
     <script>
+        let allUsers = [];
+
+        function toggleRecipientType() {
+            const type = document.querySelector('input[name="recipientType"]:checked').value;
+            
+            document.getElementById('singleUserSelect').style.display = type === 'single' ? 'block' : 'none';
+            document.getElementById('multipleUserSelect').style.display = type === 'multiple' ? 'block' : 'none';
+            document.getElementById('allUsersMessage').style.display = type === 'all' ? 'block' : 'none';
+        }
+
+        function toggleAllUsers() {
+            const selectAll = document.getElementById('selectAllUsers').checked;
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll;
+            });
+            
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const checked = document.querySelectorAll('.user-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = checked;
+        }
+
         async function loadUsers() {
             try {
                 const response = await fetch('/web/users', {
@@ -88,16 +157,33 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    const users = data.data || data;
+                    allUsers = data.data || data;
                     const userSelect = document.getElementById('userEmail');
+                    const checkboxList = document.getElementById('userCheckboxList');
                     
+                    // Populate single select dropdown
                     userSelect.innerHTML = '<option value="">Select User</option>';
                     
-                    users.forEach(user => {
+                    // Populate checkbox list
+                    checkboxList.innerHTML = '';
+                    
+                    allUsers.forEach((user, index) => {
+                        // Single select option
                         const option = document.createElement('option');
                         option.value = user.email;
                         option.textContent = `${user.first_name} ${user.last_name} (${user.email})`;
                         userSelect.appendChild(option);
+                        
+                        // Checkbox option
+                        const checkboxDiv = document.createElement('div');
+                        checkboxDiv.className = 'form-check';
+                        checkboxDiv.innerHTML = `
+                            <input class="form-check-input user-checkbox" type="checkbox" value="${user.email}" id="user${index}" onchange="updateSelectedCount()">
+                            <label class="form-check-label" for="user${index}">
+                                ${user.first_name} ${user.last_name} (${user.email})
+                            </label>
+                        `;
+                        checkboxList.appendChild(checkboxDiv);
                     });
                 }
             } catch (error) {
@@ -106,27 +192,20 @@
         }
 
         async function sendPushNotification() {
-            const emailEl = document.getElementById('userEmail');
+            const recipientType = document.querySelector('input[name="recipientType"]:checked').value;
             const typeEl = document.getElementById('notificationType');
             const titleEl = document.getElementById('notifTitle');
             const messageEl = document.getElementById('notifMessage');
 
-            if (!emailEl || !typeEl || !titleEl || !messageEl) {
+            if (!typeEl || !titleEl || !messageEl) {
                 alert('Form elements not found');
                 return;
             }
 
-            const email = emailEl.value ? emailEl.value.trim() : '';
             const type = typeEl.value ? typeEl.value.trim() : '';
             const title = titleEl.value ? titleEl.value.trim() : '';
             const message = messageEl.value ? messageEl.value.trim() : '';
 
-            console.log('Sending notification:', { email, type, title, message });
-
-            if (!email) {
-                alert('Please select a user');
-                return;
-            }
             if (!title) {
                 alert('Please enter notification title');
                 return;
@@ -136,51 +215,106 @@
                 return;
             }
 
+            let emails = [];
+
+            // Get recipient emails based on type
+            if (recipientType === 'single') {
+                const email = document.getElementById('userEmail').value.trim();
+                if (!email) {
+                    alert('Please select a user');
+                    return;
+                }
+                emails = [email];
+            } else if (recipientType === 'multiple') {
+                const checkboxes = document.querySelectorAll('.user-checkbox:checked');
+                if (checkboxes.length === 0) {
+                    alert('Please select at least one user');
+                    return;
+                }
+                emails = Array.from(checkboxes).map(cb => cb.value);
+            } else if (recipientType === 'all') {
+                emails = allUsers.map(user => user.email);
+                if (emails.length === 0) {
+                    alert('No users found in the system');
+                    return;
+                }
+            }
+
+            console.log('Sending notification to:', emails);
+
+            // Show progress
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+            let successCount = 0;
+            let failCount = 0;
+
             try {
-                const response = await fetch('/api/push-notification', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        type: type,
-                        title: title,
-                        message: message
-                    })
-                });
+                // Send notifications to all selected users
+                for (const email of emails) {
+                    try {
+                        const response = await fetch('/api/push-notification', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify({
+                                email: email,
+                                type: type,
+                                title: title,
+                                message: message
+                            })
+                        });
 
-                console.log('Send response status:', response.status);
-                const result = await response.json();
-                console.log('Send response:', result);
+                        if (response.ok) {
+                            successCount++;
+                        } else {
+                            failCount++;
+                        }
+                    } catch (error) {
+                        console.error('Error sending to', email, error);
+                        failCount++;
+                    }
+                }
 
-                if (response.ok) {
-                    alert('Push notification sent successfully!');
+                // Show result
+                if (failCount === 0) {
+                    alert(`✓ Notification sent successfully to ${successCount} user(s)!`);
                     document.getElementById('notificationForm').reset();
-                    addToHistory(email, type, title, message);
+                    toggleRecipientType();
+                    addToHistory(emails.join(', '), type, title, message, successCount);
                 } else {
-                    alert('Failed to send notification: ' + (result.message || 'Unknown error'));
+                    alert(`Sent to ${successCount} user(s), failed for ${failCount} user(s)`);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error sending notification: ' + error.message);
+                alert('Error sending notifications: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         }
 
-        function addToHistory(email, type, title, message) {
+        function addToHistory(recipients, type, title, message, count) {
             const history = document.getElementById('notificationHistory');
             const now = new Date().toLocaleString();
+            
+            const recipientDisplay = count > 3 
+                ? `${count} users` 
+                : recipients;
             
             const notificationHtml = `
                 <div class="alert alert-${type} mb-2">
                     <div class="d-flex justify-content-between">
-                        <div>
+                        <div style="flex: 1;">
                             <strong>${title}</strong><br>
-                            <small>To: ${email}</small><br>
+                            <small><i class="fas fa-users"></i> To: ${recipientDisplay}</small><br>
                             <span>${message}</span>
                         </div>
-                        <small class="text-muted">${now}</small>
+                        <small class="text-muted text-nowrap ms-3">${now}</small>
                     </div>
                 </div>
             `;

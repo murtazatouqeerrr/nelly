@@ -22,7 +22,9 @@ class UserCourseEnrollment extends Model
         'completed_at',
         'progress_percentage',
         'total_time_spent',
-        'status'
+        'status',
+        'access_revoked',
+        'access_revoked_at'
     ];
 
     protected $casts = [
@@ -30,7 +32,9 @@ class UserCourseEnrollment extends Model
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
         'court_date' => 'date',
-        'amount_paid' => 'decimal:2'
+        'amount_paid' => 'decimal:2',
+        'payment_status' => 'string',
+        'status' => 'string'
     ];
 
     public function user(): BelongsTo

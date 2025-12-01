@@ -14,6 +14,7 @@ class Invoice extends Model
         'items',
         'subtotal',
         'tax_amount',
+        'tax_rate',
         'total_amount',
         'pdf_path',
         'sent_at'
@@ -25,6 +26,7 @@ class Invoice extends Model
         'due_date' => 'date',
         'subtotal' => 'decimal:2',
         'tax_amount' => 'decimal:2',
+        'tax_rate' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'sent_at' => 'datetime'
     ];

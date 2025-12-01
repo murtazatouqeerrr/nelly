@@ -22,36 +22,42 @@
           <div v-if="currentQuestion.question_type === 'multiple_choice'" class="options">
             <div v-for="(option, index) in currentQuestion.options" :key="index" class="form-check">
               <input 
-                :id="`option-${index}`"
-                v-model="answers[currentQuestion.id]" 
+                :id="`option-${currentQuestion.id}-${index}`"
+                :checked="answers[currentQuestion.id] === option"
+                @change="answers[currentQuestion.id] = option"
                 :value="option"
                 type="radio" 
                 class="form-check-input"
+                :name="`question-${currentQuestion.id}`"
               >
-              <label :for="`option-${index}`" class="form-check-label">{{ option }}</label>
+              <label :for="`option-${currentQuestion.id}-${index}`" class="form-check-label">{{ option }}</label>
             </div>
           </div>
           
           <div v-else class="options">
             <div class="form-check">
               <input 
-                id="true-option"
-                v-model="answers[currentQuestion.id]" 
+                :id="`true-option-${currentQuestion.id}`"
+                :checked="answers[currentQuestion.id] === 'true'"
+                @change="answers[currentQuestion.id] = 'true'"
                 value="true"
                 type="radio" 
                 class="form-check-input"
+                :name="`question-${currentQuestion.id}`"
               >
-              <label for="true-option" class="form-check-label">True</label>
+              <label :for="`true-option-${currentQuestion.id}`" class="form-check-label">True</label>
             </div>
             <div class="form-check">
               <input 
-                id="false-option"
-                v-model="answers[currentQuestion.id]" 
+                :id="`false-option-${currentQuestion.id}`"
+                :checked="answers[currentQuestion.id] === 'false'"
+                @change="answers[currentQuestion.id] = 'false'"
                 value="false"
                 type="radio" 
                 class="form-check-input"
+                :name="`question-${currentQuestion.id}`"
               >
-              <label for="false-option" class="form-check-label">False</label>
+              <label :for="`false-option-${currentQuestion.id}`" class="form-check-label">False</label>
             </div>
           </div>
         </div>

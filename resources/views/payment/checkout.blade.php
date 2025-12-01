@@ -62,11 +62,6 @@
                     <p>Pay securely with your credit or debit card via Stripe</p>
                 </div>
 
-                <div class="payment-method" onclick="selectPaymentMethod('paypal')">
-                    <h3>🅿️ PayPal</h3>
-                    <p>Pay with your PayPal account or credit card</p>
-                </div>
-
                 <div class="payment-method" onclick="selectPaymentMethod('dummy')">
                     <h3>🧪 Test Payment (Dummy)</h3>
                     <p>Use this for testing purposes only</p>
@@ -100,18 +95,7 @@
                 </button>
             </div>
 
-            <div class="paypal-form" id="paypal-form">
-                <h4>Billing Information</h4>
-                <input type="text" id="paypal-address" placeholder="Address" required style="width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-                <input type="text" id="paypal-city" placeholder="City" required style="width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <input type="text" id="paypal-state" placeholder="State" required style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
-                    <input type="text" id="paypal-zipcode" placeholder="Zip Code" required style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
-                </div>
-                <input type="text" id="paypal-country" placeholder="Country" required value="USA" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px;">
-                
-                <div id="paypal-button-container"></div>
-            </div>
+
 
             <div class="stripe-form" id="dummy-form">
                 <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
@@ -144,8 +128,6 @@
 
             if (method === 'stripe' && !stripe) {
                 initializeStripe();
-            } else if (method === 'paypal') {
-                initializePayPal();
             }
         }
 
@@ -228,50 +210,7 @@
             });
         }
 
-        function initializePayPal() {
-            if (typeof paypal === 'undefined') {
-                alert('PayPal is not configured. Please contact support or use credit card payment.');
-                return;
-            }
-            paypal.Buttons({
-                createOrder: function(data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            amount: {
-                                value: '{{ $course->price }}'
-                            },
-                            description: '{{ $course->title }}'
-                        }]
-                    });
-                },
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(details) {
-                        fetch('/payment/paypal', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                enrollment_id: {{ $enrollment->id }},
-                                paypal_order_id: data.orderID,
-                                address: document.getElementById('paypal-address').value,
-                                city: document.getElementById('paypal-city').value,
-                                state: document.getElementById('paypal-state').value,
-                                country: document.getElementById('paypal-country').value,
-                                zipcode: document.getElementById('paypal-zipcode').value
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.href = data.redirect;
-                            }
-                        });
-                    });
-                }
-            }).render('#paypal-button-container');
-        }
+
 
         async function processDummyPayment() {
             const button = event.target;

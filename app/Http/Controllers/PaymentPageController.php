@@ -197,6 +197,22 @@ class PaymentPageController extends Controller
             'status' => 'completed'
         ]);
 
+        // Generate and send payment receipt via email
+        try {
+            $course = $this->findCourse($enrollment->course_id);
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('payments.receipt', compact('payment'));
+            
+            \Mail::send('emails.payment-receipt', compact('payment', 'course'), function ($message) use ($payment, $pdf) {
+                $message->to($payment->billing_email)
+                        ->subject('Payment Receipt #' . $payment->id . ' - Traffic School')
+                        ->attachData($pdf->output(), 'payment-receipt-' . $payment->id . '.pdf');
+            });
+            
+            \Log::info('Payment receipt sent', ['payment_id' => $payment->id, 'email' => $payment->billing_email]);
+        } catch (\Exception $e) {
+            \Log::error('Payment receipt email error: ' . $e->getMessage());
+        }
+
         // Send enrollment confirmation email
         try {
             $course = $this->findCourse($enrollment->course_id);

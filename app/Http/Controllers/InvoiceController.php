@@ -78,24 +78,74 @@ class InvoiceController extends Controller
 
     public function send(Invoice $invoice)
     {
-        return $this->emailInvoice($invoice);
+        try {
+            return $this->emailInvoice($invoice);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send invoice', [
+                'invoice_id' => $invoice->id,
+                'error' => $e->getMessage()
+            ]);
+            return response()->json(['error' => 'Failed to send invoice: ' . $e->getMessage()], 500);
+        }
     }
 
     public function emailInvoice(Invoice $invoice)
     {
-        $invoice->load(['payment.user', 'payment.enrollment.course']);
-        
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('invoices.template', compact('invoice'));
-        
-        \Mail::send('emails.invoice', compact('invoice'), function ($message) use ($invoice, $pdf) {
-            $message->to($invoice->payment->user->email)
-                    ->subject('Invoice ' . $invoice->invoice_number)
-                    ->attachData($pdf->output(), $invoice->invoice_number . '.pdf');
-        });
+        try {
+            $invoice->load(['payment.user', 'payment.enrollment.course']);
+            
+            $user = $invoice->payment->user;
+            
+            if (!$user || !$user->email) {
+                return response()->json(['error' => 'User email not found'], 400);
+            }
+            
+            \Log::info('Generating PDF for invoice', ['invoice_id' => $invoice->id]);
+            
+            try {
+                $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('invoices.template', compact('invoice'));
+                $pdfOutput = $pdf->output();
+            } catch (\Exception $e) {
+                \Log::error('PDF generation failed', [
+                    'invoice_id' => $invoice->id,
+                    'error' => $e->getMessage()
+                ]);
+                // Continue without PDF attachment
+                $pdfOutput = null;
+            }
+            
+            \Log::info('Sending invoice email', [
+                'invoice_id' => $invoice->id,
+                'to' => $user->email,
+                'has_pdf' => $pdfOutput !== null
+            ]);
+            
+            \Mail::send('emails.invoice', compact('invoice', 'user'), function ($message) use ($invoice, $pdfOutput, $user) {
+                $message->to($user->email)
+                        ->subject('Invoice ' . $invoice->invoice_number);
+                
+                if ($pdfOutput) {
+                    $message->attachData($pdfOutput, $invoice->invoice_number . '.pdf');
+                }
+            });
 
-        $invoice->update(['sent_at' => now()]);
+            $invoice->update(['sent_at' => now()]);
+            
+            \Log::info('Invoice email sent successfully', ['invoice_id' => $invoice->id]);
 
-        return response()->json(['message' => 'Invoice emailed successfully']);
+            return response()->json([
+                'message' => 'Invoice emailed successfully',
+                'sent_to' => $user->email,
+                'invoice_number' => $invoice->invoice_number
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send invoice email', [
+                'invoice_id' => $invoice->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Failed to send invoice: ' . $e->getMessage()], 500);
+        }
     }
 
     public function generatePdf(Invoice $invoice)
@@ -105,5 +155,37 @@ class InvoiceController extends Controller
         $pdf = Pdf::loadView('invoices.template', compact('invoice'));
         
         return $pdf->stream($invoice->invoice_number . '.pdf');
+    }
+
+    /**
+     * Show invoice for authenticated user (public route)
+     */
+    public function showPublic(Invoice $invoice)
+    {
+        // Verify the invoice belongs to the authenticated user
+        if ($invoice->payment->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to invoice');
+        }
+
+        $invoice->load(['payment.user', 'payment.enrollment.course']);
+        
+        return view('invoices.view', compact('invoice'));
+    }
+
+    /**
+     * Download invoice PDF for authenticated user (public route)
+     */
+    public function downloadPublic(Invoice $invoice)
+    {
+        // Verify the invoice belongs to the authenticated user
+        if ($invoice->payment->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to invoice');
+        }
+
+        $invoice->load(['payment.user', 'payment.enrollment.course']);
+        
+        $pdf = Pdf::loadView('invoices.template', compact('invoice'));
+        
+        return $pdf->download($invoice->invoice_number . '.pdf');
     }
 }

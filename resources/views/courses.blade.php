@@ -97,7 +97,11 @@
                                     <p class="mb-1"><strong>Duration:</strong> ${course.duration} minutes</p>
                                     <p class="mb-1"><strong>Price:</strong> $${course.price}</p>
                                 </div>
-                                <button onclick="enrollCourse('${course.id}', '${course.table}')" class="btn btn-primary mt-auto">Enroll</button>
+                                <div class="d-flex gap-2 mt-auto">
+                                    <button onclick="viewDetails('${course.table}', '${course.id}')" class="btn btn-info flex-grow-1">View Details</button>
+
+                                    <button onclick="enrollCourse('${course.id}', '${course.table}')" class="btn btn-primary flex-grow-1">Enroll</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -112,6 +116,11 @@
         function enrollCourse(courseId, table) {
             window.location.href = `/payment?course_id=${courseId}&table=${table}`;
         }
+        
+      function viewDetails(table, courseId) {
+    window.location.href = `/course-details/${table}/${courseId}`;
+}
+
         
         // Show fallback and load courses if Vue doesn't load
         setTimeout(() => {

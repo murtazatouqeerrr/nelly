@@ -357,13 +357,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/payments/paypal*') ? 'bg-primary rounded' : '' }}" href="/admin/payments/paypal">
-                            <i class="fab fa-paypal me-2"></i> PayPal Payments
+                        <a class="nav-link text-white {{ request()->is('admin/course-timers*') ? 'bg-primary rounded' : '' }}" href="/admin/course-timers">
+                            <i class="fas fa-clock me-2"></i> Course Timers
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/course-timers*') ? 'bg-primary rounded' : '' }}" href="/admin/course-timers">
-                            <i class="fas fa-clock me-2"></i> Course Timers
+                        <a class="nav-link text-white {{ request()->is('admin/state-stamps*') ? 'bg-primary rounded' : '' }}" href="/admin/state-stamps">
+                            <i class="fas fa-stamp me-2"></i> State Stamps
                         </a>
                     </li>
                     <li class="nav-item">

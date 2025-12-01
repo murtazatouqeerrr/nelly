@@ -13,12 +13,12 @@ class FloridaBDICourseSeeder extends Seeder
         // Florida BDI Course
         $courseId = DB::table('florida_courses')->insertGetId([
             'course_type' => 'BDI',
-            'title' => '4-Hour Florida BDI Course',
-            'description' => 'Florida Basic Driver Improvement Course',
+            'title' => 'Florida Driving/Ticket Dismissal - 4-Hour Basic Driver Improvement Course (BDI)',
+            'description' => 'Florida Basic Driver Improvement Course for ticket dismissal',
             'state' => 'FL',
             'passing_score' => 80,
             'duration' => 240,
-            'price' => 29.99,
+            'price' => 19.95,
             
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

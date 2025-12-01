@@ -68,6 +68,10 @@
         .footer { text-align: center; margin-top: 30px; color: #6c757d; }
         .footer a { color: #0d6efd; text-decoration: none; }
         .footer a:hover { text-decoration: underline; }
+        .error-message { color: #dc3545; font-size: 14px; margin-top: 5px; display: none; }
+        .form-group.error input { border-color: #dc3545; }
+        .validation-errors { background: #f8d7da; border: 1px solid #f5c2c7; color: #842029; padding: 15px; border-radius: 0.375rem; margin-bottom: 20px; }
+        .validation-errors ul { margin: 10px 0 0 20px; padding: 0; }
     </style>
 </head>
 <body>
@@ -79,15 +83,46 @@
         
         <form method="POST" action="{{ route('register.process', 1) }}">
             @csrf
+            
+            <!-- Store course enrollment params -->
+            <input type="hidden" name="course_id" value="{{ request('course_id') }}">
+            <input type="hidden" name="course_enroll" value="{{ request('course_enroll') }}">
+            <input type="hidden" name="region" value="{{ request('region') }}">
+            
+            @if(session('error'))
+                <div style="background: #f8d7da; border: 1px solid #f5c2c7; color: #842029; padding: 15px; border-radius: 0.375rem; margin-bottom: 20px;">
+                    <strong>Error:</strong> {{ session('error') }}
+                </div>
+            @endif
+            
+            @if($errors->any())
+                <div class="validation-errors">
+                    <strong>Please fix the following errors:</strong>
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            
+            @if(session('success'))
+                <div style="background: #d1e7dd; border: 1px solid #badbcc; color: #0f5132; padding: 15px; border-radius: 0.375rem; margin-bottom: 20px;">
+                    <strong>Success:</strong> {{ session('success') }}
+                </div>
+            @endif
+            
             <div class="registration-form">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="first_name">First Name</label>
-                        <input type="text" id="first_name" name="first_name" value="{{ old('first_name', session('registration_step_1.first_name')) }}" required>
+                        <input type="text" id="first_name" name="first_name" value="{{ old('first_name', session('registration_step_1.first_name')) }}" pattern="[a-zA-Z\s\-']+" title="Only letters, spaces, hyphens, and apostrophes allowed" required>
+                        <div class="error-message">Only letters, spaces, hyphens, and apostrophes allowed</div>
                     </div>
                     <div class="form-group">
                         <label for="last_name">Last Name</label>
-                        <input type="text" id="last_name" name="last_name" value="{{ old('last_name', session('registration_step_1.last_name')) }}" required>
+                        <input type="text" id="last_name" name="last_name" value="{{ old('last_name', session('registration_step_1.last_name')) }}" pattern="[a-zA-Z\s\-']+" title="Only letters, spaces, hyphens, and apostrophes allowed" required>
+                        <div class="error-message">Only letters, spaces, hyphens, and apostrophes allowed</div>
                     </div>
                 </div>
                 
@@ -120,6 +155,26 @@
         </form>
         
         <div class="note-section">
+            <strong>Password Guidelines</strong>
+            <div class="note-text">
+                <strong>Note: Your Password must meet the following criteria:</strong><br>
+                1) at least eight characters in length<br>
+                2) contain upper and lower case characters<br>
+                3) contain at least one numeric character<br>
+                4) contain at least one special character.<br>
+                Acceptable special characters are: ! @ # $ & * ( )<br><br>
+                <strong>It is recommended that your Password meet the following criteria:</strong><br>
+                5) does not contain words found in a dictionary<br>
+                6) should not contain names of pets, family, etc.<br>
+                7) does not match a previous password
+            </div>
+        </div>
+        
+        <div class="note-section" style="background: #fff3cd; border: 1px solid #ffeaa7; margin-top: 20px;">
+            <strong style="color: #0066cc; font-size: 18px;">Note: The Login ID and Password are BOTH Case Sensitive</strong>
+        </div>
+        
+        <div class="note-section">
             <strong>Note:</strong>
             <div class="note-text">
                 The student is responsible to ensure completion of the course is accepted by the entity for which you are taking the course i.e. Courthouse, DMV, Insurance Company, etc.
@@ -130,5 +185,56 @@
             Have an account? <a href="/login">Sign In</a>
         </div>
     </div>
+    
+    <script>
+        // Real-time validation for name fields
+        document.getElementById('first_name').addEventListener('input', function(e) {
+            const value = e.target.value;
+            const regex = /^[a-zA-Z\s\-']*$/;
+            const parent = e.target.closest('.form-group');
+            const errorMsg = parent.querySelector('.error-message');
+            
+            if (!regex.test(value)) {
+                parent.classList.add('error');
+                errorMsg.style.display = 'block';
+                e.target.value = value.replace(/[^a-zA-Z\s\-']/g, '');
+            } else {
+                parent.classList.remove('error');
+                errorMsg.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('last_name').addEventListener('input', function(e) {
+            const value = e.target.value;
+            const regex = /^[a-zA-Z\s\-']*$/;
+            const parent = e.target.closest('.form-group');
+            const errorMsg = parent.querySelector('.error-message');
+            
+            if (!regex.test(value)) {
+                parent.classList.add('error');
+                errorMsg.style.display = 'block';
+                e.target.value = value.replace(/[^a-zA-Z\s\-']/g, '');
+            } else {
+                parent.classList.remove('error');
+                errorMsg.style.display = 'none';
+            }
+        });
+        
+        // Password validation
+        document.getElementById('password').addEventListener('input', function(e) {
+            const value = e.target.value;
+            const hasLower = /[a-z]/.test(value);
+            const hasUpper = /[A-Z]/.test(value);
+            const hasNumber = /[0-9]/.test(value);
+            const hasSpecial = /[@$!%*#?&()]/.test(value);
+            const isLongEnough = value.length >= 8;
+            
+            if (!hasLower || !hasUpper || !hasNumber || !hasSpecial || !isLongEnough) {
+                e.target.style.borderColor = '#ffc107';
+            } else {
+                e.target.style.borderColor = '#28a745';
+            }
+        });
+    </script>
 </body>
 </html>

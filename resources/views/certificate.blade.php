@@ -94,8 +94,18 @@
                 4235 Hillsboro Pike #300644<br>
                 Nashville, TN 37215
             </div>
-            <div class="middle-section">
-                <!-- This spans both rows -->
+            <div class="middle-section" style="display: flex; align-items: center; justify-content: center; text-align: center;">
+                @if(isset($state_stamp) && $state_stamp && $state_stamp->logo_path)
+                    <div>
+                        <img src="{{ asset('storage/' . $state_stamp->logo_path) }}" alt="{{ $state_stamp->state_name }} Stamp" style="max-width: 150px; max-height: 100px;">
+                        <div style="font-size: 10px; margin-top: 5px;">{{ $state_stamp->state_name }}</div>
+                    </div>
+                @else
+                    <div style="padding: 20px; color: #999;">
+                        <div style="font-size: 48px;">🏛️</div>
+                        <div style="font-size: 10px; margin-top: 5px;">State Seal</div>
+                    </div>
+                @endif
             </div>
             <div class="cert-number">
                 (TVS OL 016)<br>

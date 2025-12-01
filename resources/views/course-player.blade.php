@@ -65,14 +65,126 @@
             background-color: var(--accent);
         }
         .form-check {
-            padding-left: 1.5em;
+            padding-left: 0;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 0.65rem 0.75rem 0.65rem 1.25rem;
+            border-radius: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--bg-primary);
+            border: 1.5px solid transparent;
         }
-        .form-check-input {
-            margin-top: 0.25em;
+        .form-check:hover {
+            background-color: var(--hover);
+            border-color: var(--accent);
+            transform: translateX(2px);
+        }
+        .form-check .form-check-input {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            background-color: transparent;
+            border: 2px solid #cbd5e1;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            margin: 0 !important;
+            float: left;
+            margin-left: 0.5em !important;
+        }
+        .form-check-input:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+        .form-check-input:checked {
+            background: linear-gradient(135deg, var(--accent, #0d6efd) 0%, #0056b3 100%);
+            border-color: var(--accent, #0d6efd);
+            animation: radioCheck 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes radioCheck {
+            0% {
+                transform: scale(0.8) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.15) rotate(180deg);
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+            }
+        }
+        .form-check-input:checked::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            animation: dotPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s forwards;
+        }
+        @keyframes dotPop {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .form-check-input:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 1.5px solid var(--accent, #0d6efd);
+            border-radius: 50%;
+            opacity: 0;
+            animation: ripple 0.4s ease-out;
+            pointer-events: none;
+        }
+        @keyframes ripple {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0;
+            }
+        }
+        .form-check-input:focus {
+            border-color: var(--accent, #0d6efd);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
         }
         .form-check-label {
-            margin-left: 0.5rem;
+            margin-left: 0.65rem;
+            cursor: pointer;
+            user-select: none;
+            flex: 1;
+            font-weight: 450;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+        .form-check:has(.form-check-input:checked) {
+            background-color: rgba(13, 110, 253, 0.06);
+            border-color: var(--accent, #0d6efd);
+        }
+        .form-check:has(.form-check-input:checked) .form-check-label {
+            color: var(--accent, #0d6efd);
         }
         .chapter-text {
             display: flex;
@@ -213,9 +325,21 @@
             }).join('');
         }
         
+        let currentChapterId = null;
+        let chapterTimer = null;
+        let timerStartTime = null;
+        let timerElapsed = 0;
+        let timerRequired = 0;
+        let timerInterval = null;
+        
         function selectChapter(chapterId) {
             const chapter = chapters.find(c => c.id === chapterId);
             if (!chapter) return;
+            
+            currentChapterId = chapterId;
+            
+            // Check for timer configuration
+            checkChapterTimer(chapterId);
             
             // Start timer for this chapter
             startChapterTimer(chapterId);
@@ -301,8 +425,10 @@
                 ${pdfContent}
                 <div class="chapter-text">${processedContent}</div>
                 <div id="questions-section" class="mt-4"></div>
-                <div class="mt-4">
-                    <button onclick="submitQuizAndComplete()" class="btn btn-success btn-lg">Complete Chapter & Submit Quiz</button>
+                <div class="mt-4" id="complete-button-container">
+                    <button onclick="submitQuizAndComplete()" class="btn btn-success btn-lg">
+                        <i class="fas fa-check-circle"></i> Complete Chapter & Submit Quiz
+                    </button>
                 </div>
             `;
             
@@ -336,24 +462,60 @@
             }, 100);
         }
         
-        async function completeChapter(chapterId) {
+        async function completeChapter(chapterId = null) {
+            // Use current chapter if no chapterId provided
+            const targetChapterId = chapterId || currentChapterId;
+            
+            if (!targetChapterId) {
+                console.error('No chapter ID available');
+                alert('Please select a chapter first');
+                return;
+            }
+            
             try {
-                const response = await fetch(`/web/enrollments/${enrollmentId}/complete-chapter/${chapterId}`, {
+                console.log('Completing chapter:', targetChapterId);
+                
+                const response = await fetch(`/web/enrollments/${enrollmentId}/complete-chapter/${targetChapterId}`, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
+                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    credentials: 'same-origin'
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        time_spent: 60
+                    })
                 });
                 
+                const data = await response.json();
+                
                 if (response.ok) {
-                    alert('Chapter completed successfully!');
-                    loadCourseData(); // Reload to update progress
+                    console.log('Chapter completed:', data);
+                    
+                    // Show success message
+                    const message = data.enrollment_completed 
+                        ? '🎉 Congratulations! You have completed the course! Your certificate is being generated.'
+                        : `✓ Chapter completed! Progress: ${data.progress_percentage}%`;
+                    
+                    alert(message);
+                    
+                    // Reload course data to update progress
+                    await loadCourseData();
+                    
+                    // If course completed, redirect to certificate page after a moment
+                    if (data.enrollment_completed) {
+                        setTimeout(() => {
+                            window.location.href = '/certificates/select';
+                        }, 2000);
+                    }
+                } else {
+                    console.error('Failed to complete chapter:', data);
+                    alert('Failed to complete chapter: ' + (data.error || 'Unknown error'));
                 }
             } catch (error) {
                 console.error('Error completing chapter:', error);
-                alert('Failed to complete chapter');
+                alert('Failed to complete chapter. Please try again.');
             }
         }
         
@@ -372,13 +534,31 @@
                 if (currentQuestions.length > 0) {
                     currentQuestions.forEach(q => questionAttempts[q.id] = 0);
                     displayQuestions();
+                    // Show quiz button
+                    document.getElementById('complete-button-container').innerHTML = `
+                        <button onclick="submitQuizAndComplete()" class="btn btn-success btn-lg">
+                            <i class="fas fa-check-circle"></i> Complete Chapter & Submit Quiz
+                        </button>
+                    `;
                 } else {
                     console.log('⚠️ No questions found for this chapter');
                     document.getElementById('questions-section').innerHTML = '<p class="text-muted">No quiz available for this chapter.</p>';
+                    // Show simple complete button
+                    document.getElementById('complete-button-container').innerHTML = `
+                        <button onclick="completeChapter()" class="btn btn-success btn-lg">
+                            <i class="fas fa-check-circle"></i> Mark Chapter as Complete
+                        </button>
+                    `;
                 }
             } catch (error) {
                 console.error('❌ Error loading questions:', error);
                 document.getElementById('questions-section').innerHTML = '<p class="text-danger">Error loading quiz.</p>';
+                // Show simple complete button on error
+                document.getElementById('complete-button-container').innerHTML = `
+                    <button onclick="completeChapter()" class="btn btn-success btn-lg">
+                        <i class="fas fa-check-circle"></i> Mark Chapter as Complete
+                    </button>
+                `;
             }
         }
         
@@ -399,7 +579,7 @@
                                         <h6>${index + 1}. ${q.question_text}</h6>
                                         ${options.map((opt, optIndex) => `
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="question_${q.id}" id="q${q.id}_opt${optIndex}" value="${opt}" required>
+                                                <input class="form-check-input" type="radio" name="question_${q.id}" id="q${q.id}_opt${optIndex}" value="${opt}">
                                                 <label class="form-check-label" for="q${q.id}_opt${optIndex}">
                                                     ${opt}
                                                 </label>
@@ -412,6 +592,8 @@
                     </div>
                 </div>
             `;
+            
+
         }
         
         async function submitQuizAndComplete() {
@@ -620,6 +802,98 @@
             });
         }
         
+        async function checkChapterTimer(chapterId) {
+            try {
+                const response = await fetch(`/api/timer/chapter/${chapterId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                const data = await response.json();
+                
+                if (data.timer && data.timer.is_enabled) {
+                    chapterTimer = data.timer;
+                    timerRequired = data.timer.required_time_minutes * 60; // Convert to seconds
+                    timerElapsed = 0;
+                    
+                    // Show timer display
+                    showTimerDisplay();
+                    startTimerCountdown();
+                } else {
+                    hideTimerDisplay();
+                }
+            } catch (error) {
+                console.error('Error checking chapter timer:', error);
+                hideTimerDisplay();
+            }
+        }
+        
+        function showTimerDisplay() {
+            const timerDisplay = document.getElementById('timer-display');
+            if (timerDisplay) {
+                timerDisplay.style.display = 'block';
+                document.getElementById('required-time').textContent = Math.floor(timerRequired / 60);
+                updateTimerDisplay();
+            }
+        }
+        
+        function hideTimerDisplay() {
+            const timerDisplay = document.getElementById('timer-display');
+            if (timerDisplay) {
+                timerDisplay.style.display = 'none';
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+        
+        function startTimerCountdown() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            timerStartTime = Date.now();
+            
+            timerInterval = setInterval(() => {
+                timerElapsed = Math.floor((Date.now() - timerStartTime) / 1000);
+                updateTimerDisplay();
+                
+                // Check if timer is complete
+                if (timerElapsed >= timerRequired) {
+                    document.getElementById('timer-status').textContent = 'Complete';
+                    document.getElementById('timer-status').classList.remove('bg-warning');
+                    document.getElementById('timer-status').classList.add('bg-success');
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerElapsed / 60);
+            const seconds = timerElapsed % 60;
+            const timeText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            document.getElementById('timer-text').textContent = timeText;
+            
+            // Update progress bar
+            const progress = Math.min((timerElapsed / timerRequired) * 100, 100);
+            document.getElementById('timer-progress').style.width = progress + '%';
+            
+            // Update status
+            if (timerElapsed >= timerRequired) {
+                document.getElementById('timer-status').textContent = 'Complete';
+                document.getElementById('timer-status').classList.remove('bg-warning');
+                document.getElementById('timer-status').classList.add('bg-success');
+            } else {
+                document.getElementById('timer-status').textContent = 'In Progress';
+                document.getElementById('timer-status').classList.remove('bg-success');
+                document.getElementById('timer-status').classList.add('bg-warning');
+            }
+        }
+        
         // Show fallback and load course data if Vue doesn't load
         setTimeout(() => {
             const vueApp = document.querySelector('#app course-player');
@@ -629,125 +903,12 @@
             }
         }, 1000);
         
-        // Timer functionality
-        let timerInterval = null;
-        let timerStartTime = 0;
-        let timerElapsed = 0;
-        let timerRequired = 0;
-        let currentTimerSession = null;
-        
+        // Old timer function - now handled by checkChapterTimer
         async function startChapterTimer(chapterId) {
-            console.log('Starting timer for chapter:', chapterId);
-            
-            // Find the chapter to get its type
-            const chapter = chapters.find(c => c.id === chapterId);
-            const chapterType = chapter?.chapter_type || 'chapters';
-            
-            try {
-                const response = await fetch('/api/timer/start', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    credentials: 'same-origin',
-                    body: JSON.stringify({ 
-                        chapter_id: chapterId,
-                        chapter_type: chapterType
-                    })
-                });
-                
-                const data = await response.json();
-                console.log('Timer response:', data);
-                
-                if (data.success && data.timer_required !== false) {
-                    currentTimerSession = data.session;
-                    timerRequired = data.required_time || 0;
-                    timerElapsed = data.session?.time_spent_seconds || 0;
-                    
-                    document.getElementById('timer-display').style.display = 'block';
-                    document.getElementById('required-time').textContent = Math.floor(timerRequired / 60);
-                    
-                    startTimerDisplay();
-                } else {
-                    console.log('No timer required for this chapter');
-                    document.getElementById('timer-display').style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Timer start error:', error);
-            }
+            // This is now handled by checkChapterTimer in selectChapter
+            console.log('Timer check for chapter:', chapterId);
         }
         
-        function startTimerDisplay() {
-            if (timerInterval) clearInterval(timerInterval);
-            
-            timerStartTime = Date.now() - (timerElapsed * 1000);
-            
-            timerInterval = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - timerStartTime) / 1000);
-                timerElapsed = elapsed;
-                
-                const minutes = Math.floor(elapsed / 60);
-                const seconds = elapsed % 60;
-                document.getElementById('timer-text').textContent = 
-                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                
-                const progress = (elapsed / timerRequired) * 100;
-                document.getElementById('timer-progress').style.width = Math.min(progress, 100) + '%';
-                
-                if (elapsed >= timerRequired) {
-                    document.getElementById('timer-status').textContent = 'Completed';
-                    document.getElementById('timer-status').className = 'badge bg-success';
-                }
-                
-                // Update server every 30 seconds
-                if (elapsed % 30 === 0 && currentTimerSession) {
-                    updateTimerOnServer(elapsed);
-                }
-            }, 1000);
-        }
-        
-        async function updateTimerOnServer(timeSpent) {
-            if (!currentTimerSession) return;
-            
-            try {
-                await fetch('/api/timer/update', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    credentials: 'same-origin',
-                    body: JSON.stringify({
-                        session_id: currentTimerSession.id,
-                        time_spent: timeSpent
-                    })
-                });
-            } catch (error) {
-                console.error('Timer update error:', error);
-            }
-        }
-        
-        function stopTimer() {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                if (currentTimerSession) {
-                    updateTimerOnServer(timerElapsed);
-                }
-            }
-        }
-        
-        // Override loadChapter to start timer
-        const originalLoadChapter = window.loadChapter;
-        window.loadChapter = function(chapterId) {
-            stopTimer();
-            if (originalLoadChapter) {
-                originalLoadChapter(chapterId);
-            }
-            startChapterTimer(chapterId);
-        };
     </script>
     </div>
     

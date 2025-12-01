@@ -33,23 +33,38 @@
                     <div class="card-body">
                         @if($enrollments->count() > 0)
                             @foreach($enrollments as $enrollment)
-                            <div class="border rounded p-3 mb-3">
+                            <div class="border rounded p-3 mb-3 {{ $enrollment->access_revoked ? 'bg-light' : '' }}">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-2">{{ $enrollment->course->title }}</h6>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-2">
+                                            {{ $enrollment->course->title }}
+                                            @if($enrollment->access_revoked)
+                                                <span class="badge bg-danger ms-2">Access Revoked</span>
+                                            @endif
+                                        </h6>
                                         <small class="text-muted">
                                             <strong>Enrolled:</strong> {{ $enrollment->created_at->format('M d, Y') }}
                                             @if($enrollment->completed_at)
                                                 <br><strong>Completed:</strong> {{ $enrollment->completed_at->format('M d, Y') }}
                                             @endif
                                             <br><strong>Status:</strong> {{ ucfirst($enrollment->status ?? 'enrolled') }}
+                                            @if($enrollment->access_revoked)
+                                                <br><strong class="text-danger">Certificate Downloaded:</strong> {{ $enrollment->access_revoked_at ? $enrollment->access_revoked_at->format('M d, Y H:i') : 'Yes' }}
+                                            @endif
                                         </small>
                                     </div>
                                     <div>
-                                        <a href="{{ url('/generate-certificate/' . $enrollment->id) }}" 
-                                           class="btn btn-primary">
-                                            <i class="fas fa-download me-2"></i>Generate Certificate
-                                        </a>
+                                        @if($enrollment->access_revoked)
+                                            <button class="btn btn-secondary" disabled>
+                                                <i class="fas fa-check me-2"></i>Already Downloaded
+                                            </button>
+                                        @else
+                                            <a href="{{ url('/certificate/download?enrollment_id=' . $enrollment->id) }}" 
+                                               class="btn btn-primary"
+                                               onclick="return confirm('⚠️ Warning: After downloading this certificate, you will lose access to this course. Continue?')">
+                                                <i class="fas fa-download me-2"></i>Download Certificate
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

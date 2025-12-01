@@ -73,6 +73,17 @@ class CertificateController extends Controller
             $due_date = $user->due_month . '/' . $user->due_day . '/' . $user->due_year;
         }
         
+        // Get state stamp if available
+        $stateStamp = null;
+        if ($enrollment && $enrollment->course) {
+            $stateCode = $enrollment->course->state ?? $enrollment->course->state_code ?? null;
+            if ($stateCode) {
+                $stateStamp = \App\Models\StateStamp::where('state_code', strtoupper($stateCode))
+                    ->where('is_active', true)
+                    ->first();
+            }
+        }
+        
         $data = [
             'student_name' => $request->student_name ?: trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
             'student_address' => $student_address ?: null,
@@ -90,6 +101,7 @@ class CertificateController extends Controller
             'city' => $user->city ?? null,
             'state' => $user->state ?? null,
             'zip' => $user->zip ?? null,
+            'state_stamp' => $stateStamp,
         ];
 
         return view('certificate', $data);
@@ -155,6 +167,18 @@ class CertificateController extends Controller
             'phone' => $phone ?: null,
         ];
         
+        // Get state stamp if available
+        $stateStamp = null;
+        if ($enrollment && $enrollment->course) {
+            $stateCode = $enrollment->course->state ?? $enrollment->course->state_code ?? null;
+            if ($stateCode) {
+                $stateStamp = \App\Models\StateStamp::where('state_code', strtoupper($stateCode))
+                    ->where('is_active', true)
+                    ->first();
+            }
+        }
+        $data['state_stamp'] = $stateStamp;
+        
         // Check if PDF package is available
         if (class_exists('\Barryvdh\DomPDF\Facade\Pdf')) {
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('certificate-pdf', $data);
@@ -175,7 +199,16 @@ class CertificateController extends Controller
             
             // Handle access revocation after download
             $accessService = new CertificateAccessService();
-            $result = $accessService->handleCertificateDownload($user);
+            
+            \Log::info('Certificate download', [
+                'user_id' => $user->id,
+                'enrollment_id' => $request->enrollment_id,
+                'has_enrollment_id' => $request->has('enrollment_id')
+            ]);
+            
+            $result = $accessService->handleCertificateDownload($user, $request->enrollment_id);
+            
+            \Log::info('Access service result', $result);
             
             if ($result['status'] === 'account_locked') {
                 auth()->logout();
@@ -264,7 +297,8 @@ class CertificateController extends Controller
 
     public function show($id)
     {
-        $certificate = FloridaCertificate::findOrFail($id);
+        $certificate = FloridaCertificate::with(['enrollment.user', 'enrollment.course'])
+            ->findOrFail($id);
         return response()->json($certificate);
     }
 
@@ -297,10 +331,90 @@ class CertificateController extends Controller
         return response()->json(['message' => 'Submitted to state', 'certificate' => $certificate]);
     }
 
-    public function emailCertificate($id)
+    public function emailCertificate(Request $request, $id)
     {
-        $certificate = FloridaCertificate::findOrFail($id);
-        return response()->json(['message' => 'Certificate emailed successfully', 'certificate' => $certificate]);
+        try {
+            \Log::info('Starting certificate email process', ['certificate_id' => $id]);
+            
+            $certificate = FloridaCertificate::with(['enrollment.user', 'enrollment.course'])
+                ->findOrFail($id);
+            
+            \Log::info('Certificate loaded', [
+                'certificate_number' => $certificate->dicds_certificate_number,
+                'student_name' => $certificate->student_name
+            ]);
+            
+            // Get email from request or use student's email
+            $recipientEmail = $request->input('email');
+            
+            if (!$recipientEmail && $certificate->enrollment && $certificate->enrollment->user) {
+                $recipientEmail = $certificate->enrollment->user->email;
+            }
+            
+            if (!$recipientEmail) {
+                \Log::error('No recipient email found', ['certificate_id' => $id]);
+                return response()->json(['error' => 'No recipient email address found'], 400);
+            }
+            
+            \Log::info('Recipient email determined', ['email' => $recipientEmail]);
+            
+            // Generate PDF
+            \Log::info('Generating certificate PDF');
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('certificates.florida-certificate', compact('certificate'));
+            $pdfOutput = $pdf->output();
+            \Log::info('PDF generated successfully', ['size' => strlen($pdfOutput) . ' bytes']);
+            
+            // Prepare email data
+            $emailData = [
+                'certificate' => $certificate,
+                'student_name' => $certificate->student_name,
+                'certificate_number' => $certificate->dicds_certificate_number,
+                'course_name' => $certificate->course_name,
+                'completion_date' => $certificate->completion_date->format('F d, Y')
+            ];
+            
+            \Log::info('Sending email', [
+                'to' => $recipientEmail,
+                'from' => config('mail.from.address'),
+                'subject' => 'Your Course Completion Certificate'
+            ]);
+            
+            // Send email
+            \Mail::send('emails.certificate', $emailData, function ($message) use ($recipientEmail, $certificate, $pdfOutput) {
+                $message->to($recipientEmail)
+                        ->subject('Your Course Completion Certificate - ' . $certificate->dicds_certificate_number)
+                        ->attachData($pdfOutput, 'certificate-' . $certificate->dicds_certificate_number . '.pdf', [
+                            'mime' => 'application/pdf'
+                        ]);
+            });
+            
+            \Log::info('Email sent successfully', ['to' => $recipientEmail]);
+            
+            // Update certificate sent status
+            $certificate->update([
+                'is_sent_to_student' => true,
+                'sent_at' => now()
+            ]);
+            
+            \Log::info('Certificate status updated', ['certificate_id' => $id]);
+            
+            return response()->json([
+                'message' => 'Certificate emailed successfully',
+                'sent_to' => $recipientEmail,
+                'certificate_number' => $certificate->dicds_certificate_number
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to email certificate', [
+                'certificate_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'error' => 'Failed to send certificate email: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function download($id)

@@ -114,6 +114,42 @@
         </div>
     </div>
     
+    <!-- Email Certificate Modal -->
+    <div class="modal fade" id="emailCertificateModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Email Certificate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="emailCertificateForm">
+                        <input type="hidden" id="emailCertificateId">
+                        <div class="mb-3">
+                            <label class="form-label">Student Name</label>
+                            <input type="text" class="form-control" id="emailStudentName" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Certificate Number</label>
+                            <input type="text" class="form-control" id="emailCertNumber" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Recipient Email Address</label>
+                            <input type="email" class="form-control" id="recipientEmail" placeholder="student@example.com" required>
+                            <small class="text-muted">The certificate will be sent to this email address</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" onclick="sendCertificateEmail()" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Send Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script>
         async function loadCertificates() {
             try {
@@ -343,25 +379,75 @@
         }
         
         function emailCertificate(certificateId) {
-            const email = prompt('Enter recipient email address:');
-            if (email) {
-                fetch(`/web/admin/certificates/${certificateId}/email`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({ email: email })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert('Certificate emailed successfully!');
-                })
-                .catch(error => {
-                    console.error('Error emailing certificate:', error);
-                    alert('Error emailing certificate');
-                });
+            // Fetch certificate details to get student email
+            fetch(`/web/admin/certificates/${certificateId}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(certificate => {
+                // Populate modal with certificate info
+                document.getElementById('emailCertificateId').value = certificate.id;
+                document.getElementById('emailStudentName').value = certificate.student_name;
+                document.getElementById('emailCertNumber').value = certificate.dicds_certificate_number || certificate.certificate_number || 'N/A';
+                
+                // Try to get student email from enrollment
+                let studentEmail = '';
+                if (certificate.enrollment && certificate.enrollment.user) {
+                    studentEmail = certificate.enrollment.user.email;
+                } else if (certificate.user) {
+                    studentEmail = certificate.user.email;
+                }
+                
+                document.getElementById('recipientEmail').value = studentEmail;
+                
+                // Show modal
+                new bootstrap.Modal(document.getElementById('emailCertificateModal')).show();
+            })
+            .catch(error => {
+                console.error('Error loading certificate:', error);
+                alert('Failed to load certificate details');
+            });
+        }
+        
+        function sendCertificateEmail() {
+            const certificateId = document.getElementById('emailCertificateId').value;
+            const email = document.getElementById('recipientEmail').value;
+            
+            if (!email) {
+                alert('Please enter an email address');
+                return;
             }
+            
+            // Disable button and show loading
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            
+            fetch(`/web/admin/certificates/${certificateId}/email`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                bootstrap.Modal.getInstance(document.getElementById('emailCertificateModal')).hide();
+                alert('✓ Certificate emailed successfully to ' + email);
+            })
+            .catch(error => {
+                console.error('Error emailing certificate:', error);
+                alert('Error emailing certificate');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
         }
         
         async function loadEnrollments() {

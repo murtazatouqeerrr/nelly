@@ -282,4 +282,30 @@ class CourseController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function showDetails($table, $courseId)
+{
+    if ($table === 'courses') {
+        $course = Course::find($courseId);
+    } elseif ($table === 'florida_courses') {
+        $course = \App\Models\FloridaCourse::find($courseId);
+    } else {
+        abort(404, 'Invalid course type');
+    }
+
+    if (!$course) {
+        abort(404, 'Course not found');
+    }
+
+    // Fetch reviews normally
+    $reviews = \App\Models\Review::where('course_name', $course->title)->get();
+    
+    return view('course-details', [
+        'course' => $course,
+        'reviews' => $reviews,
+        'avgRating' => round($reviews->avg('rating') ?? 0, 1),
+        'totalReviews' => $reviews->count()
+    ]);
+}
+
 }

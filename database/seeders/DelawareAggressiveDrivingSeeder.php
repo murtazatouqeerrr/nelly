@@ -18,7 +18,7 @@ class DelawareAggressiveDrivingSeeder extends Seeder
             'state' => 'DE',
             'passing_score' => 80,
             'duration' => 240, // 4 hours
-            'price' => 49.99,
+            'price' => 100.00,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);

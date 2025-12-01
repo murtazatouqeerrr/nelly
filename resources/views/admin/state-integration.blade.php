@@ -19,9 +19,14 @@
     <div class="container mt-4" style="margin-left: 300px; max-width: calc(100% - 320px);">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>State Integration & Automation</h2>
-            <button onclick="showCreateModal()" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Add State Configuration
-            </button>
+            <div>
+                <a href="/admin/manage-counties" class="btn btn-info me-2">
+                    <i class="fas fa-map"></i> Manage Counties & Courts
+                </a>
+                <button onclick="showCreateModal()" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add State Configuration
+                </button>
+            </div>
         </div>
 
         <!-- Stats Cards -->

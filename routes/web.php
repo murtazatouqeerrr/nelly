@@ -98,6 +98,8 @@ Route::get('/courses', function () {
     return view('courses');
 })->middleware('auth');
 
+Route::get('/course-details/{table}/{courseId}', [App\Http\Controllers\CourseController::class, 'showDetails'])->middleware('auth');
+
 Route::get('/api/courses/public', [App\Http\Controllers\CourseController::class, 'publicIndex'])->middleware('auth');
 
 Route::get('/certificates', function () {
@@ -128,8 +130,19 @@ Route::get('/generate-certificate/{enrollment_id}', function ($enrollment_id) {
         'enrollment_id' => $enrollment->id
     ];
     
-    return redirect('/certificate?' . http_build_query($params));
+    $review = \App\Models\Review::where('user_id', $user->id)
+        ->where('enrollment_id', $enrollment_id)
+        ->first();
+    
+    if ($review) {
+        return redirect('/certificate?' . http_build_query($params));
+    }
+    
+    return redirect('/review-course?' . http_build_query($params));
 })->middleware('auth');
+
+Route::get('/review-course', [App\Http\Controllers\ReviewController::class, 'show'])->middleware('auth')->name('review-course');
+Route::post('/submit-review', [App\Http\Controllers\ReviewController::class, 'store'])->middleware('auth')->name('submit-review');
 
 Route::get('/certificates/verify/{hash}', function ($hash) {
     $certificate = \App\Models\FloridaCertificate::where('verification_hash', $hash)->first();
@@ -168,11 +181,39 @@ Route::get('/my-enrollments', function () {
     return view('my-enrollments');
 })->middleware('auth');
 
-Route::get('/course-player/{enrollmentId}', function () {
+Route::get('/course-player/{enrollmentId}', function ($enrollmentId) {
+    $enrollment = \App\Models\UserCourseEnrollment::where('id', $enrollmentId)
+        ->where('user_id', auth()->id())
+        ->first();
+    
+    if (!$enrollment) {
+        return redirect('/dashboard')->with('error', 'Enrollment not found');
+    }
+    
+    if ($enrollment->access_revoked) {
+        return redirect('/dashboard')->with('error', 'Access to this course has been revoked after certificate download');
+    }
+    
     return view('course-player');
 })->middleware('auth');
 
 Route::get('/course-player', function () {
+    $enrollmentId = request()->get('enrollmentId');
+    
+    if ($enrollmentId) {
+        $enrollment = \App\Models\UserCourseEnrollment::where('id', $enrollmentId)
+            ->where('user_id', auth()->id())
+            ->first();
+        
+        if (!$enrollment) {
+            return redirect('/dashboard')->with('error', 'Enrollment not found');
+        }
+        
+        if ($enrollment->access_revoked) {
+            return redirect('/dashboard')->with('error', 'Access to this course has been revoked after certificate download');
+        }
+    }
+    
     return view('course-player');
 })->middleware('auth');
 
@@ -183,6 +224,12 @@ Route::get('/profile', function () {
 Route::get('/my-payments', function () {
     return view('my-payments');
 })->middleware('auth');
+
+// Public invoice routes for users
+Route::middleware(['auth'])->group(function () {
+    Route::get('/invoices/{invoice}', [App\Http\Controllers\InvoiceController::class, 'showPublic'])->name('invoice.show');
+    Route::get('/invoices/{invoice}/download', [App\Http\Controllers\InvoiceController::class, 'downloadPublic'])->name('invoice.download');
+});
 
 Route::get('/create-course', function () {
     return view('create-course');
@@ -270,6 +317,16 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::post('/web/admin/state-configurations', [App\Http\Controllers\StateConfigurationController::class, 'store']);
     Route::get('/web/admin/state-configurations/{stateCode}/test-connection', [App\Http\Controllers\StateConfigurationController::class, 'testConnection']);
     Route::delete('/web/admin/state-configurations/{stateConfiguration}', [App\Http\Controllers\StateConfigurationController::class, 'destroy']);
+    Route::get('/web/admin/courts/states', [App\Http\Controllers\CountyController::class, 'index']);
+    Route::post('/web/admin/courts/states', [App\Http\Controllers\CountyController::class, 'storeState']);
+    Route::delete('/web/admin/courts/states/{state}', [App\Http\Controllers\CountyController::class, 'deleteState']);
+    Route::get('/web/admin/courts/{state}/counties', [App\Http\Controllers\CountyController::class, 'getCounties']);
+    Route::post('/web/admin/courts/{state}/counties', [App\Http\Controllers\CountyController::class, 'storeCounty']);
+    Route::delete('/web/admin/courts/{state}/counties/{county}', [App\Http\Controllers\CountyController::class, 'deleteCounty']);
+    Route::get('/web/admin/courts/{state}/{county}', [App\Http\Controllers\CountyController::class, 'getCourts']);
+    Route::post('/web/admin/courts', [App\Http\Controllers\CountyController::class, 'storeCourt']);
+    Route::put('/web/admin/courts/{id}', [App\Http\Controllers\CountyController::class, 'updateCourt']);
+    Route::delete('/web/admin/courts/{id}', [App\Http\Controllers\CountyController::class, 'deleteCourt']);
     
     Route::get('/web/admin/submission-queue/stats', [App\Http\Controllers\StateSubmissionController::class, 'stats']);
     Route::post('/web/admin/submission-queue/process-pending', [App\Http\Controllers\StateSubmissionController::class, 'processPending']);
@@ -334,6 +391,13 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::get('/admin/payments/stripe', function () { return view('admin.payments.stripe'); });
     Route::get('/admin/payments/paypal', function () { return view('admin.payments.paypal'); });
     Route::get('/admin/course-timers', function () { return view('admin.course-timers'); });
+    
+    // State Stamps Admin routes
+    Route::get('/admin/state-stamps', [App\Http\Controllers\StateStampController::class, 'index']);
+    Route::post('/admin/state-stamps', [App\Http\Controllers\StateStampController::class, 'store']);
+    Route::put('/admin/state-stamps/{id}', [App\Http\Controllers\StateStampController::class, 'update']);
+    Route::delete('/admin/state-stamps/{id}', [App\Http\Controllers\StateStampController::class, 'destroy']);
+    
     Route::get('/admin/support/tickets', [App\Http\Controllers\SupportTicketController::class, 'index']);
     Route::get('/admin/support/recipients', [App\Http\Controllers\TicketRecipientController::class, 'index'])->name('ticket-recipients.index');
     Route::post('/admin/support/recipients', [App\Http\Controllers\TicketRecipientController::class, 'store'])->name('ticket-recipients.store');
@@ -592,6 +656,18 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
             ->header('Content-Type', 'text/html')
             ->header('Content-Disposition', 'attachment; filename="export-' . $type . '-' . time() . '.html"');
     });
+    Route::get('/api/chapters', [App\Http\Controllers\ChapterController::class, 'getAllChapters']);
+    
+    // Timer API routes
+    Route::get('/api/timer/list', [App\Http\Controllers\TimerController::class, 'list']);
+    Route::post('/api/timer/configure', [App\Http\Controllers\TimerController::class, 'configure']);
+    Route::post('/api/timer/toggle/{id}', [App\Http\Controllers\TimerController::class, 'toggle']);
+    Route::delete('/api/timer/delete/{id}', [App\Http\Controllers\TimerController::class, 'delete']);
+    Route::get('/api/timer/chapter/{id}', [App\Http\Controllers\TimerController::class, 'getForChapter']);
+    
+    // State Stamps API routes
+    Route::get('/api/state-stamps/{stateCode}', [App\Http\Controllers\StateStampController::class, 'getByStateCode']);
+    
     Route::get('/api/florida-courses/{id}/chapters', [App\Http\Controllers\ChapterController::class, 'indexWeb']);
     Route::post('/api/florida-courses/{id}/chapters', [App\Http\Controllers\ChapterController::class, 'storeWeb']);
     Route::get('/api/chapters/{id}', [App\Http\Controllers\ChapterController::class, 'show']);
@@ -665,6 +741,9 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     });
     Route::get('/admin/state-integration', function () {
         return view('admin.state-integration');
+    });
+    Route::get('/admin/manage-counties', function () {
+        return view('admin.manage-counties');
     });
     Route::get('/admin/email-templates', function () {
         return view('admin.email-templates');
@@ -841,6 +920,11 @@ Route::middleware('auth')->group(function () {
 // Public Pages
 Route::get('/register/{step?}', [App\Http\Controllers\RegistrationController::class, 'showStep'])->name('register.step');
 Route::post('/register/{step}', [App\Http\Controllers\RegistrationController::class, 'processStep'])->name('register.process');
+
+// Payment Routes - Course Enrollment
+Route::middleware('auth')->group(function () {
+    Route::get('/payment', [App\Http\Controllers\PaymentController::class, 'showPayment'])->name('payment.show');
+});
 
 Route::get('/certificate', [App\Http\Controllers\CertificateController::class, 'generate']);
 Route::get('/certificate/download', [App\Http\Controllers\CertificateController::class, 'downloadPdf'])->middleware('auth');

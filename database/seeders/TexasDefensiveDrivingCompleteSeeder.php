@@ -28,20 +28,21 @@ class TexasDefensiveDrivingCompleteSeeder extends Seeder
     private function createTexasCourse()
     {
         // Check if course already exists
-        $existingCourse = DB::table('florida_courses')->where('title', 'Texas Defensive Driving Course')->first();
+        $existingCourse = DB::table('florida_courses')->where('title', 'LIKE', 'Texas%Ticket Dismissal%')->first();
         
         if ($existingCourse) {
-            $this->command->info('Texas course already exists, updating...');
+            $this->command->info('Texas Ticket Dismissal course already exists, updating...');
             return $existingCourse->id;
         }
 
+        // Create Ticket Dismissal Course
         $courseId = DB::table('florida_courses')->insertGetId([
-            'title' => 'Texas Defensive Driving Course',
-            'description' => 'Complete 6-hour Texas Defensive Driving Course approved by TDLR for ticket dismissal and insurance discounts. License Number: CP007',
+            'title' => 'Texas Driving/Ticket Dismissal - 6 Hour Defensive Driving Course',
+            'description' => 'Complete 6-hour Texas Defensive Driving Course approved by TDLR for ticket dismissal. License Number: CP007',
             'state' => 'TX',
-            'course_type' => 'BDI',
+            'course_type' => 'Ticket Dismissal',
             'duration' => 360,
-            'price' => 29.95,
+            'price' => 28.00,
             'passing_score' => 70,
             'is_active' => true,
             'certificate_type' => 'CP007',
@@ -49,7 +50,23 @@ class TexasDefensiveDrivingCompleteSeeder extends Seeder
             'updated_at' => Carbon::now(),
         ]);
 
-        $this->command->info("Created Texas course with ID: {$courseId}");
+        // Create Insurance Discount Course
+        $insuranceCourseId = DB::table('florida_courses')->insertGetId([
+            'title' => 'Texas Insurance Discount - 6 Hour Defensive Driving Course',
+            'description' => 'Complete 6-hour Texas Defensive Driving Course approved by TDLR for insurance discounts. License Number: CP007',
+            'state' => 'TX',
+            'course_type' => 'Insurance Discount',
+            'duration' => 360,
+            'price' => 28.00,
+            'passing_score' => 70,
+            'is_active' => true,
+            'certificate_type' => 'CP007',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $this->command->info("Created Texas Ticket Dismissal course with ID: {$courseId}");
+        $this->command->info("Created Texas Insurance Discount course with ID: {$insuranceCourseId}");
         return $courseId;
     }
 

@@ -78,14 +78,7 @@ class PaymentController extends Controller
             $payment = Payment::create($paymentData);
             \Log::info('Payment created successfully', ['payment_id' => $payment->id]);
 
-            // Auto-create invoice
-            $invoice = Invoice::create([
-                'payment_id' => $payment->id,
-                'invoice_number' => 'INV-' . date('Y') . '-' . str_pad($payment->id, 6, '0', STR_PAD_LEFT),
-                'total_amount' => $payment->amount,
-                'invoice_date' => now(),
-            ]);
-            \Log::info('Invoice created automatically', ['invoice_id' => $invoice->id]);
+            // Invoice will be created automatically by PaymentObserver
 
             return response()->json($payment->load(['user', 'enrollment.course', 'invoice']));
         } catch (\Exception $e) {
@@ -184,5 +177,93 @@ class PaymentController extends Controller
             'total_refunded' => $totalRefunded,
             'remaining_amount' => $payment->amount - $totalRefunded
         ]);
+    }
+
+    public function showPayment(Request $request)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please login to continue');
+        }
+
+        $courseId = $request->course_id;
+        $table = $request->input('table', 'florida_courses');
+        $user = auth()->user();
+        
+        // Validate table parameter
+        if (!in_array($table, ['courses', 'florida_courses'])) {
+            return redirect()->back()->with('error', 'Invalid course table specified');
+        }
+        
+        // Determine which model to use based on table parameter
+        try {
+            if ($table === 'courses') {
+                $course = \App\Models\Course::findOrFail($courseId);
+            } else {
+                $course = \App\Models\FloridaCourse::findOrFail($courseId);
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Course not found');
+        }
+        
+        // Create or get enrollment (required for checkout page)
+        $enrollment = \App\Models\UserCourseEnrollment::firstOrCreate([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+        ], [
+            'amount_paid' => $course->price ?? 0,
+            'payment_status' => 'pending',
+            'enrolled_at' => now(),
+            'status' => 'active', // Valid values: active, completed, expired, cancelled
+        ]);
+        
+        return view('payment.checkout', compact('course', 'enrollment'));
+    }
+
+    public function processPayment(Request $request)
+    {
+        $request->validate([
+            'course_id' => 'required',
+            'table' => 'required|in:courses,florida_courses',
+            'payment_method' => 'required|string',
+            'amount' => 'required|numeric|min:0',
+        ]);
+
+        $user = auth()->user();
+        $table = $request->table;
+        
+        // Get course from appropriate table
+        if ($table === 'courses') {
+            $course = \App\Models\Course::findOrFail($request->course_id);
+        } else {
+            $course = \App\Models\FloridaCourse::findOrFail($request->course_id);
+        }
+
+        // Create enrollment
+        $enrollment = \App\Models\UserCourseEnrollment::firstOrCreate([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+        ], [
+            'enrolled_at' => now(),
+            'status' => 'active',
+        ]);
+
+        // Create payment (invoice will be created automatically by PaymentObserver)
+        $payment = Payment::create([
+            'user_id' => $user->id,
+            'enrollment_id' => $enrollment->id,
+            'amount' => $request->amount,
+            'payment_method' => $request->payment_method,
+            'gateway' => $request->payment_method === 'stripe' ? 'stripe' : 'manual',
+            'gateway_payment_id' => 'pay_' . time() . '_' . $user->id,
+            'billing_name' => $user->first_name . ' ' . $user->last_name,
+            'billing_email' => $user->email,
+            'status' => 'completed',
+        ]);
+
+        // Clear pending enrollment session
+        session()->forget('pending_course_enrollment');
+
+        return redirect()->route('course-player', ['enrollmentId' => $enrollment->id])
+            ->with('success', 'Payment successful! You can now access the course.');
     }
 }

@@ -8,6 +8,47 @@ use Illuminate\Http\Request;
 
 class ChapterController extends Controller
 {
+    public function getAllChapters()
+    {
+        try {
+            $chapters = Chapter::orderBy('course_id')->orderBy('order_index')->get();
+            
+            $result = $chapters->map(function($chapter) {
+                // Try to get course from both tables
+                $course = \App\Models\Course::find($chapter->course_id);
+                $courseType = 'courses';
+                
+                if (!$course) {
+                    $course = \App\Models\FloridaCourse::find($chapter->course_id);
+                    $courseType = 'florida_courses';
+                }
+                
+                return [
+                    'id' => $chapter->id,
+                    'title' => $chapter->title,
+                    'display_title' => $chapter->title,
+                    'course_id' => $chapter->course_id,
+                    'course_name' => $course ? $course->title : 'Unknown Course',
+                    'type' => $courseType,
+                    'order_index' => $chapter->order_index,
+                    'course' => $course ? [
+                        'id' => $course->id,
+                        'title' => $course->title
+                    ] : null
+                ];
+            });
+            
+            // Sort by course name
+            $result = $result->sortBy('course_name')->values();
+            
+            return response()->json($result);
+        } catch (\Exception $e) {
+            \Log::error('Error loading all chapters: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            return response()->json(['error' => 'Failed to load chapters', 'message' => $e->getMessage()], 500);
+        }
+    }
+    
     public function index(Course $course)
     {
         $chapters = $course->chapters()->orderBy('order_index')->get();

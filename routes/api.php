@@ -656,5 +656,47 @@ Route::get('/public/courses', function () {
     }
 });
 
+// Court API Routes
+Route::get('/courts/states', function () {
+    return response()->json(
+        \App\Models\Court::distinct()->pluck('state')->sort()->values()
+    );
+});
+
+Route::get('/courts/by-state/{state}', function ($state) {
+    return response()->json(
+        \App\Models\Court::where('state', $state)
+            ->distinct()
+            ->pluck('county')
+            ->sort()
+            ->values()
+    );
+});
+
+Route::get('/courts/by-county/{state}/{county}', function ($state, $county) {
+    $page = request('page', 1);
+    $limit = 100;
+    $offset = ($page - 1) * $limit;
+    
+    $courts = \App\Models\Court::where('state', $state)
+        ->where('county', $county)
+        ->orderBy('court')
+        ->offset($offset)
+        ->limit($limit)
+        ->pluck('court');
+    
+    $total = \App\Models\Court::where('state', $state)
+        ->where('county', $county)
+        ->count();
+    
+    return response()->json([
+        'courts' => $courts,
+        'total' => $total,
+        'page' => $page,
+        'limit' => $limit,
+        'has_more' => ($offset + $limit) < $total
+    ]);
+});
+
 // Include new modules API routes
 require __DIR__.'/new-modules-api.php';

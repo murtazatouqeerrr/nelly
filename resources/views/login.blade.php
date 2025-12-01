@@ -10,10 +10,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="/css/themes.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body>
     <x-theme-switcher />
-    <div class="container mt-5">
+    <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
@@ -38,12 +46,27 @@
                             </div>
                         @endif
                         
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> <strong>Login Information:</strong><br>
-                            • Use your registered email and password<br>
-                            • Password is case-sensitive<br>
-                            • Contact admin if you forgot your password
-                        </div>
+                        <!-- <div class="alert alert-warning mb-3">
+                            <div class="text-center">
+                                <strong style="font-size: 18px;">Note: The Login ID and Password are <u>BOTH Case Sensitive</u></strong>
+                            </div>
+                        </div> -->
+                        
+                        <!-- <div class="alert alert-info mb-3">
+                            <strong>Password Guidelines:</strong><br>
+                            <small class="d-block mt-2">
+                                <strong>Note: Your Password must meet the following criteria:</strong><br>
+                                1) at least eight characters in length<br>
+                                2) contain upper and lower case characters<br>
+                                3) contain at least one numeric character<br>
+                                4) contain at least one special character.<br>
+                                Acceptable special characters are: ! @ # $ & * ( )<br><br>
+                                <strong>It is recommended that your Password meet the following criteria:</strong><br>
+                                5) does not contain words found in a dictionary<br>
+                                6) should not contain names of pets, family, etc.<br>
+                                7) does not match a previous password
+                            </small>
+                        </div> -->
                         
                         <form method="POST" action="/login">
                             @csrf

@@ -13,12 +13,12 @@ class Delaware6HourDefensiveDrivingSeeder extends Seeder
         // Create Delaware 6-Hour Insurance Discount Course
         $courseId = DB::table('florida_courses')->insertGetId([
             'course_type' => 'Insurance Discount',
-            'title' => 'Delaware Insurance Discount - 6 Hour Course (10% Discount)',
+            'title' => 'Delaware Insurance Discount - 3 Year Refresher/Renewal 6 Hour Course',
             'description' => 'Complete 6-hour Delaware Insurance Discount Course for 10% insurance discount and 3-point credit on driving record.',
             'state' => 'DE',
             'passing_score' => 80,
             'duration' => 360, // 6 hours
-            'price' => 39.99,
+            'price' => 25.00,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);

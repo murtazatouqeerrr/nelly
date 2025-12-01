@@ -18,7 +18,7 @@ class Delaware3HourRefresherSeeder extends Seeder
             'state' => 'DE',
             'passing_score' => 80,
             'duration' => 180, // 3 hours
-            'price' => 24.99,
+            'price' => 17.95,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);

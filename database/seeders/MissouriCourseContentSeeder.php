@@ -14,16 +14,32 @@ class MissouriCourseContentSeeder extends Seeder
         // Delete old Missouri courses and create fresh one
         DB::table('courses')->where('state', 'Missouri')->delete();
         
-        // Create Missouri Course in courses table
+        // Create Missouri Ticket Dismissal Course
         $course = DB::table('courses')->insertGetId([
-            'title' => 'Missouri Driver Improvement Program',
-            'description' => 'State-approved by the Missouri Safety Center. Complete this 11-chapter course to reduce points on your driving record, meet court requirements, or qualify for insurance discounts. 100% online with unlimited retakes.',
+            'title' => 'Missouri Driving/Ticket Dismissal - 8 Hour Driver Improvement Course',
+            'description' => 'State-approved by the Missouri Safety Center. Complete this 8-hour course to reduce points on your driving record and meet court requirements. 100% online with unlimited retakes.',
             'state' => 'Missouri',
             'duration' => 480,
-            'price' => 29.95,
+            'price' => 24.94,
             'passing_score' => 80,
             'is_active' => true,
-            'course_type' => 'BDI',
+            'course_type' => 'Ticket Dismissal',
+            'delivery_type' => 'Internet',
+            'certificate_type' => 'form_4444',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+        
+        // Create Missouri Insurance Discount Course
+        $insuranceCourse = DB::table('courses')->insertGetId([
+            'title' => 'Missouri Insurance Discount - Defensive Driving Course',
+            'description' => 'State-approved defensive driving course for insurance discounts. 100% online with unlimited retakes.',
+            'state' => 'Missouri',
+            'duration' => 480,
+            'price' => 24.95,
+            'passing_score' => 80,
+            'is_active' => true,
+            'course_type' => 'Insurance Discount',
             'delivery_type' => 'Internet',
             'certificate_type' => 'form_4444',
             'created_at' => now(),
