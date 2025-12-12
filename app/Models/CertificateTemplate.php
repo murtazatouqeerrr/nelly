@@ -12,10 +12,10 @@ class CertificateTemplate extends Model
         'html_content',
         'background_image',
         'font_family',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 }

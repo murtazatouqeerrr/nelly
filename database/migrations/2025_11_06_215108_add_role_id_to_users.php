@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Only add the column and foreign key if they don't exist
-            if (!Schema::hasColumn('users', 'role_id')) {
+            if (! Schema::hasColumn('users', 'role_id')) {
                 $table->foreignId('role_id')
                     ->nullable()
                     ->after('id')
@@ -42,6 +42,7 @@ return new class extends Migration
     {
         $connection = Schema::getConnection()->getDoctrineSchemaManager();
         $doctrineTable = $connection->listTableDetails($tableName);
+
         return array_keys($doctrineTable->getForeignKeys());
     }
 };

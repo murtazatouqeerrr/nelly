@@ -26,13 +26,13 @@ class EnrollmentConfirmation extends Notification
     public function toMail($notifiable)
     {
         $course = $this->enrollment->course ?? $this->enrollment->floridaCourse;
-        
+
         return (new MailMessage)
-            ->subject('Enrollment Confirmation - ' . $course->title)
+            ->subject('Enrollment Confirmation - '.$course->title)
             ->view('emails.courses.enrolled', [
                 'user' => $notifiable,
                 'enrollment' => $this->enrollment,
-                'course' => $course
+                'course' => $course,
             ]);
     }
 }

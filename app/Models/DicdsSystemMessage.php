@@ -14,13 +14,13 @@ class DicdsSystemMessage extends Model
         'is_active',
         'start_date',
         'end_date',
-        'created_by'
+        'created_by',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'start_date' => 'datetime',
-        'end_date' => 'datetime'
+        'end_date' => 'datetime',
     ];
 
     public function creator(): BelongsTo

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SecurityLog;
 use App\Models\LoginAttempt;
-use Illuminate\Http\Request;
+use App\Models\SecurityLog;
 use Illuminate\Http\JsonResponse;
 
 class AuditController extends Controller
@@ -12,7 +11,7 @@ class AuditController extends Controller
     public function getDashboard(): JsonResponse
     {
         try {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 
@@ -35,7 +34,8 @@ class AuditController extends Controller
                 'recent_events' => $recentEvents,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Audit dashboard failed: ' . $e->getMessage());
+            \Log::error('Audit dashboard failed: '.$e->getMessage());
+
             return response()->json([
                 'stats' => [
                     'total_events' => 0,
@@ -44,14 +44,14 @@ class AuditController extends Controller
                     'critical_events' => 0,
                 ],
                 'recent_events' => [],
-                'error' => 'Failed to load dashboard data'
+                'error' => 'Failed to load dashboard data',
             ], 500);
         }
     }
 
     public function getComplianceReport(): JsonResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

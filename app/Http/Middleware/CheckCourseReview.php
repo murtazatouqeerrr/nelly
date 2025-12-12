@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Review;
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\Review;
 
 class CheckCourseReview
 {
@@ -12,7 +12,7 @@ class CheckCourseReview
     {
         $enrollmentId = $request->query('enrollment_id');
 
-        if (!$enrollmentId) {
+        if (! $enrollmentId) {
             return $next($request);
         }
 
@@ -21,9 +21,9 @@ class CheckCourseReview
             ->first();
 
         if ($review) {
-            return redirect('/certificate?' . $request->getQueryString());
+            return redirect('/certificate?'.$request->getQueryString());
         }
 
-        return redirect('/review-course?enrollment_id=' . $enrollmentId . '&' . $request->getQueryString());
+        return redirect('/review-course?enrollment_id='.$enrollmentId.'&'.$request->getQueryString());
     }
 }

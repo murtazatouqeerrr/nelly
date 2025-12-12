@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\{DicdsAuthController, DicdsController, WebAdminController};
+use App\Http\Controllers\DicdsAuthController;
+use App\Http\Controllers\DicdsController;
+use App\Http\Controllers\WebAdminController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes

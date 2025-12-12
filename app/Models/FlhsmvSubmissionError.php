@@ -11,12 +11,12 @@ class FlhsmvSubmissionError extends Model
         'error_code',
         'error_message',
         'error_details',
-        'occurred_at'
+        'occurred_at',
     ];
 
     protected $casts = [
         'error_details' => 'array',
-        'occurred_at' => 'datetime'
+        'occurred_at' => 'datetime',
     ];
 
     public function submission()

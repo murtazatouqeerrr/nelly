@@ -26,7 +26,7 @@ class FloridaCertificate extends Model
         'verification_hash',
         'is_sent_to_student',
         'sent_at',
-        'generated_at'
+        'generated_at',
     ];
 
     protected $casts = [
@@ -36,9 +36,9 @@ class FloridaCertificate extends Model
         'final_exam_score' => 'decimal:2',
         'is_sent_to_student' => 'boolean',
         'sent_at' => 'datetime',
-        'generated_at' => 'datetime'
+        'generated_at' => 'datetime',
     ];
-    
+
     public function enrollment(): BelongsTo
     {
         return $this->belongsTo(UserCourseEnrollment::class, 'enrollment_id');

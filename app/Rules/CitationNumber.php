@@ -22,7 +22,7 @@ class CitationNumber implements Rule
         }
 
         // For other reasons, if provided, can be any length except 7 (treated as court order)
-        if (!empty($value)) {
+        if (! empty($value)) {
             return true;
         }
 

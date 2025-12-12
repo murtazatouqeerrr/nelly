@@ -13,7 +13,7 @@ class NotificationSetting extends Model
         'email_system',
         'sms_reminders',
         'in_app_notifications',
-        'push_notifications'
+        'push_notifications',
     ];
 
     protected $casts = [
@@ -22,7 +22,7 @@ class NotificationSetting extends Model
         'email_system' => 'boolean',
         'sms_reminders' => 'boolean',
         'in_app_notifications' => 'boolean',
-        'push_notifications' => 'boolean'
+        'push_notifications' => 'boolean',
     ];
 
     public function user()

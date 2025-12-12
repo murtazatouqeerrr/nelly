@@ -9,13 +9,13 @@ class TexasMasterSeeder extends Seeder
     public function run()
     {
         $this->command->info('Starting Texas course seeding...');
-        
+
         // Run all Texas-related seeders
         $this->call([
             TexasDefensiveDrivingCompleteSeeder::class,
             TexasFaqSeeder::class,
         ]);
-        
+
         $this->command->info('Texas course seeding completed successfully!');
         $this->command->info('');
         $this->command->info('Texas Course Details:');

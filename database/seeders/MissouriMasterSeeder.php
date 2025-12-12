@@ -16,7 +16,7 @@ class MissouriMasterSeeder extends Seeder
             MissouriFinalExamSeeder::class,
             MissouriFaqSeeder::class,
         ]);
-        
+
         $this->command->info('✅ Missouri course, chapters, quizzes, and FAQs seeded successfully!');
     }
 }

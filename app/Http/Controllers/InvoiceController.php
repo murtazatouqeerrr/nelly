@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
@@ -14,23 +13,24 @@ class InvoiceController extends Controller
         $invoices = Invoice::with(['payment.user', 'payment.enrollment.course'])
             ->orderBy('created_at', 'desc')
             ->paginate(20);
-        
+
         return response()->json($invoices);
     }
 
     public function show(Invoice $invoice)
     {
         $invoice->load(['payment.user', 'payment.enrollment.course']);
+
         return response()->json($invoice);
     }
 
     public function download(Invoice $invoice)
     {
         $invoice->load(['payment.user', 'payment.enrollment.course']);
-        
+
         $pdf = Pdf::loadView('invoices.template', compact('invoice'));
-        
-        return $pdf->download($invoice->invoice_number . '.pdf');
+
+        return $pdf->download($invoice->invoice_number.'.pdf');
     }
 
     public function store(Request $request)
@@ -44,6 +44,7 @@ class InvoiceController extends Controller
             ]);
 
             $invoice = Invoice::create($request->all());
+
             return response()->json($invoice->load(['payment.user', 'payment.enrollment.course']));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -54,12 +55,13 @@ class InvoiceController extends Controller
     {
         try {
             $request->validate([
-                'invoice_number' => 'sometimes|string|unique:invoices,invoice_number,' . $invoice->id,
+                'invoice_number' => 'sometimes|string|unique:invoices,invoice_number,'.$invoice->id,
                 'total_amount' => 'sometimes|numeric|min:0',
                 'invoice_date' => 'sometimes|date',
             ]);
 
             $invoice->update($request->all());
+
             return response()->json($invoice->load(['payment.user', 'payment.enrollment.course']));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -70,6 +72,7 @@ class InvoiceController extends Controller
     {
         try {
             $invoice->delete();
+
             return response()->json(['message' => 'Invoice deleted successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -83,9 +86,10 @@ class InvoiceController extends Controller
         } catch (\Exception $e) {
             \Log::error('Failed to send invoice', [
                 'invoice_id' => $invoice->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            return response()->json(['error' => 'Failed to send invoice: ' . $e->getMessage()], 500);
+
+            return response()->json(['error' => 'Failed to send invoice: '.$e->getMessage()], 500);
         }
     }
 
@@ -93,68 +97,69 @@ class InvoiceController extends Controller
     {
         try {
             $invoice->load(['payment.user', 'payment.enrollment.course']);
-            
+
             $user = $invoice->payment->user;
-            
-            if (!$user || !$user->email) {
+
+            if (! $user || ! $user->email) {
                 return response()->json(['error' => 'User email not found'], 400);
             }
-            
+
             \Log::info('Generating PDF for invoice', ['invoice_id' => $invoice->id]);
-            
+
             try {
                 $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('invoices.template', compact('invoice'));
                 $pdfOutput = $pdf->output();
             } catch (\Exception $e) {
                 \Log::error('PDF generation failed', [
                     'invoice_id' => $invoice->id,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
                 // Continue without PDF attachment
                 $pdfOutput = null;
             }
-            
+
             \Log::info('Sending invoice email', [
                 'invoice_id' => $invoice->id,
                 'to' => $user->email,
-                'has_pdf' => $pdfOutput !== null
+                'has_pdf' => $pdfOutput !== null,
             ]);
-            
+
             \Mail::send('emails.invoice', compact('invoice', 'user'), function ($message) use ($invoice, $pdfOutput, $user) {
                 $message->to($user->email)
-                        ->subject('Invoice ' . $invoice->invoice_number);
-                
+                    ->subject('Invoice '.$invoice->invoice_number);
+
                 if ($pdfOutput) {
-                    $message->attachData($pdfOutput, $invoice->invoice_number . '.pdf');
+                    $message->attachData($pdfOutput, $invoice->invoice_number.'.pdf');
                 }
             });
 
             $invoice->update(['sent_at' => now()]);
-            
+
             \Log::info('Invoice email sent successfully', ['invoice_id' => $invoice->id]);
 
             return response()->json([
                 'message' => 'Invoice emailed successfully',
                 'sent_to' => $user->email,
-                'invoice_number' => $invoice->invoice_number
+                'invoice_number' => $invoice->invoice_number,
             ]);
         } catch (\Exception $e) {
             \Log::error('Failed to send invoice email', [
                 'invoice_id' => $invoice->id,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            return response()->json(['error' => 'Failed to send invoice: ' . $e->getMessage()], 500);
+
+            return response()->json(['error' => 'Failed to send invoice: '.$e->getMessage()], 500);
         }
     }
 
     public function generatePdf(Invoice $invoice)
     {
         $invoice->load(['payment.user', 'payment.enrollment.course']);
-        
+
         $pdf = Pdf::loadView('invoices.template', compact('invoice'));
-        
-        return $pdf->stream($invoice->invoice_number . '.pdf');
+
+        return $pdf->stream($invoice->invoice_number.'.pdf');
     }
 
     /**
@@ -168,7 +173,7 @@ class InvoiceController extends Controller
         }
 
         $invoice->load(['payment.user', 'payment.enrollment.course']);
-        
+
         return view('invoices.view', compact('invoice'));
     }
 
@@ -183,9 +188,9 @@ class InvoiceController extends Controller
         }
 
         $invoice->load(['payment.user', 'payment.enrollment.course']);
-        
+
         $pdf = Pdf::loadView('invoices.template', compact('invoice'));
-        
-        return $pdf->download($invoice->invoice_number . '.pdf');
+
+        return $pdf->download($invoice->invoice_number.'.pdf');
     }
 }

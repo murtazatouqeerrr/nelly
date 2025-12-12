@@ -32,6 +32,7 @@ class InstructorCourseController extends Controller
     {
         $assignment = InstructorCourseAssignment::findOrFail($assignmentId);
         $assignment->update($request->all());
+
         return response()->json($assignment);
     }
 
@@ -40,7 +41,7 @@ class InstructorCourseController extends Controller
         $courses = InstructorCourseAssignment::where('instructor_id', $id)
             ->where('status', 'active')
             ->get();
-        
+
         return response()->json($courses);
     }
 }

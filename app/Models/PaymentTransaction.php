@@ -16,13 +16,13 @@ class PaymentTransaction extends Model
         'status',
         'payment_method',
         'metadata',
-        'processed_at'
+        'processed_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'metadata' => 'array',
-        'processed_at' => 'datetime'
+        'processed_at' => 'datetime',
     ];
 
     public function user()

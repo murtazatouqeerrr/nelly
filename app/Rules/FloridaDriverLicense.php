@@ -21,7 +21,7 @@ class FloridaDriverLicense implements Rule
         }
 
         // For out-of-state licenses, just check it's not empty
-        return !empty($value);
+        return ! empty($value);
     }
 
     public function message()

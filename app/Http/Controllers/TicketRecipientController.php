@@ -10,6 +10,7 @@ class TicketRecipientController extends Controller
     public function index()
     {
         $recipients = TicketRecipient::orderBy('created_at', 'desc')->paginate(20);
+
         return view('admin.support.recipients', compact('recipients'));
     }
 
@@ -17,7 +18,7 @@ class TicketRecipientController extends Controller
     {
         $request->validate([
             'email' => 'required|email|unique:ticket_recipients,email',
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255',
         ]);
 
         TicketRecipient::create($request->only(['email', 'name']));
@@ -28,12 +29,14 @@ class TicketRecipientController extends Controller
     public function destroy(TicketRecipient $recipient)
     {
         $recipient->delete();
+
         return redirect()->back()->with('success', 'Recipient deleted successfully');
     }
 
     public function toggle(TicketRecipient $recipient)
     {
-        $recipient->update(['is_active' => !$recipient->is_active]);
+        $recipient->update(['is_active' => ! $recipient->is_active]);
+
         return redirect()->back()->with('success', 'Recipient status updated');
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class FloridaDefensiveDrivingSeeder extends Seeder
 {
@@ -12,17 +12,17 @@ class FloridaDefensiveDrivingSeeder extends Seeder
     {
         // Delete existing Florida defensive driving florida_courses
         DB::table('florida_courses')->where('course_type', 'BDI')->where('title', 'LIKE', '%Defensive Driving%')->delete();
-        
+
         // Create Florida Defensive Driving Course
         $courseId = DB::table('florida_courses')->insertGetId([
             'course_type' => 'Insurance Discount',
             'title' => 'Florida Insurance Discount - Defensive Driving Course',
             'description' => 'Complete this 6-hour course to reduce points, meet court requirements, or qualify for insurance discounts.',
-            'state' => 'FL',
-            'passing_score' => 80,
-            'duration' => 360,
+            'state_code' => 'FL',
+            'min_pass_score' => 80,
+            'total_duration' => 360,
             'price' => 16.95,
-            
+
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
@@ -33,16 +33,16 @@ class FloridaDefensiveDrivingSeeder extends Seeder
     private function createChapters($courseId)
     {
         $chapters = $this->getChapterData();
-        
+
         foreach ($chapters as $index => $chapterData) {
             $chapterId = DB::table('chapters')->insertGetId([
                 'course_id' => $courseId,
                 'title' => $chapterData['title'],
                 'content' => $chapterData['content'],
-                
+
                 'order_index' => $index + 1,
                 'duration' => $chapterData['duration'],
-                
+
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -104,10 +104,10 @@ According to the World Health Organization (WHO), road traffic collisions cause 
                             'To drive faster than other vehicles',
                             'To keep the driver and everyone around them as safe as possible',
                             'To avoid getting traffic tickets',
-                            'To save fuel while driving'
+                            'To save fuel while driving',
                         ],
                         'correct_answer' => 'To keep the driver and everyone around them as safe as possible',
-                        'explanation' => 'Defensive driving is a comprehensive method focused on safety for all road users.'
+                        'explanation' => 'Defensive driving is a comprehensive method focused on safety for all road users.',
                     ],
                     [
                         'question' => 'According to the WHO, approximately how many deaths are caused by road traffic collisions each year worldwide?',
@@ -115,12 +115,12 @@ According to the World Health Organization (WHO), road traffic collisions cause 
                             'Over 500,000',
                             'Over 1 million',
                             'Over 2 million',
-                            'Over 5 million'
+                            'Over 5 million',
                         ],
                         'correct_answer' => 'Over 1 million',
-                        'explanation' => 'The World Health Organization reports that road traffic collisions cause over a million deaths annually worldwide.'
-                    ]
-                ]
+                        'explanation' => 'The World Health Organization reports that road traffic collisions cause over a million deaths annually worldwide.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 2: The Dangers of City Driving',
@@ -154,10 +154,10 @@ Be prepared to brake in certain situations but don\'t rest your foot on the peda
                             '5-8 seconds',
                             '10-15 seconds',
                             '20-25 seconds',
-                            '30 seconds'
+                            '30 seconds',
                         ],
                         'correct_answer' => '10-15 seconds',
-                        'explanation' => 'Scanning 10-15 seconds ahead allows you to see hazards early and make safe decisions.'
+                        'explanation' => 'Scanning 10-15 seconds ahead allows you to see hazards early and make safe decisions.',
                     ],
                     [
                         'question' => 'Why should you avoid "riding the brakes" in city driving?',
@@ -165,12 +165,12 @@ Be prepared to brake in certain situations but don\'t rest your foot on the peda
                             'It wastes fuel',
                             'It wears out brake pads faster',
                             'Cars behind you may ignore your brake lights and be unprepared for emergencies',
-                            'It makes steering more difficult'
+                            'It makes steering more difficult',
                         ],
                         'correct_answer' => 'Cars behind you may ignore your brake lights and be unprepared for emergencies',
-                        'explanation' => 'Constantly having brake lights on desensitizes following drivers, making them less likely to react when you actually need to brake.'
-                    ]
-                ]
+                        'explanation' => 'Constantly having brake lights on desensitizes following drivers, making them less likely to react when you actually need to brake.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 3: Following Distance and Space Management',
@@ -207,10 +207,10 @@ Apply the four-second rule when:
                             '1 second',
                             '2 seconds',
                             '3 seconds',
-                            '5 seconds'
+                            '5 seconds',
                         ],
                         'correct_answer' => '3 seconds',
-                        'explanation' => 'The three-second rule provides adequate time to react and stop safely under normal conditions.'
+                        'explanation' => 'The three-second rule provides adequate time to react and stop safely under normal conditions.',
                     ],
                     [
                         'question' => 'When should you use the four-second rule instead of the three-second rule?',
@@ -218,12 +218,12 @@ Apply the four-second rule when:
                             'Only at night',
                             'When roads are wet, frosty, or when towing a trailer',
                             'Only on highways',
-                            'When driving in the city'
+                            'When driving in the city',
                         ],
                         'correct_answer' => 'When roads are wet, frosty, or when towing a trailer',
-                        'explanation' => 'The four-second rule provides extra safety margin when conditions require longer stopping distances.'
-                    ]
-                ]
+                        'explanation' => 'The four-second rule provides extra safety margin when conditions require longer stopping distances.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 4: Pedestrians and Emergency Vehicles',
@@ -261,10 +261,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                             'Only at marked crosswalks',
                             'Only when they have a walk signal',
                             'When they are on your half of the roadway or approaching closely from the opposite half',
-                            'Only during daylight hours'
+                            'Only during daylight hours',
                         ],
                         'correct_answer' => 'When they are on your half of the roadway or approaching closely from the opposite half',
-                        'explanation' => 'Florida law requires yielding to pedestrians when they are on your half of the roadway or approaching so closely as to be in danger.'
+                        'explanation' => 'Florida law requires yielding to pedestrians when they are on your half of the roadway or approaching so closely as to be in danger.',
                     ],
                     [
                         'question' => 'What percentage of automobile crash claims occur in parking lots?',
@@ -272,13 +272,13 @@ When approached by emergency vehicles with sirens and flashing lights:
                             '10%',
                             '15%',
                             '20%',
-                            '25%'
+                            '25%',
                         ],
                         'correct_answer' => '20%',
-                        'explanation' => 'The Insurance Institute for Highway Safety reports that parking lot accidents account for more than 20% of automobile crash claims.'
-                    ]
-                ]
-            ]
+                        'explanation' => 'The Insurance Institute for Highway Safety reports that parking lot accidents account for more than 20% of automobile crash claims.',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -289,7 +289,7 @@ When approached by emergency vehicles with sirens and flashing lights:
             'course_id' => $courseId,
             'title' => 'Final Exam',
             'content' => 'This final exam tests your knowledge of defensive driving principles, traffic laws, and safe driving practices covered throughout the course. You must score 80% or higher to pass.',
-            
+
             'order_index' => 99,
             'duration' => 30,
             'created_at' => Carbon::now(),
@@ -303,10 +303,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'during school hours',
                     'if they go to that school',
                     'at all times',
-                    'if it isn\'t a school holiday'
+                    'if it isn\'t a school holiday',
                 ],
                 'correct_answer' => 'at all times',
-                'explanation' => 'School crossing guards must be obeyed at all times when they are directing traffic.'
+                'explanation' => 'School crossing guards must be obeyed at all times when they are directing traffic.',
             ],
             [
                 'question' => 'If you are traveling down a one way street, _____.',
@@ -314,10 +314,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'watch for traffic going the wrong way',
                     'make sure you are going in the right direction',
                     'Both A and B are correct',
-                    'keep your turn signal on'
+                    'keep your turn signal on',
                 ],
                 'correct_answer' => 'Both A and B are correct',
-                'explanation' => 'On one-way streets, you should ensure you\'re going the correct direction and watch for confused drivers going the wrong way.'
+                'explanation' => 'On one-way streets, you should ensure you\'re going the correct direction and watch for confused drivers going the wrong way.',
             ],
             [
                 'question' => 'The purpose of traffic signs are ____.',
@@ -325,10 +325,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'to serve as traffic control',
                     'to communicate warnings',
                     'to express traffic regulations',
-                    'all of the above'
+                    'all of the above',
                 ],
                 'correct_answer' => 'all of the above',
-                'explanation' => 'Traffic signs serve multiple purposes including traffic control, warnings, and communicating regulations.'
+                'explanation' => 'Traffic signs serve multiple purposes including traffic control, warnings, and communicating regulations.',
             ],
             [
                 'question' => 'When approaching an intersection, _____.',
@@ -336,10 +336,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'be ready to stop or yield, even if there is no posted sign',
                     'always keep a lookout for pedestrians and bicyclists',
                     'be ready to stop if the light is yellow',
-                    'All of the above'
+                    'All of the above',
                 ],
                 'correct_answer' => 'All of the above',
-                'explanation' => 'All these actions are important safety measures when approaching intersections.'
+                'explanation' => 'All these actions are important safety measures when approaching intersections.',
             ],
             [
                 'question' => 'Cars that carry heavy loads, large vehicles, and trucks all need _____ distance to stop as regular cars.',
@@ -347,10 +347,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'less',
                     'the same',
                     'more',
-                    'diminishing'
+                    'diminishing',
                 ],
                 'correct_answer' => 'more',
-                'explanation' => 'Heavy vehicles require more distance to stop due to increased weight and momentum.'
+                'explanation' => 'Heavy vehicles require more distance to stop due to increased weight and momentum.',
             ],
             [
                 'question' => 'You should always drive on the right side of the road except ____.',
@@ -358,10 +358,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'when passing another vehicle',
                     'when making a left turn',
                     'when it\'s closed to traffic',
-                    'All of the above'
+                    'All of the above',
                 ],
                 'correct_answer' => 'All of the above',
-                'explanation' => 'These are all legitimate exceptions to driving on the right side of the road.'
+                'explanation' => 'These are all legitimate exceptions to driving on the right side of the road.',
             ],
             [
                 'question' => 'Many people will instinctively _____ an animal on the road, causing a hazard to other drivers.',
@@ -369,10 +369,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'make friends with',
                     'catch',
                     'swerve around',
-                    'stop'
+                    'stop',
                 ],
                 'correct_answer' => 'swerve around',
-                'explanation' => 'Drivers often swerve to avoid animals, which can create hazards for other vehicles.'
+                'explanation' => 'Drivers often swerve to avoid animals, which can create hazards for other vehicles.',
             ],
             [
                 'question' => 'To yield means ____.',
@@ -380,10 +380,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'to cease all action',
                     'to outmaneuver',
                     'to take possession of',
-                    'to give up (an advantage, for example) to another'
+                    'to give up (an advantage, for example) to another',
                 ],
                 'correct_answer' => 'to give up (an advantage, for example) to another',
-                'explanation' => 'Yielding means giving the right-of-way or advantage to another driver or pedestrian.'
+                'explanation' => 'Yielding means giving the right-of-way or advantage to another driver or pedestrian.',
             ],
             [
                 'question' => 'Lane drifting, erratic behavior and speeding up and slowing down help identify _____.',
@@ -391,10 +391,10 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'a person evading police',
                     'a drowsy driver',
                     'a drunk at a bar',
-                    'a drunk on the road'
+                    'a drunk on the road',
                 ],
                 'correct_answer' => 'a drunk on the road',
-                'explanation' => 'These behaviors are classic signs of impaired driving due to alcohol or drugs.'
+                'explanation' => 'These behaviors are classic signs of impaired driving due to alcohol or drugs.',
             ],
             [
                 'question' => '_____ can contribute to bad driving.',
@@ -402,11 +402,11 @@ When approached by emergency vehicles with sirens and flashing lights:
                     'Fatigue',
                     'Emotions',
                     'Cell phone use',
-                    'All of the above'
+                    'All of the above',
                 ],
                 'correct_answer' => 'All of the above',
-                'explanation' => 'Fatigue, emotions, and cell phone use are all major contributors to unsafe driving behaviors.'
-            ]
+                'explanation' => 'Fatigue, emotions, and cell phone use are all major contributors to unsafe driving behaviors.',
+            ],
         ];
 
         foreach ($finalExamQuestions as $index => $questionData) {

@@ -12,13 +12,13 @@ class Coupon extends Model
         'type',
         'is_active',
         'is_used',
-        'expires_at'
+        'expires_at',
     ];
 
     protected $casts = [
         'expires_at' => 'datetime',
         'is_active' => 'boolean',
-        'is_used' => 'boolean'
+        'is_used' => 'boolean',
     ];
 
     public function usage()
@@ -28,9 +28,16 @@ class Coupon extends Model
 
     public function isValid()
     {
-        if (!$this->is_active) return false;
-        if ($this->is_used) return false;
-        if ($this->expires_at && $this->expires_at->isPast()) return false;
+        if (! $this->is_active) {
+            return false;
+        }
+        if ($this->is_used) {
+            return false;
+        }
+        if ($this->expires_at && $this->expires_at->isPast()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -39,6 +46,7 @@ class Coupon extends Model
         if ($this->type === 'percentage') {
             return ($amount * $this->amount) / 100;
         }
+
         return min($this->amount, $amount);
     }
 
@@ -47,7 +55,7 @@ class Coupon extends Model
         do {
             $code = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 4));
         } while (self::where('code', $code)->exists());
-        
+
         return $code;
     }
 

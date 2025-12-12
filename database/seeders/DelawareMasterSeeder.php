@@ -11,14 +11,14 @@ class DelawareMasterSeeder extends Seeder
         $this->command->info('🏛️ Starting Delaware Course Seeding...');
         $this->command->info('📚 Creating 3 Delaware Traffic School Courses');
         $this->command->info('');
-        
+
         // Run all Delaware course seeders
         $this->call([
             Delaware6HourDefensiveDrivingSeeder::class,
             Delaware3HourRefresherSeeder::class,
             DelawareAggressiveDrivingSeeder::class,
         ]);
-        
+
         $this->command->info('');
         $this->command->info('✅ Delaware course seeding completed successfully!');
         $this->command->info('');

@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Course;
+use App\Models\DicdsUser;
 use Illuminate\Database\Seeder;
-use App\Models\{Course, DicdsUser};
 use Illuminate\Support\Facades\Hash;
 
 class DicdsSeeder extends Seeder
@@ -38,7 +39,7 @@ class DicdsSeeder extends Seeder
                 'desired_role' => 'DRS_Provider_Admin',
                 'user_group' => 'TEST PROVIDER',
                 'status' => 'Active',
-                'approved_at' => now()
+                'approved_at' => now(),
             ]
         );
     }

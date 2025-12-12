@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Models\PaymentTransaction;
 use App\Models\StripePayment;
-use Stripe\Stripe;
-use Stripe\PaymentIntent;
 use Exception;
+use Stripe\PaymentIntent;
+use Stripe\Stripe;
 
 class StripePaymentService
 {
@@ -22,13 +22,13 @@ class StripePaymentService
                 'amount' => $amount * 100, // Convert to cents
                 'currency' => $currency,
                 'metadata' => $metadata,
-                'automatic_payment_methods' => ['enabled' => true]
+                'automatic_payment_methods' => ['enabled' => true],
             ]);
 
             return [
                 'success' => true,
                 'client_secret' => $paymentIntent->client_secret,
-                'payment_intent_id' => $paymentIntent->id
+                'payment_intent_id' => $paymentIntent->id,
             ];
         } catch (Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -50,7 +50,7 @@ class StripePaymentService
                 'status' => $paymentIntent->status,
                 'payment_method' => $paymentIntent->payment_method,
                 'metadata' => $paymentIntent->metadata->toArray(),
-                'processed_at' => now()
+                'processed_at' => now(),
             ]);
 
             StripePayment::create([
@@ -62,7 +62,7 @@ class StripePaymentService
                 'status' => $paymentIntent->status,
                 'amount' => $paymentIntent->amount / 100,
                 'currency' => $paymentIntent->currency,
-                'metadata' => $paymentIntent->metadata->toArray()
+                'metadata' => $paymentIntent->metadata->toArray(),
             ]);
 
             return ['success' => true, 'transaction' => $transaction];
@@ -76,7 +76,7 @@ class StripePaymentService
         try {
             $refund = \Stripe\Refund::create([
                 'payment_intent' => $paymentIntentId,
-                'amount' => $amount ? $amount * 100 : null
+                'amount' => $amount ? $amount * 100 : null,
             ]);
 
             return ['success' => true, 'refund' => $refund];

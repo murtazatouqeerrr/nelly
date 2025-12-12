@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // ✅ Prevents "table already exists" SQL error
-        if (!Schema::hasTable('state_submission_queue')) {
+        if (! Schema::hasTable('state_submission_queue')) {
             Schema::create('state_submission_queue', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('certificate_id')->constrained()->onDelete('cascade');

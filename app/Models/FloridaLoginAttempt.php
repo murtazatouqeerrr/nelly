@@ -13,12 +13,12 @@ class FloridaLoginAttempt extends Model
         'ip_address',
         'user_agent',
         'successful',
-        'florida_compliance_check'
+        'florida_compliance_check',
     ];
 
     protected $casts = [
         'successful' => 'boolean',
         'florida_compliance_check' => 'boolean',
-        'attempted_at' => 'datetime'
+        'attempted_at' => 'datetime',
     ];
 }

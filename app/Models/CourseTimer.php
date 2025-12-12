@@ -13,14 +13,14 @@ class CourseTimer extends Model
         'is_enabled',
         'allow_pause',
         'track_tab_switch',
-        'bypass_for_admin'
+        'bypass_for_admin',
     ];
 
     protected $casts = [
         'is_enabled' => 'boolean',
         'allow_pause' => 'boolean',
         'track_tab_switch' => 'boolean',
-        'bypass_for_admin' => 'boolean'
+        'bypass_for_admin' => 'boolean',
     ];
 
     public function chapter()

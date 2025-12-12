@@ -9,13 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         // ✅ Prevents duplicate table creation
-        if (!Schema::hasTable('email_logs')) {
+        if (! Schema::hasTable('email_logs')) {
             Schema::create('email_logs', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('template_id')
-                      ->nullable()
-                      ->constrained('email_templates')
-                      ->onDelete('set null');
+                    ->nullable()
+                    ->constrained('email_templates')
+                    ->onDelete('set null');
                 $table->string('recipient_email');
                 $table->string('recipient_name')->nullable();
                 $table->string('subject');
@@ -29,7 +29,7 @@ return new class extends Migration
                 $table->timestamp('sent_at')->nullable();
 
                 // ✅ Use Laravel's built-in timestamp management
-                $table->timestamps(); 
+                $table->timestamps();
             });
         }
     }

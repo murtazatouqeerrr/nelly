@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\StripePaymentService;
 use App\Services\PayPalPaymentService;
+use App\Services\StripePaymentService;
 use Illuminate\Http\Request;
 
 class PaymentGatewayController extends Controller
 {
     protected $stripeService;
+
     protected $paypalService;
 
     public function __construct(StripePaymentService $stripeService, PayPalPaymentService $paypalService)
@@ -22,7 +23,7 @@ class PaymentGatewayController extends Controller
         $request->validate([
             'amount' => 'required|numeric|min:0.01',
             'currency' => 'nullable|string|size:3',
-            'metadata' => 'nullable|array'
+            'metadata' => 'nullable|array',
         ]);
 
         $result = $this->stripeService->createPaymentIntent(
@@ -38,7 +39,7 @@ class PaymentGatewayController extends Controller
     {
         $request->validate([
             'payment_intent_id' => 'required|string',
-            'payment_id' => 'required|exists:payments,id'
+            'payment_id' => 'required|exists:payments,id',
         ]);
 
         $result = $this->stripeService->processPayment(
@@ -54,7 +55,7 @@ class PaymentGatewayController extends Controller
     {
         $request->validate([
             'amount' => 'required|numeric|min:0.01',
-            'currency' => 'nullable|string|size:3'
+            'currency' => 'nullable|string|size:3',
         ]);
 
         $result = $this->paypalService->createOrder(
@@ -69,7 +70,7 @@ class PaymentGatewayController extends Controller
     {
         $request->validate([
             'order_id' => 'required|string',
-            'payment_id' => 'required|exists:payments,id'
+            'payment_id' => 'required|exists:payments,id',
         ]);
 
         $result = $this->paypalService->captureOrder(
@@ -85,10 +86,10 @@ class PaymentGatewayController extends Controller
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        
+
         // Handle Stripe webhook events
         // Implement webhook verification and processing
-        
+
         return response()->json(['received' => true]);
     }
 
@@ -96,7 +97,7 @@ class PaymentGatewayController extends Controller
     {
         // Handle PayPal webhook events
         // Implement webhook verification and processing
-        
+
         return response()->json(['received' => true]);
     }
 
@@ -104,17 +105,17 @@ class PaymentGatewayController extends Controller
     {
         $request->validate([
             'payment_id' => 'required|exists:payments,id',
-            'amount' => 'required|numeric|min:0.01'
+            'amount' => 'required|numeric|min:0.01',
         ]);
 
         try {
             $payment = \App\Models\Payment::findOrFail($request->payment_id);
-            
+
             // Update payment status to completed
             $payment->update([
                 'status' => 'completed',
                 'gateway' => 'dummy',
-                'gateway_payment_id' => 'dummy_' . time() . '_' . auth()->id()
+                'gateway_payment_id' => 'dummy_'.time().'_'.auth()->id(),
             ]);
 
             \Log::info('Dummy payment processed', ['payment_id' => $payment->id, 'amount' => $request->amount]);
@@ -122,10 +123,11 @@ class PaymentGatewayController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Payment processed successfully',
-                'payment' => $payment
+                'payment' => $payment,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Dummy payment error: ' . $e->getMessage());
+            \Log::error('Dummy payment error: '.$e->getMessage());
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

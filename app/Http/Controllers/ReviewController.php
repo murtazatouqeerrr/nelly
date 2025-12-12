@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Review;
+use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
@@ -34,6 +34,6 @@ class ReviewController extends Controller
             'feedback' => $validated['feedback'],
         ]);
 
-        return redirect('/certificate?' . http_build_query($request->query()));
+        return redirect('/certificate?'.http_build_query($request->query()));
     }
 }

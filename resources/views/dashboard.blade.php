@@ -231,6 +231,70 @@
         loadStats();
         @endif
     </script>
+
+    <!-- Announcement Modal -->
+    @php
+        $activeAnnouncements = \App\Models\Announcement::where('is_active', true)
+            ->where(function($query) {
+                $query->where('target_audience', 'all')
+                      ->orWhere('target_audience', auth()->user()->role->slug === 'student' ? 'student' : 'college');
+            })
+            ->where(function($query) {
+                $query->whereNull('start_date')
+                      ->orWhere('start_date', '<=', now());
+            })
+            ->where(function($query) {
+                $query->whereNull('end_date')
+                      ->orWhere('end_date', '>=', now());
+            })
+            ->get();
+    @endphp
+
+    @foreach($activeAnnouncements as $announcement)
+    <div class="modal fade" id="announcementModal{{ $announcement->id }}" tabindex="-1" aria-labelledby="announcementModalLabel{{ $announcement->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="announcementModalLabel{{ $announcement->id }}">
+                        <i class="fas fa-bullhorn"></i> {{ $announcement->title }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if($announcement->image_path)
+                        <img src="{{ asset('storage/' . $announcement->image_path) }}" 
+                             alt="{{ $announcement->title }}" 
+                             class="img-fluid mb-3 rounded">
+                    @endif
+                    <p>{{ $announcement->description }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endforeach
+
+    <script>
+        // Show announcement modals on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            @foreach($activeAnnouncements as $index => $announcement)
+                @if($index === 0)
+                    // Show first announcement immediately
+                    var modal{{ $announcement->id }} = new bootstrap.Modal(document.getElementById('announcementModal{{ $announcement->id }}'));
+                    modal{{ $announcement->id }}.show();
+                @else
+                    // Show subsequent announcements after previous ones are closed
+                    document.getElementById('announcementModal{{ $activeAnnouncements[$index - 1]->id }}').addEventListener('hidden.bs.modal', function () {
+                        var modal{{ $announcement->id }} = new bootstrap.Modal(document.getElementById('announcementModal{{ $announcement->id }}'));
+                        modal{{ $announcement->id }}.show();
+                    });
+                @endif
+            @endforeach
+        });
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <x-footer />
 </body>

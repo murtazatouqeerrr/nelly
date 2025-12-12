@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\StateStamp;
+use Illuminate\Database\Seeder;
 
 class StateStampSeeder extends Seeder
 {
@@ -38,7 +38,7 @@ class StateStampSeeder extends Seeder
                 [
                     'state_name' => $state['state_name'],
                     'is_active' => true,
-                    'description' => 'State stamp for ' . $state['state_name']
+                    'description' => 'State stamp for '.$state['state_name'],
                 ]
             );
         }

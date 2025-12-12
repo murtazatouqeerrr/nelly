@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        if (!Schema::hasTable('chapter_progress')) {
+        if (! Schema::hasTable('chapter_progress')) {
             Schema::create('chapter_progress', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -20,13 +20,13 @@ return new class extends Migration
                 $table->integer('time_spent_minutes')->default(0);
                 $table->enum('status', ['not_started', 'in_progress', 'quiz_failed', 'completed'])->default('not_started');
                 $table->timestamps();
-                
+
                 $table->unique(['user_id', 'chapter_id']);
             });
         }
 
         Schema::table('quiz_attempts', function (Blueprint $table) {
-            if (!Schema::hasColumn('quiz_attempts', 'quiz_type')) {
+            if (! Schema::hasColumn('quiz_attempts', 'quiz_type')) {
                 $table->string('quiz_type')->default('chapter')->after('id');
             }
         });

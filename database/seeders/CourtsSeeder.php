@@ -10,9 +10,10 @@ class CourtsSeeder extends Seeder
     public function run(): void
     {
         $file = base_path('all.csv');
-        
-        if (!file_exists($file)) {
+
+        if (! file_exists($file)) {
             $this->command->error("CSV file not found: {$file}");
+
             return;
         }
 
@@ -38,7 +39,7 @@ class CourtsSeeder extends Seeder
             }
         }
 
-        if (!empty($batch)) {
+        if (! empty($batch)) {
             Court::insert($batch);
         }
 

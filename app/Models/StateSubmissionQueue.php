@@ -20,7 +20,7 @@ class StateSubmissionQueue extends Model
         'error_message',
         'submitted_data',
         'response_data',
-        'processed_at'
+        'processed_at',
     ];
 
     protected $casts = [
@@ -28,7 +28,7 @@ class StateSubmissionQueue extends Model
         'response_data' => 'array',
         'last_attempt_at' => 'datetime',
         'next_attempt_at' => 'datetime',
-        'processed_at' => 'datetime'
+        'processed_at' => 'datetime',
     ];
 
     public function certificate()

@@ -8,7 +8,7 @@ return new class extends Migration
     public function up()
     {
         $course = DB::table('courses')->where('title', 'LIKE', '%Missouri%')->first();
-        
+
         if ($course) {
             DB::table('chapters')->insert([
                 'course_id' => $course->id,
@@ -24,7 +24,7 @@ return new class extends Migration
     public function down()
     {
         $course = DB::table('courses')->where('title', 'LIKE', '%Missouri%')->first();
-        
+
         if ($course) {
             DB::table('chapters')
                 ->where('course_id', $course->id)

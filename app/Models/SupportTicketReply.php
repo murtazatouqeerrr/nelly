@@ -11,12 +11,12 @@ class SupportTicketReply extends Model
         'user_id',
         'message',
         'is_staff_reply',
-        'attachments'
+        'attachments',
     ];
 
     protected $casts = [
         'is_staff_reply' => 'boolean',
-        'attachments' => 'array'
+        'attachments' => 'array',
     ];
 
     public function ticket()

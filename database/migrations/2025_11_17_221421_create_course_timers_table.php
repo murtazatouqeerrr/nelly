@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('time_spent')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['user_id', 'chapter_id', 'chapter_type']);
         });
     }

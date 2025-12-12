@@ -8,7 +8,7 @@ class FloridaNotificationSetting extends Model
 {
     protected $fillable = [
         'user_id', 'email_course_updates', 'email_payment_receipts', 'email_certificate_alerts',
-        'email_dicds_status', 'email_compliance_alerts', 'sms_reminders', 'in_app_notifications'
+        'email_dicds_status', 'email_compliance_alerts', 'sms_reminders', 'in_app_notifications',
     ];
 
     protected $casts = [
@@ -18,7 +18,7 @@ class FloridaNotificationSetting extends Model
         'email_dicds_status' => 'boolean',
         'email_compliance_alerts' => 'boolean',
         'sms_reminders' => 'boolean',
-        'in_app_notifications' => 'boolean'
+        'in_app_notifications' => 'boolean',
     ];
 
     public function user()

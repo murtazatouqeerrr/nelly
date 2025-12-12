@@ -28,8 +28,8 @@ class StateSubmissionController extends Controller
         }
 
         $submissions = $query->orderBy('priority', 'desc')
-                           ->orderBy('next_attempt_at', 'asc')
-                           ->paginate(20);
+            ->orderBy('next_attempt_at', 'asc')
+            ->paginate(20);
 
         return response()->json($submissions);
     }
@@ -37,7 +37,7 @@ class StateSubmissionController extends Controller
     public function retry($id)
     {
         $submission = StateSubmissionQueue::findOrFail($id);
-        
+
         if ($submission->status === 'completed') {
             return response()->json(['error' => 'Cannot retry completed submission'], 400);
         }
@@ -45,7 +45,7 @@ class StateSubmissionController extends Controller
         $submission->update([
             'status' => 'pending',
             'next_attempt_at' => now(),
-            'error_message' => null
+            'error_message' => null,
         ]);
 
         return response()->json(['message' => 'Submission queued for retry']);
@@ -56,7 +56,7 @@ class StateSubmissionController extends Controller
         $pendingSubmissions = StateSubmissionQueue::where('status', 'pending')
             ->where(function ($query) {
                 $query->whereNull('next_attempt_at')
-                      ->orWhere('next_attempt_at', '<=', now());
+                    ->orWhere('next_attempt_at', '<=', now());
             })
             ->with(['certificate', 'stateConfiguration'])
             ->orderBy('priority', 'desc')
@@ -69,15 +69,15 @@ class StateSubmissionController extends Controller
                 $this->processSubmission($submission);
                 $processed++;
             } catch (\Exception $e) {
-                \Log::error('Failed to process submission: ' . $e->getMessage(), [
-                    'submission_id' => $submission->id
+                \Log::error('Failed to process submission: '.$e->getMessage(), [
+                    'submission_id' => $submission->id,
                 ]);
             }
         }
 
         return response()->json([
             'message' => "Processed {$processed} submissions",
-            'processed_count' => $processed
+            'processed_count' => $processed,
         ]);
     }
 
@@ -90,7 +90,7 @@ class StateSubmissionController extends Controller
             'failed' => StateSubmissionQueue::where('status', 'failed')->count(),
             'retry' => StateSubmissionQueue::where('status', 'retry')->count(),
             'high_priority' => StateSubmissionQueue::where('priority', 'high')->whereIn('status', ['pending', 'retry'])->count(),
-            'overdue' => StateSubmissionQueue::where('next_attempt_at', '<', now())->whereIn('status', ['pending', 'retry'])->count()
+            'overdue' => StateSubmissionQueue::where('next_attempt_at', '<', now())->whereIn('status', ['pending', 'retry'])->count(),
         ];
 
         return response()->json($stats);
@@ -101,7 +101,7 @@ class StateSubmissionController extends Controller
         $submission->update([
             'status' => 'processing',
             'last_attempt_at' => now(),
-            'attempts' => $submission->attempts + 1
+            'attempts' => $submission->attempts + 1,
         ]);
 
         try {
@@ -126,7 +126,7 @@ class StateSubmissionController extends Controller
                 'status' => 'completed',
                 'processed_at' => now(),
                 'response_data' => $result,
-                'error_message' => null
+                'error_message' => null,
             ]);
 
         } catch (\Exception $e) {
@@ -137,19 +137,19 @@ class StateSubmissionController extends Controller
     private function submitViaApi($config, $certificate)
     {
         $credentials = $config->api_credentials;
-        
+
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $credentials['token'] ?? '',
-            'Content-Type' => 'application/json'
+            'Authorization' => 'Bearer '.$credentials['token'] ?? '',
+            'Content-Type' => 'application/json',
         ])->post($config->api_endpoint, [
             'certificate_id' => $certificate->id,
             'student_name' => $certificate->student_name,
             'completion_date' => $certificate->completion_date,
-            'course_name' => $certificate->course_name
+            'course_name' => $certificate->course_name,
         ]);
 
-        if (!$response->successful()) {
-            throw new \Exception('API submission failed: ' . $response->body());
+        if (! $response->successful()) {
+            throw new \Exception('API submission failed: '.$response->body());
         }
 
         return $response->json();
@@ -159,12 +159,13 @@ class StateSubmissionController extends Controller
     {
         // This would integrate with browser automation (Selenium/Puppeteer)
         // For now, return mock success
-        return ['status' => 'submitted', 'portal_id' => 'MOCK_' . time()];
+        return ['status' => 'submitted', 'portal_id' => 'MOCK_'.time()];
     }
 
     private function submitViaEmail($config, $certificate)
     {
         \Mail::to($config->email_recipient)->send(new \App\Mail\CertificateSubmission($certificate));
+
         return ['status' => 'emailed', 'recipient' => $config->email_recipient];
     }
 
@@ -184,7 +185,7 @@ class StateSubmissionController extends Controller
         $submission->update([
             'status' => $nextStatus,
             'next_attempt_at' => $nextAttempt,
-            'error_message' => $exception->getMessage()
+            'error_message' => $exception->getMessage(),
         ]);
     }
 }

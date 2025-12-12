@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\UserCourseEnrollment;
 use App\Models\FloridaCourse;
-use App\Models\User;
+use App\Models\UserCourseEnrollment;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class FloridaAuditController extends Controller
 {
@@ -53,14 +51,14 @@ class FloridaAuditController extends Controller
 
         $enrollments = $query->get();
 
-        $filename = 'florida_audit_' . now()->format('Y_m_d_H_i_s') . '.csv';
+        $filename = 'florida_audit_'.now()->format('Y_m_d_H_i_s').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
-        $callback = function() use ($enrollments) {
+        $callback = function () use ($enrollments) {
             $file = fopen('php://output', 'w');
             fputcsv($file, ['User Name', 'Email', 'Course Title', 'Status', 'Enrolled Date', 'Completed Date', 'Progress']);
 
@@ -72,7 +70,7 @@ class FloridaAuditController extends Controller
                     $enrollment->status,
                     $enrollment->created_at->format('Y-m-d H:i:s'),
                     $enrollment->completed_at ? $enrollment->completed_at->format('Y-m-d H:i:s') : '',
-                    $enrollment->progress . '%'
+                    $enrollment->progress.'%',
                 ]);
             }
 

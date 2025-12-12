@@ -72,7 +72,7 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
-    
+
     public function certificates()
     {
         return $this->hasManyThrough(
@@ -89,22 +89,22 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(Role::class);
     }
-    
+
     public function enrollments()
     {
         return $this->hasMany(UserCourseEnrollment::class);
     }
-    
+
     public function createdCourses()
     {
         return $this->hasMany(Course::class, 'created_by');
     }
-    
+
     public function scopeNotLocked($query)
     {
         return $query->where('account_locked', false);
     }
-    
+
     // JWT methods
     public function getJWTIdentifier()
     {

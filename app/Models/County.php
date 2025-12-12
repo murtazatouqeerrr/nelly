@@ -10,11 +10,11 @@ class County extends Model
         'name',
         'code',
         'state_code',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function state()

@@ -1,16 +1,16 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
-$app = require_once __DIR__ . '/bootstrap/app.php';
+$app = require_once __DIR__.'/bootstrap/app.php';
 $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
 use App\Models\Court;
 
-$file = __DIR__ . '/all.csv';
+$file = __DIR__.'/all.csv';
 
-if (!file_exists($file)) {
+if (! file_exists($file)) {
     echo "CSV file not found: {$file}\n";
     exit(1);
 }
@@ -42,7 +42,7 @@ while (($row = fgetcsv($handle)) !== false) {
     }
 }
 
-if (!empty($batch)) {
+if (! empty($batch)) {
     Court::insert($batch);
     $count += count($batch);
 }

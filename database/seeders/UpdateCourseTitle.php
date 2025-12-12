@@ -13,9 +13,9 @@ class UpdateCourseTitle extends Seeder
             ->where('id', 1)
             ->update([
                 'title' => '4-Hour Florida BDI Course',
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
-        
+
         $this->command->info('Course title updated!');
     }
 }

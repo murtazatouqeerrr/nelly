@@ -20,14 +20,14 @@ class FloridaAuditTrail extends Model
         'ip_address',
         'user_agent',
         'url',
-        'method'
+        'method',
     ];
 
     protected $casts = [
         'old_values' => 'array',
         'new_values' => 'array',
         'florida_required' => 'boolean',
-        'created_at' => 'datetime'
+        'created_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

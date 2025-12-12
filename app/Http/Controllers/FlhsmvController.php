@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\FlhsmvSoapService;
 use App\Models\FlhsmvSubmission;
+use App\Services\FlhsmvSoapService;
 use Illuminate\Http\Request;
 
 class FlhsmvController extends Controller
@@ -18,7 +18,7 @@ class FlhsmvController extends Controller
     public function submitCompletion(Request $request)
     {
         $request->validate([
-            'certificate_id' => 'required|exists:florida_certificates,id'
+            'certificate_id' => 'required|exists:florida_certificates,id',
         ]);
 
         $result = $this->flhsmvService->submitCompletion($request->certificate_id);
@@ -27,14 +27,14 @@ class FlhsmvController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Completion submitted successfully to FLHSMV',
-                'submission' => $result['submission']
+                'submission' => $result['submission'],
             ]);
         }
 
         return response()->json([
             'success' => false,
             'message' => 'Failed to submit completion',
-            'error' => $result['error'] ?? 'Unknown error'
+            'error' => $result['error'] ?? 'Unknown error',
         ], 422);
     }
 
@@ -45,7 +45,7 @@ class FlhsmvController extends Controller
         return response()->json([
             'submission' => $submission,
             'status' => $submission->status,
-            'errors' => $submission->errors
+            'errors' => $submission->errors,
         ]);
     }
 
@@ -54,7 +54,7 @@ class FlhsmvController extends Controller
         // For web view
         if ($request->expectsJson() || $request->is('api/*')) {
             $submissions = FlhsmvSubmission::with(['user', 'certificate'])
-                ->when($request->status, function($query, $status) {
+                ->when($request->status, function ($query, $status) {
                     return $query->where('status', $status);
                 })
                 ->orderBy('created_at', 'desc')
@@ -62,7 +62,7 @@ class FlhsmvController extends Controller
 
             return response()->json($submissions);
         }
-        
+
         // For blade view
         return view('admin.flhsmv-submissions');
     }

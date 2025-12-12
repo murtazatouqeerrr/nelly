@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FloridaMobileAnalytics;
 use App\Models\FloridaDeviceSession;
-use Illuminate\Http\Request;
+use App\Models\FloridaMobileAnalytics;
 
 class FloridaAnalyticsController extends Controller
 {
@@ -23,7 +22,7 @@ class FloridaAnalyticsController extends Controller
             return response()->json([
                 'analytics' => $analytics,
                 'device_sessions' => $deviceSessions,
-                'total_mobile_users' => FloridaDeviceSession::whereIn('device_type', ['mobile', 'tablet'])->distinct('user_id')->count()
+                'total_mobile_users' => FloridaDeviceSession::whereIn('device_type', ['mobile', 'tablet'])->distinct('user_id')->count(),
             ]);
         } catch (\Exception $e) {
             // Return mock data if database is not available
@@ -31,14 +30,14 @@ class FloridaAnalyticsController extends Controller
                 'analytics' => [
                     ['device_type' => 'mobile', 'total_actions' => 150, 'avg_load_time' => 2.3],
                     ['device_type' => 'tablet', 'total_actions' => 75, 'avg_load_time' => 2.1],
-                    ['device_type' => 'desktop', 'total_actions' => 200, 'avg_load_time' => 1.8]
+                    ['device_type' => 'desktop', 'total_actions' => 200, 'avg_load_time' => 1.8],
                 ],
                 'device_sessions' => [
                     ['device_type' => 'mobile', 'session_count' => 120],
                     ['device_type' => 'tablet', 'session_count' => 45],
-                    ['device_type' => 'desktop', 'session_count' => 180]
+                    ['device_type' => 'desktop', 'session_count' => 180],
                 ],
-                'total_mobile_users' => 165
+                'total_mobile_users' => 165,
             ]);
         }
     }

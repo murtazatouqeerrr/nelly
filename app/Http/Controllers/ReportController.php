@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Course;
-use App\Models\UserCourseEnrollment;
-use App\Models\Payment;
 use App\Models\Certificate;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Course;
+use App\Models\Payment;
+use App\Models\UserCourseEnrollment;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -22,7 +20,7 @@ class ReportController extends Controller
                 'revenue_report' => 'Revenue Report',
                 'certificate_report' => 'Certificate Report',
                 'state_compliance_report' => 'State Compliance Report',
-            ]
+            ],
         ]);
     }
 
@@ -92,14 +90,14 @@ class ReportController extends Controller
             'course_breakdown' => $courseBreakdown,
             'detailed_data' => $enrollments->map(function ($enrollment) {
                 return [
-                    'student_name' => $enrollment->user->first_name . ' ' . $enrollment->user->last_name,
+                    'student_name' => $enrollment->user->first_name.' '.$enrollment->user->last_name,
                     'student_email' => $enrollment->user->email,
                     'course_title' => $enrollment->floridaCourse->title ?? 'N/A',
                     'enrollment_date' => $enrollment->created_at->format('Y-m-d H:i:s'),
                     'completion_date' => $enrollment->completed_at ? $enrollment->completed_at->format('Y-m-d H:i:s') : 'In Progress',
                     'status' => $enrollment->completed_at ? 'Completed' : 'In Progress',
                 ];
-            })
+            }),
         ]);
     }
 
@@ -130,14 +128,14 @@ class ReportController extends Controller
             'summary' => $summary,
             'detailed_data' => $completions->map(function ($completion) {
                 return [
-                    'student_name' => $completion->user->first_name . ' ' . $completion->user->last_name,
+                    'student_name' => $completion->user->first_name.' '.$completion->user->last_name,
                     'student_email' => $completion->user->email,
                     'course_title' => $completion->floridaCourse->title ?? 'N/A',
                     'enrollment_date' => $completion->created_at->format('Y-m-d'),
                     'completion_date' => $completion->completed_at->format('Y-m-d'),
                     'completion_time_days' => $completion->created_at->diffInDays($completion->completed_at),
                 ];
-            })
+            }),
         ]);
     }
 
@@ -179,7 +177,7 @@ class ReportController extends Controller
             'detailed_data' => $payments->map(function ($payment) {
                 return [
                     'transaction_id' => $payment->id,
-                    'customer_name' => $payment->user->first_name . ' ' . $payment->user->last_name,
+                    'customer_name' => $payment->user->first_name.' '.$payment->user->last_name,
                     'customer_email' => $payment->user->email,
                     'course_title' => $payment->enrollment->floridaCourse->title ?? 'N/A',
                     'amount' => $payment->amount,
@@ -187,7 +185,7 @@ class ReportController extends Controller
                     'gateway' => $payment->gateway,
                     'transaction_date' => $payment->created_at->format('Y-m-d H:i:s'),
                 ];
-            })
+            }),
         ]);
     }
 
@@ -233,7 +231,7 @@ class ReportController extends Controller
                     'status' => $certificate->status,
                     'sent_to_state' => $certificate->is_sent_to_state ? 'Yes' : 'No',
                 ];
-            })
+            }),
         ]);
     }
 
@@ -253,7 +251,7 @@ class ReportController extends Controller
             'submitted_to_state' => $certificates->where('is_sent_to_state', true)->count(),
             'confirmed_by_state' => $certificates->where('status', 'confirmed')->count(),
             'rejected_by_state' => $certificates->where('status', 'rejected')->count(),
-            'compliance_rate' => $certificates->count() > 0 
+            'compliance_rate' => $certificates->count() > 0
                 ? round(($certificates->where('status', 'confirmed')->count() / $certificates->count()) * 100, 2)
                 : 0,
         ];
@@ -265,7 +263,7 @@ class ReportController extends Controller
                 'total_certificates' => $group->count(),
                 'submitted' => $group->where('is_sent_to_state', true)->count(),
                 'confirmed' => $group->where('status', 'confirmed')->count(),
-                'compliance_rate' => $group->count() > 0 
+                'compliance_rate' => $group->count() > 0
                     ? round(($group->where('status', 'confirmed')->count() / $group->count()) * 100, 2)
                     : 0,
             ];
@@ -282,13 +280,13 @@ class ReportController extends Controller
                     'student_name' => $certificate->student_name,
                     'state_code' => $certificate->state_code,
                     'completion_date' => $certificate->completion_date,
-                    'submission_date' => $certificate->is_sent_to_state 
+                    'submission_date' => $certificate->is_sent_to_state
                         ? $certificate->stateSubmissionLogs->first()?->submitted_at?->format('Y-m-d') ?? 'N/A'
                         : 'Not Submitted',
                     'status' => $certificate->status,
                     'compliance_status' => $certificate->status === 'confirmed' ? 'Compliant' : 'Pending',
                 ];
-            })
+            }),
         ]);
     }
 

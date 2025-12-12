@@ -16,7 +16,7 @@ class AuthController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
-            'role_id' => 'required|exists:roles,id'
+            'role_id' => 'required|exists:roles,id',
         ]);
 
         $user = User::create([
@@ -25,14 +25,14 @@ class AuthController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'user' => $user->load('role'),
-            'token' => $token
+            'token' => $token,
         ], 201);
     }
 
@@ -40,12 +40,12 @@ class AuthController extends Controller
     {
         $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
         // Check if user exists and is not locked
         $user = User::where('email', $credentials['email'])->first();
-        
+
         if ($user && $user->account_locked) {
             return back()->withErrors([
                 'email' => 'Your account has been locked. Please contact support to regain access.',
@@ -55,41 +55,43 @@ class AuthController extends Controller
         // Check if this is a web request (expects HTML) or API request (expects JSON)
         if ($request->expectsJson()) {
             $success = (bool) JWTAuth::attempt($credentials);
-            
+
             // Log attempt
             \App\Models\LoginAttempt::create([
                 'email' => $credentials['email'],
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'successful' => $success,
-                'attempted_at' => now()
+                'attempted_at' => now(),
             ]);
-            
-            if (!$success) {
+
+            if (! $success) {
                 return response()->json(['error' => 'Invalid credentials'], 401);
             }
 
             $user = auth()->user();
+
             return response()->json([
                 'user' => $user->load('role'),
-                'token' => JWTAuth::attempt($credentials)
+                'token' => JWTAuth::attempt($credentials),
             ]);
         }
 
         // Web login with session
         $success = auth()->attempt($credentials, $request->filled('remember'));
-        
+
         // Log attempt
         \App\Models\LoginAttempt::create([
             'email' => $credentials['email'],
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'successful' => $success,
-            'attempted_at' => now()
+            'attempted_at' => now(),
         ]);
-        
+
         if ($success) {
             $request->session()->regenerate();
+
             return redirect()->intended('/dashboard');
         }
 
@@ -102,6 +104,7 @@ class AuthController extends Controller
     {
         if ($request->expectsJson()) {
             JWTAuth::invalidate(JWTAuth::getToken());
+
             return response()->json(['message' => 'Successfully logged out']);
         }
 
@@ -109,6 +112,7 @@ class AuthController extends Controller
         auth()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect('/login');
     }
 
@@ -121,9 +125,10 @@ class AuthController extends Controller
     {
         try {
             $user = auth()->user();
-            if (!$user) {
+            if (! $user) {
                 return response()->json(['error' => 'Unauthenticated'], 401);
             }
+
             return response()->json($user->load('role'));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -134,20 +139,20 @@ class AuthController extends Controller
     {
         try {
             $user = auth()->user();
-            
+
             $validated = $request->validate([
                 'first_name' => 'sometimes|string|max:255',
                 'last_name' => 'sometimes|string|max:255',
-                'email' => 'sometimes|email|unique:users,email,' . $user->id,
+                'email' => 'sometimes|email|unique:users,email,'.$user->id,
                 'phone' => 'sometimes|string|max:20',
                 'address' => 'sometimes|string',
                 'city' => 'sometimes|string',
                 'state' => 'sometimes|string',
-                'zip_code' => 'sometimes|string'
+                'zip_code' => 'sometimes|string',
             ]);
-            
+
             $user->update($validated);
-            
+
             return response()->json(['message' => 'Profile updated successfully', 'user' => $user]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

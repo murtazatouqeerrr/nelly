@@ -26,7 +26,7 @@ class CopyrightProtectionController extends Controller
         $stats = CopyrightProtectionLog::selectRaw('action, COUNT(*) as count')
             ->groupBy('action')
             ->get();
-        
+
         return response()->json($stats);
     }
 }

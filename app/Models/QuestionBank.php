@@ -15,12 +15,12 @@ class QuestionBank extends Model
         'category',
         'explanation',
         'difficulty',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
         'options' => 'array',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function course()

@@ -2,18 +2,19 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class FloridaDefensiveDrivingFinalSeeder extends Seeder
 {
     public function run()
     {
         $course = DB::table('florida_courses')->where('title', 'LIKE', '%Defensive Driving%')->first();
-        
-        if (!$course) {
+
+        if (! $course) {
             $this->command->error('Florida Defensive Driving Course not found.');
+
             return;
         }
 
@@ -68,10 +69,10 @@ Never drive through, around, or under any closed crossing gate at a railroad cro
                             'may sometimes',
                             'can',
                             'must never',
-                            'shouldn\'t'
+                            'shouldn\'t',
                         ],
                         'correct_answer' => 'must never',
-                        'explanation' => 'The basic speed law requires that you never drive faster than is safe for current conditions, regardless of posted limits.'
+                        'explanation' => 'The basic speed law requires that you never drive faster than is safe for current conditions, regardless of posted limits.',
                     ],
                     [
                         'question' => 'At 55 mph, it takes about _____ to react and bring a car to a complete stop.',
@@ -79,12 +80,12 @@ Never drive through, around, or under any closed crossing gate at a railroad cro
                             '210 feet',
                             '400 feet',
                             '½ mile',
-                            'a football field'
+                            'a football field',
                         ],
                         'correct_answer' => '400 feet',
-                        'explanation' => 'At 55 mph, the total stopping distance including reaction time is approximately 400 feet.'
-                    ]
-                ]
+                        'explanation' => 'At 55 mph, the total stopping distance including reaction time is approximately 400 feet.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 14: Vehicle Safety Equipment and Hazardous Conditions',
@@ -134,10 +135,10 @@ Use headlights:
                             'Only at night',
                             'Whenever windshield wipers are in continuous use',
                             'Only in heavy rain',
-                            'Only when visibility is poor'
+                            'Only when visibility is poor',
                         ],
                         'correct_answer' => 'Whenever windshield wipers are in continuous use',
-                        'explanation' => 'Florida law requires headlights whenever windshield wipers are in continuous use, among other conditions.'
+                        'explanation' => 'Florida law requires headlights whenever windshield wipers are in continuous use, among other conditions.',
                     ],
                     [
                         'question' => 'Minimum tire tread depth should be:',
@@ -145,12 +146,12 @@ Use headlights:
                             '1/32 inch',
                             '2/32 inch',
                             '3/32 inch',
-                            '4/32 inch'
+                            '4/32 inch',
                         ],
                         'correct_answer' => '2/32 inch',
-                        'explanation' => 'Tire tread should be no less than 2/32 of an inch deep for safe traction on the road.'
-                    ]
-                ]
+                        'explanation' => 'Tire tread should be no less than 2/32 of an inch deep for safe traction on the road.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 15: Alcohol, Drugs, and Impaired Driving',
@@ -211,10 +212,10 @@ Use headlights:
                             '0.08%',
                             '0.04%',
                             '0.02%',
-                            '0.00%'
+                            '0.00%',
                         ],
                         'correct_answer' => '0.02%',
-                        'explanation' => 'Florida has a zero tolerance policy with a 0.02% BAC limit for drivers under 21 years of age.'
+                        'explanation' => 'Florida has a zero tolerance policy with a 0.02% BAC limit for drivers under 21 years of age.',
                     ],
                     [
                         'question' => 'The body can metabolize approximately _____ of alcohol per hour.',
@@ -222,12 +223,12 @@ Use headlights:
                             'half an ounce',
                             'one ounce',
                             'two ounces',
-                            'three ounces'
+                            'three ounces',
                         ],
                         'correct_answer' => 'one ounce',
-                        'explanation' => 'The human body can metabolize approximately one ounce of alcohol per hour, regardless of body size.'
-                    ]
-                ]
+                        'explanation' => 'The human body can metabolize approximately one ounce of alcohol per hour, regardless of body size.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 16: Identifying and Avoiding Impaired Drivers',
@@ -287,10 +288,10 @@ When calling 911, provide:
                             'Driving exactly at the speed limit',
                             'Lane drifting and erratic speed changes',
                             'Using turn signals properly',
-                            'Maintaining proper following distance'
+                            'Maintaining proper following distance',
                         ],
                         'correct_answer' => 'Lane drifting and erratic speed changes',
-                        'explanation' => 'Lane drifting and erratic speed changes are classic signs of impaired driving due to reduced coordination and judgment.'
+                        'explanation' => 'Lane drifting and erratic speed changes are classic signs of impaired driving due to reduced coordination and judgment.',
                     ],
                     [
                         'question' => 'When you spot a suspected impaired driver, you should:',
@@ -298,26 +299,26 @@ When calling 911, provide:
                             'Try to stop them yourself',
                             'Flash your lights at them',
                             'Maintain safe distance and call 911',
-                            'Speed up to get past them quickly'
+                            'Speed up to get past them quickly',
                         ],
                         'correct_answer' => 'Maintain safe distance and call 911',
-                        'explanation' => 'The safest approach is to maintain distance from the impaired driver and report them to authorities.'
-                    ]
-                ]
-            ]
+                        'explanation' => 'The safest approach is to maintain distance from the impaired driver and report them to authorities.',
+                    ],
+                ],
+            ],
         ];
 
         foreach ($chapters as $index => $chapterData) {
             $chapterOrder = $index + 13; // Continue from previous chapters
-            
+
             $chapterId = DB::table('chapters')->insertGetId([
                 'course_id' => $courseId,
                 'title' => $chapterData['title'],
                 'content' => $chapterData['content'],
-                
+
                 'order_index' => $chapterOrder,
                 'duration' => $chapterData['duration'],
-                
+
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -334,7 +335,7 @@ When calling 911, provide:
                         'explanation' => $questionData['explanation'],
                         'order_index' => $qIndex + 1,
                         'points' => 1,
-                        
+
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
                     ]);

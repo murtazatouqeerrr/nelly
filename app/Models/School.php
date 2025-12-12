@@ -14,13 +14,28 @@ class School extends Model
     protected $fillable = [
         'school_name', 'address', 'city', 'state', 'zip_code',
         'phone', 'fax', 'email', 'contact_person', 'provider_id',
-        'disable_certificates', 'status'
+        'disable_certificates', 'status',
     ];
 
     protected $casts = ['disable_certificates' => 'boolean'];
 
-    public function provider() { return $this->belongsTo(DicdsUser::class, 'provider_id'); }
-    public function courses() { return $this->hasMany(SchoolCourse::class); }
-    public function instructors() { return $this->hasMany(Instructor::class); }
-    public function certificates() { return $this->hasMany(Certificate::class); }
+    public function provider()
+    {
+        return $this->belongsTo(DicdsUser::class, 'provider_id');
+    }
+
+    public function courses()
+    {
+        return $this->hasMany(SchoolCourse::class);
+    }
+
+    public function instructors()
+    {
+        return $this->hasMany(Instructor::class);
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
 }

@@ -9,13 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            if (!Schema::hasColumn('payments', 'gateway_transaction_id')) {
+            if (! Schema::hasColumn('payments', 'gateway_transaction_id')) {
                 $table->string('gateway_transaction_id')->nullable();
             }
-            if (!Schema::hasColumn('payments', 'gateway_response')) {
+            if (! Schema::hasColumn('payments', 'gateway_response')) {
                 $table->json('gateway_response')->nullable();
             }
-            if (!Schema::hasColumn('payments', 'processed_at')) {
+            if (! Schema::hasColumn('payments', 'processed_at')) {
                 $table->timestamp('processed_at')->nullable();
             }
         });

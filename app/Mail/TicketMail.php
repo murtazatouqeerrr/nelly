@@ -22,7 +22,7 @@ class TicketMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Support Ticket: ' . $this->ticket->subject,
+            subject: 'New Support Ticket: '.$this->ticket->subject,
         );
     }
 

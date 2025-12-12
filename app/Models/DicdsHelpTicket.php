@@ -16,11 +16,11 @@ class DicdsHelpTicket extends Model
         'priority',
         'response',
         'responded_by',
-        'responded_at'
+        'responded_at',
     ];
 
     protected $casts = [
-        'responded_at' => 'datetime'
+        'responded_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

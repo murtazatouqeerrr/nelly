@@ -13,10 +13,10 @@ class UserController extends Controller
         $query = User::with('role');
 
         if ($request->search) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('first_name', 'like', "%{$request->search}%")
-                  ->orWhere('last_name', 'like', "%{$request->search}%")
-                  ->orWhere('email', 'like', "%{$request->search}%");
+                    ->orWhere('last_name', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%");
             });
         }
 
@@ -38,7 +38,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
-            'role_id' => 'required|exists:roles,id'
+            'role_id' => 'required|exists:roles,id',
         ]);
 
         $user = User::create([
@@ -52,7 +52,7 @@ class UserController extends Controller
             'driver_license' => $request->driver_license,
             'dicds_user_id' => $request->dicds_user_id,
             'dicds_password' => $request->dicds_password ? encrypt($request->dicds_password) : null,
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         return response()->json($user->load('role'), 201);
@@ -63,12 +63,12 @@ class UserController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'role_id' => 'required|exists:roles,id'
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'role_id' => 'required|exists:roles,id',
         ]);
 
         $data = $request->only(['role_id', 'first_name', 'last_name', 'email', 'phone', 'address', 'driver_license', 'dicds_user_id', 'status']);
-        
+
         if ($request->password) {
             $data['password'] = Hash::make($request->password);
         }
@@ -85,6 +85,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+
         return response()->json(['message' => 'User deleted successfully']);
     }
 
@@ -95,10 +96,10 @@ class UserController extends Controller
             $query = User::with('role');
 
             if ($request->search) {
-                $query->where(function($q) use ($request) {
+                $query->where(function ($q) use ($request) {
                     $q->where('first_name', 'like', "%{$request->search}%")
-                      ->orWhere('last_name', 'like', "%{$request->search}%")
-                      ->orWhere('email', 'like', "%{$request->search}%");
+                        ->orWhere('last_name', 'like', "%{$request->search}%")
+                        ->orWhere('email', 'like', "%{$request->search}%");
                 });
             }
 
@@ -111,21 +112,22 @@ class UserController extends Controller
             }
 
             $result = $query->paginate(15);
-            
+
             return response()->json([
                 'data' => $result->items(),
                 'current_page' => $result->currentPage(),
                 'last_page' => $result->lastPage(),
-                'total' => $result->total()
+                'total' => $result->total(),
             ]);
         } catch (\Exception $e) {
-            \Log::error('UserController indexWeb error: ' . $e->getMessage());
+            \Log::error('UserController indexWeb error: '.$e->getMessage());
+
             return response()->json([
                 'data' => [],
                 'current_page' => 1,
                 'last_page' => 1,
                 'total' => 0,
-                'error' => 'Failed to load users'
+                'error' => 'Failed to load users',
             ], 500);
         }
     }
@@ -134,7 +136,7 @@ class UserController extends Controller
     {
         return $this->store($request);
     }
-    
+
     public function updateWeb(Request $request, User $user)
     {
         return $this->update($request, $user);

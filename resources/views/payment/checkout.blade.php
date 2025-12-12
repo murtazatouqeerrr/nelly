@@ -57,9 +57,9 @@
             <div class="payment-methods">
                 <h3>Select Payment Method</h3>
                 
-                <div class="payment-method" onclick="selectPaymentMethod('stripe')">
+                <div class="payment-method" onclick="selectPaymentMethod('authorizenet')">
                     <h3>💳 Credit/Debit Card</h3>
-                    <p>Pay securely with your credit or debit card via Stripe</p>
+                    <p>Pay securely with your credit or debit card</p>
                 </div>
 
                 <div class="payment-method" onclick="selectPaymentMethod('dummy')">
@@ -68,34 +68,36 @@
                 </div>
             </div>
 
-            <div class="stripe-form" id="stripe-form">
+            <div class="stripe-form" id="authorizenet-form">
                 <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
-                    <h4 style="margin: 0 0 10px 0; color: #0369a1;">Test Card Information</h4>
-                    <p style="margin: 5px 0; font-size: 14px;"><strong>Card Number:</strong> 4242 4242 4242 4242</p>
-                    <p style="margin: 5px 0; font-size: 14px;"><strong>Expiry:</strong> Any future date (e.g., 12/34)</p>
-                    <p style="margin: 5px 0; font-size: 14px;"><strong>CVC:</strong> Any 3 digits (e.g., 123)</p>
-                    <p style="margin: 5px 0; font-size: 14px;"><strong>ZIP:</strong> Any 5 digits (e.g., 12345)</p>
+                    <h4 style="margin: 0 0 10px 0; color: #0369a1;">Test Card Information (Sandbox)</h4>
+                    <p style="margin: 5px 0; font-size: 14px;"><strong>Card Number:</strong> 4007000000027</p>
+                    <p style="margin: 5px 0; font-size: 14px;"><strong>Expiry:</strong> Any future date (e.g., 12/2025)</p>
+                    <p style="margin: 5px 0; font-size: 14px;"><strong>CVV:</strong> Any 3 digits (e.g., 123)</p>
                 </div>
 
                 <h4>Billing Information</h4>
-                <input type="text" id="billing-address" placeholder="Address" required style="width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-                <input type="text" id="billing-city" placeholder="City" required style="width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="authnet-billing-address" placeholder="Address" required style="width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="authnet-billing-city" placeholder="City" required style="width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
                 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <input type="text" id="billing-state" placeholder="State" required style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
-                    <input type="text" id="billing-zipcode" placeholder="Zip Code" required style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" id="authnet-billing-state" placeholder="State" required style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" id="authnet-billing-zipcode" placeholder="Zip Code" required style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
                 </div>
-                <input type="text" id="billing-country" placeholder="Country" required value="USA" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="authnet-billing-country" placeholder="Country" required value="USA" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px;">
                 
                 <h4>Card Details</h4>
-                <div id="card-element"></div>
-                <div id="card-errors" class="error"></div>
-                <button class="btn btn-primary" onclick="processStripePayment()">
+                <input type="text" id="authnet-card-number" placeholder="Card Number" required maxlength="16" style="width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="text" id="authnet-expiry-month" placeholder="MM" required maxlength="2" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" id="authnet-expiry-year" placeholder="YYYY" required maxlength="4" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" id="authnet-cvv" placeholder="CVV" required maxlength="4" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div id="authnet-errors" class="error"></div>
+                <button class="btn btn-primary" onclick="processAuthorizenetPayment()">
                     <span class="loading">Processing...</span>
                     <span class="btn-text">Pay ${{ number_format($course->price, 2) }}</span>
                 </button>
             </div>
-
-
 
             <div class="stripe-form" id="dummy-form">
                 <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
@@ -131,86 +133,69 @@
             }
         }
 
-        function initializeStripe() {
-            const stripeKey = '{{ config("payment.stripe.public_key") ?: config("services.stripe.key") ?: env("STRIPE_KEY") }}';
-            
-            if (!stripeKey || stripeKey.includes('your_stripe')) {
-                document.getElementById('card-errors').textContent = 'Stripe is not configured. Please contact support.';
-                return;
-            }
-            
-            stripe = Stripe(stripeKey);
-            const elements = stripe.elements();
-            
-            cardElement = elements.create('card', {
-                style: {
-                    base: {
-                        fontSize: '16px',
-                        color: '#424770',
-                        '::placeholder': { color: '#aab7c4' }
-                    }
-                }
-            });
-            
-            cardElement.mount('#card-element');
-            cardElement.on('change', ({error}) => {
-                const displayError = document.getElementById('card-errors');
-                displayError.textContent = error ? error.message : '';
-            });
-        }
-
-        async function processStripePayment() {
-            if (!stripe || !cardElement) return;
-
+        async function processAuthorizenetPayment() {
             const button = event.target;
             button.disabled = true;
             button.querySelector('.loading').style.display = 'inline';
             button.querySelector('.btn-text').style.display = 'none';
 
-            const {paymentMethod, error} = await stripe.createPaymentMethod({
-                type: 'card',
-                card: cardElement,
-            });
+            // Validate inputs
+            const cardNumber = document.getElementById('authnet-card-number').value.replace(/\s/g, '');
+            const expiryMonth = document.getElementById('authnet-expiry-month').value;
+            const expiryYear = document.getElementById('authnet-expiry-year').value;
+            const cvv = document.getElementById('authnet-cvv').value;
+            const address = document.getElementById('authnet-billing-address').value;
+            const city = document.getElementById('authnet-billing-city').value;
+            const state = document.getElementById('authnet-billing-state').value;
+            const zipcode = document.getElementById('authnet-billing-zipcode').value;
+            const country = document.getElementById('authnet-billing-country').value;
 
-            if (error) {
-                document.getElementById('card-errors').textContent = error.message;
+            if (!cardNumber || !expiryMonth || !expiryYear || !cvv || !address || !city || !state || !zipcode) {
+                document.getElementById('authnet-errors').textContent = 'Please fill in all required fields';
                 button.disabled = false;
                 button.querySelector('.loading').style.display = 'none';
                 button.querySelector('.btn-text').style.display = 'inline';
                 return;
             }
 
-            // Send to server
-            fetch('/payment/stripe', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    enrollment_id: {{ $enrollment->id }},
-                    payment_method_id: paymentMethod.id,
-                    address: document.getElementById('billing-address').value,
-                    city: document.getElementById('billing-city').value,
-                    state: document.getElementById('billing-state').value,
-                    country: document.getElementById('billing-country').value,
-                    zipcode: document.getElementById('billing-zipcode').value
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
+            try {
+                const response = await fetch('/payment/authorizenet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        enrollment_id: {{ $enrollment->id }},
+                        card_number: cardNumber,
+                        expiry_month: expiryMonth,
+                        expiry_year: expiryYear,
+                        cvv: cvv,
+                        address: address,
+                        city: city,
+                        state: state,
+                        country: country,
+                        zipcode: zipcode
+                    })
+                });
+
+                const data = await response.json();
+                
                 if (data.success) {
                     window.location.href = data.redirect;
                 } else {
-                    document.getElementById('card-errors').textContent = data.error;
+                    document.getElementById('authnet-errors').textContent = data.error || 'Payment failed';
                     button.disabled = false;
                     button.querySelector('.loading').style.display = 'none';
                     button.querySelector('.btn-text').style.display = 'inline';
                 }
-            });
+            } catch (error) {
+                document.getElementById('authnet-errors').textContent = 'Error: ' + error.message;
+                button.disabled = false;
+                button.querySelector('.loading').style.display = 'none';
+                button.querySelector('.btn-text').style.display = 'inline';
+            }
         }
-
-
 
         async function processDummyPayment() {
             const button = event.target;

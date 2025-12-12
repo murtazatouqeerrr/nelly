@@ -18,7 +18,7 @@ class LegalDocumentController extends Controller
             ->where('is_active', true)
             ->latest('effective_date')
             ->first();
-        
+
         return response()->json($document);
     }
 
@@ -43,6 +43,7 @@ class LegalDocumentController extends Controller
     {
         $document = LegalDocument::findOrFail($id);
         $document->update($request->all());
+
         return response()->json($document);
     }
 
@@ -51,6 +52,7 @@ class LegalDocumentController extends Controller
         $document = LegalDocument::findOrFail($id);
         LegalDocument::where('document_type', $document->document_type)->update(['is_active' => false]);
         $document->update(['is_active' => true]);
+
         return response()->json($document);
     }
 }

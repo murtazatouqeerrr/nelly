@@ -20,14 +20,14 @@ class Certificate extends Model
         'state_submission_id',
         'submission_attempts',
         'last_submission_attempt',
-        'status'
+        'status',
     ];
 
     protected $casts = [
         'completion_date' => 'date',
         'issued_at' => 'datetime',
         'last_submission_attempt' => 'datetime',
-        'is_sent_to_state' => 'boolean'
+        'is_sent_to_state' => 'boolean',
     ];
 
     public function enrollment()

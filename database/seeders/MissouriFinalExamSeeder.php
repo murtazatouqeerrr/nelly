@@ -13,21 +13,23 @@ class MissouriFinalExamSeeder extends Seeder
             ->where('title', 'like', '%Missouri%')
             ->first();
 
-        if (!$course) {
+        if (! $course) {
             $this->command->error('Missouri course not found!');
+
             return;
         }
 
         $finalExamChapter = DB::table('chapters')
             ->where('course_id', $course->id)
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('title', 'like', '%Final Exam%')
-                      ->orWhere('order_index', 11);
+                    ->orWhere('order_index', 11);
             })
             ->first();
 
-        if (!$finalExamChapter) {
+        if (! $finalExamChapter) {
             $this->command->error('Final Exam chapter not found!');
+
             return;
         }
 
@@ -81,7 +83,7 @@ class MissouriFinalExamSeeder extends Seeder
             ['question' => 'Driver\'s failure to pay attention is responsible for an estimated:', 'options' => ['100,000 auto accidents', '300,000 auto accidents', '1.2 million auto accidents', '.2 million'], 'correct_answer' => '1.2 million auto accidents'],
             ['question' => 'When parking:', 'options' => ['Downhill: point your front tires towards the side of the road and roll forward to hit the curb.', 'Uphill: point your tires towards the middle of the road and roll back to hit the curb.', 'Anytime: your tires shouldn\'t be more than 18 inches from the curb.', 'All of the above', 'None of the above'], 'correct_answer' => 'All of the above'],
             ['question' => 'The following is not a road rage offense:', 'options' => ['Making obscene gestures', 'Blocking a vehicle that is trying to pass', 'Breaking suddenly to "punish" a tailgater.', 'Driving with BAC of .08%', 'Using a vehicle to intimidate another driver.'], 'correct_answer' => 'Driving with BAC of .08%'],
-            ['question' => 'You should never pass a solid yellow line, with these few important exceptions:', 'options' => ['When you are turning left at an intersection', 'When you are turning into or out of a private road, or a driveway', 'When the right half of the road is closed, or blocked by an obstacle', 'Certain carpool lanes allow drivers to cross but you must enter and exit at designated places only', 'All of the above'], 'correct_answer' => 'All of the above']
+            ['question' => 'You should never pass a solid yellow line, with these few important exceptions:', 'options' => ['When you are turning left at an intersection', 'When you are turning into or out of a private road, or a driveway', 'When the right half of the road is closed, or blocked by an obstacle', 'Certain carpool lanes allow drivers to cross but you must enter and exit at designated places only', 'All of the above'], 'correct_answer' => 'All of the above'],
         ];
 
         foreach ($questions as $index => $question) {

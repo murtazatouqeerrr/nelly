@@ -13,12 +13,12 @@ class Refund extends Model
         'reason',
         'status',
         'processed_by',
-        'processed_at'
+        'processed_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'processed_at' => 'datetime'
+        'processed_at' => 'datetime',
     ];
 
     public function payment()

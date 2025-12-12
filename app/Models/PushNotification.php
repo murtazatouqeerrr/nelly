@@ -11,10 +11,10 @@ class PushNotification extends Model
         'type',
         'title',
         'message',
-        'is_read'
+        'is_read',
     ];
 
     protected $casts = [
-        'is_read' => 'boolean'
+        'is_read' => 'boolean',
     ];
 }

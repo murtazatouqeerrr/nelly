@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FloridaCertificate;
 use App\Models\CertificateVerificationLog;
+use App\Models\FloridaCertificate;
 use Illuminate\Http\Request;
 
 class CertificateVerificationController extends Controller
@@ -14,13 +14,13 @@ class CertificateVerificationController extends Controller
             $certificate = FloridaCertificate::where('verification_hash', $verificationHash)->first();
         } else {
             $request->validate([
-                'certificate_number' => 'required|string'
+                'certificate_number' => 'required|string',
             ]);
-            
+
             $certificate = FloridaCertificate::where('dicds_certificate_number', $request->certificate_number)->first();
         }
 
-        if (!$certificate) {
+        if (! $certificate) {
             return response()->json(['message' => 'Certificate not found'], 404);
         }
 
@@ -30,7 +30,7 @@ class CertificateVerificationController extends Controller
             'verified_by' => $request->verified_by,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
-            'verified_at' => now()
+            'verified_at' => now(),
         ]);
 
         return response()->json([
@@ -40,8 +40,8 @@ class CertificateVerificationController extends Controller
                 'course_name' => $certificate->course_name,
                 'completion_date' => $certificate->completion_date,
                 'dicds_certificate_number' => $certificate->dicds_certificate_number,
-                'final_exam_score' => $certificate->final_exam_score
-            ]
+                'final_exam_score' => $certificate->final_exam_score,
+            ],
         ]);
     }
 }

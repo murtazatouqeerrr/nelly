@@ -12,13 +12,13 @@ class FloridaComplianceReport extends Model
         'data_range_start',
         'data_range_end',
         'generated_by',
-        'file_path'
+        'file_path',
     ];
 
     protected $casts = [
         'report_date' => 'date',
         'data_range_start' => 'date',
-        'data_range_end' => 'date'
+        'data_range_end' => 'date',
     ];
 
     public function generator()

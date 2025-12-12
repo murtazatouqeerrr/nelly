@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // Only create table if it doesn't exist
-        if (!Schema::hasTable('dicds_certificate_orders')) {
+        if (! Schema::hasTable('dicds_certificate_orders')) {
             Schema::create('dicds_certificate_orders', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('school_id')->constrained('florida_schools')->onDelete('cascade');

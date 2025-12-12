@@ -8,7 +8,7 @@ class FloridaNotification extends Model
 {
     protected $fillable = [
         'user_id', 'type', 'title', 'message', 'action_url', 'is_read', 'read_at',
-        'scheduled_for', 'sent_at', 'florida_metadata'
+        'scheduled_for', 'sent_at', 'florida_metadata',
     ];
 
     protected $casts = [
@@ -16,7 +16,7 @@ class FloridaNotification extends Model
         'read_at' => 'datetime',
         'scheduled_for' => 'datetime',
         'sent_at' => 'datetime',
-        'florida_metadata' => 'array'
+        'florida_metadata' => 'array',
     ];
 
     public function user()

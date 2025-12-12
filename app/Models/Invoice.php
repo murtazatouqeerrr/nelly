@@ -17,7 +17,7 @@ class Invoice extends Model
         'tax_rate',
         'total_amount',
         'pdf_path',
-        'sent_at'
+        'sent_at',
     ];
 
     protected $casts = [
@@ -28,7 +28,7 @@ class Invoice extends Model
         'tax_amount' => 'decimal:2',
         'tax_rate' => 'decimal:2',
         'total_amount' => 'decimal:2',
-        'sent_at' => 'datetime'
+        'sent_at' => 'datetime',
     ];
 
     public function payment()

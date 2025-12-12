@@ -14,12 +14,12 @@ class ChapterQuestion extends Model
         'correct_answer',
         'explanation',
         'points',
-        'order_index'
+        'order_index',
     ];
 
     protected $casts = [
         'points' => 'integer',
-        'order_index' => 'integer'
+        'order_index' => 'integer',
     ];
 
     public function chapter()

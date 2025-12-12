@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // ✅ Prevent "table already exists" error
-        if (!Schema::hasTable('certificates')) {
+        if (! Schema::hasTable('certificates')) {
             Schema::create('certificates', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('enrollment_id')->constrained('user_course_enrollments')->onDelete('cascade');

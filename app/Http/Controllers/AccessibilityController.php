@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserAccessibilityPreference;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AccessibilityController extends Controller
 {
     public function getPreferences(): JsonResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -30,7 +30,7 @@ class AccessibilityController extends Controller
 
     public function updatePreferences(Request $request): JsonResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -58,7 +58,7 @@ class AccessibilityController extends Controller
 
     public function resetPreferences(): JsonResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\FloridaAuditTrail;
+use App\Models\FloridaSecurityLog;
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\FloridaSecurityLog;
-use App\Models\FloridaAuditTrail;
 
 class FloridaSecurityLogger
 {
@@ -23,11 +23,11 @@ class FloridaSecurityLogger
                     'user_agent' => $request->userAgent(),
                     'description' => "Admin accessed: {$request->path()}",
                     'risk_level' => 'low',
-                    'created_at' => now()
+                    'created_at' => now(),
                 ]);
             } catch (\Exception $e) {
                 // Silently fail if logging fails
-                \Log::error('Florida Security Logger failed: ' . $e->getMessage());
+                \Log::error('Florida Security Logger failed: '.$e->getMessage());
             }
         }
 
@@ -36,17 +36,17 @@ class FloridaSecurityLogger
             try {
                 FloridaAuditTrail::create([
                     'user_id' => auth()->id(),
-                    'action' => $request->method() . ' ' . $request->path(),
+                    'action' => $request->method().' '.$request->path(),
                     'model_type' => 'System',
                     'florida_required' => true,
                     'ip_address' => $request->ip(),
                     'user_agent' => $request->userAgent(),
                     'url' => $request->fullUrl(),
                     'method' => $request->method(),
-                    'created_at' => now()
+                    'created_at' => now(),
                 ]);
             } catch (\Exception $e) {
-                \Log::error('Florida Audit Logger failed: ' . $e->getMessage());
+                \Log::error('Florida Audit Logger failed: '.$e->getMessage());
             }
         }
 
@@ -59,7 +59,7 @@ class FloridaSecurityLogger
             'admin/florida-*',
             'admin/dicds-*',
             'admin/certificates*',
-            'api/florida-*'
+            'api/florida-*',
         ];
 
         foreach ($floridaRequiredPaths as $pattern) {

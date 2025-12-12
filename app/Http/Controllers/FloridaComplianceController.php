@@ -27,7 +27,7 @@ class FloridaComplianceController extends Controller
             'details' => ['message' => 'Check completed successfully'],
             'performed_by' => auth()->id(),
             'performed_at' => now(),
-            'next_due_date' => $this->calculateNextDueDate($checkType)
+            'next_due_date' => $this->calculateNextDueDate($checkType),
         ]);
 
         return response()->json($check);
@@ -44,7 +44,7 @@ class FloridaComplianceController extends Controller
 
     private function calculateNextDueDate($checkType)
     {
-        return match($checkType) {
+        return match ($checkType) {
             'daily' => now()->addDay(),
             'weekly' => now()->addWeek(),
             'monthly' => now()->addMonth(),

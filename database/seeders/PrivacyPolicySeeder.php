@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\LegalDocument;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class PrivacyPolicySeeder extends Seeder
 {
@@ -18,7 +18,7 @@ class PrivacyPolicySeeder extends Seeder
                 'last_name' => 'User',
                 'password' => \Hash::make('password'),
                 'role_id' => 1,
-                'status' => 'active'
+                'status' => 'active',
             ]
         );
 
@@ -32,7 +32,7 @@ Governing Law: You agree that by using our website or our services, your use is 
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => true,
-            'created_by' => $adminUser->id
+            'created_by' => $adminUser->id,
         ]);
 
         LegalDocument::create([
@@ -55,7 +55,7 @@ Governing Law: You agree that by using our website or our services, your use is 
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => true,
-            'created_by' => $adminUser->id
+            'created_by' => $adminUser->id,
         ]);
 
         LegalDocument::create([
@@ -86,7 +86,7 @@ Hours: Monday-Friday 8am-4pm PST',
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => false,
-            'created_by' => $adminUser->id
+            'created_by' => $adminUser->id,
         ]);
 
         LegalDocument::create([
@@ -97,7 +97,7 @@ Hours: Monday-Friday 8am-4pm PST',
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => false,
-            'created_by' => $adminUser->id
+            'created_by' => $adminUser->id,
         ]);
 
         LegalDocument::create([
@@ -112,7 +112,7 @@ Changes: Dummies Traffic School reserves the right to change these terms and con
             'effective_date' => Carbon::now(),
             'is_active' => true,
             'requires_consent' => false,
-            'created_by' => $adminUser->id
+            'created_by' => $adminUser->id,
         ]);
     }
 }

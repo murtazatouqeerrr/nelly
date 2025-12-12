@@ -14,12 +14,12 @@ class FloridaDeviceSession extends Model
         'screen_height',
         'user_agent',
         'florida_course_accessed',
-        'last_activity'
+        'last_activity',
     ];
 
     protected $casts = [
         'florida_course_accessed' => 'boolean',
-        'last_activity' => 'datetime'
+        'last_activity' => 'datetime',
     ];
 
     public function user(): BelongsTo

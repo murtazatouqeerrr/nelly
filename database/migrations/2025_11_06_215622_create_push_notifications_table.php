@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('push_notifications')) {
+        if (! Schema::hasTable('push_notifications')) {
             Schema::create('push_notifications', function (Blueprint $table) {
                 $table->id();
 

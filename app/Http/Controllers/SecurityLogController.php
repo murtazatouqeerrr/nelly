@@ -3,21 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\SecurityLog;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class SecurityLogController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         $logs = SecurityLog::with('user')
-            ->when($request->event_type, fn($q) => $q->where('event_type', $request->event_type))
-            ->when($request->risk_level, fn($q) => $q->where('risk_level', $request->risk_level))
-            ->when($request->user_id, fn($q) => $q->where('user_id', $request->user_id))
+            ->when($request->event_type, fn ($q) => $q->where('event_type', $request->event_type))
+            ->when($request->risk_level, fn ($q) => $q->where('risk_level', $request->risk_level))
+            ->when($request->user_id, fn ($q) => $q->where('user_id', $request->user_id))
             ->orderBy('created_at', 'desc')
             ->paginate(50);
 
@@ -26,7 +26,7 @@ class SecurityLogController extends Controller
 
     public function forceLogout(Request $request): JsonResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

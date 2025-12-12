@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class UserAccessController extends Controller
 {
@@ -12,7 +11,7 @@ class UserAccessController extends Controller
         $lockedUsers = User::where('account_locked', true)
             ->orderBy('locked_at', 'desc')
             ->paginate(20);
-        
+
         return view('admin.user-access', compact('lockedUsers'));
     }
 
@@ -21,7 +20,7 @@ class UserAccessController extends Controller
         $user->update([
             'account_locked' => false,
             'lock_reason' => null,
-            'locked_at' => null
+            'locked_at' => null,
         ]);
 
         return redirect()->back()->with('success', 'User account unlocked successfully');
@@ -33,7 +32,7 @@ class UserAccessController extends Controller
             ->select('id', 'first_name', 'last_name', 'email', 'lock_reason', 'locked_at')
             ->orderBy('locked_at', 'desc')
             ->get();
-        
+
         return response()->json($lockedUsers);
     }
 
@@ -42,7 +41,7 @@ class UserAccessController extends Controller
         $user->update([
             'account_locked' => false,
             'lock_reason' => null,
-            'locked_at' => null
+            'locked_at' => null,
         ]);
 
         return response()->json(['success' => true, 'message' => 'User unlocked']);

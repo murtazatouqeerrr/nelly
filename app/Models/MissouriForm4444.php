@@ -17,7 +17,7 @@ class MissouriForm4444 extends Model
         'submitted_to_dor',
         'dor_submission_date',
         'status',
-        'pdf_path'
+        'pdf_path',
     ];
 
     protected $casts = [
@@ -25,24 +25,31 @@ class MissouriForm4444 extends Model
         'submission_deadline' => 'datetime',
         'dor_submission_date' => 'datetime',
         'court_signature_required' => 'boolean',
-        'submitted_to_dor' => 'boolean'
+        'submitted_to_dor' => 'boolean',
     ];
 
     const STATUSES = [
         'pending_completion',
-        'ready_for_submission', 
+        'ready_for_submission',
         'awaiting_court_signature',
         'submitted_to_dor',
-        'expired'
+        'expired',
     ];
 
     const SUBMISSION_METHODS = [
         'point_reduction',
         'court_ordered',
         'insurance_discount',
-        'voluntary'
+        'voluntary',
     ];
 
-    public function user() { return $this->belongsTo(User::class); }
-    public function enrollment() { return $this->belongsTo(UserCourseEnrollment::class); }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function enrollment()
+    {
+        return $this->belongsTo(UserCourseEnrollment::class);
+    }
 }

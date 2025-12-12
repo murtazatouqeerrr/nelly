@@ -10,8 +10,8 @@ class FloridaSecurityLogController extends Controller
     public function index(Request $request)
     {
         $logs = FloridaSecurityLog::with('user')
-            ->when($request->event_type, fn($q) => $q->where('event_type', $request->event_type))
-            ->when($request->risk_level, fn($q) => $q->where('risk_level', $request->risk_level))
+            ->when($request->event_type, fn ($q) => $q->where('event_type', $request->event_type))
+            ->when($request->risk_level, fn ($q) => $q->where('risk_level', $request->risk_level))
             ->orderBy('created_at', 'desc')
             ->paginate(50);
 
@@ -21,7 +21,7 @@ class FloridaSecurityLogController extends Controller
     public function forceLogout(Request $request)
     {
         $request->validate(['user_id' => 'required|exists:users,id']);
-        
+
         // Force logout logic here
         FloridaSecurityLog::create([
             'user_id' => $request->user_id,
@@ -29,7 +29,7 @@ class FloridaSecurityLogController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'description' => 'Force logout by admin',
-            'risk_level' => 'medium'
+            'risk_level' => 'medium',
         ]);
 
         return response()->json(['message' => 'User logged out successfully']);

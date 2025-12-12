@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\UserCourseEnrollment;
+use Illuminate\Database\Seeder;
 
 class PaymentSeeder extends Seeder
 {
@@ -13,16 +13,17 @@ class PaymentSeeder extends Seeder
     {
         $users = User::all();
         $enrollments = UserCourseEnrollment::all();
-        
+
         if ($users->isEmpty() || $enrollments->isEmpty()) {
             $this->command->warn('Skipping PaymentSeeder: No users or enrollments found.');
+
             return;
         }
-        
+
         $paymentMethods = ['credit_card', 'debit_card', 'paypal', 'stripe', 'bank_transfer'];
         $gateways = ['stripe', 'paypal', 'square', 'authorize_net'];
         $statuses = ['pending', 'completed', 'failed', 'refunded'];
-        
+
         foreach ($enrollments as $enrollment) {
             Payment::create([
                 'user_id' => $enrollment->user_id,
@@ -31,19 +32,19 @@ class PaymentSeeder extends Seeder
                 'currency' => 'USD',
                 'payment_method' => $paymentMethods[array_rand($paymentMethods)],
                 'gateway' => $gateways[array_rand($gateways)],
-                'gateway_transaction_id' => 'txn_' . uniqid(),
+                'gateway_transaction_id' => 'txn_'.uniqid(),
                 'status' => $statuses[array_rand($statuses)],
                 'gateway_response' => json_encode([
-                    'transaction_id' => 'txn_' . uniqid(),
+                    'transaction_id' => 'txn_'.uniqid(),
                     'response_code' => '00',
-                    'message' => 'Transaction approved'
+                    'message' => 'Transaction approved',
                 ]),
                 'processed_at' => now()->subDays(rand(1, 30)),
                 'created_at' => now()->subDays(rand(1, 60)),
-                'updated_at' => now()->subDays(rand(1, 30))
+                'updated_at' => now()->subDays(rand(1, 30)),
             ]);
         }
-        
+
         // Create some additional random payments
         for ($i = 0; $i < 50; $i++) {
             Payment::create([
@@ -53,16 +54,16 @@ class PaymentSeeder extends Seeder
                 'currency' => 'USD',
                 'payment_method' => $paymentMethods[array_rand($paymentMethods)],
                 'gateway' => $gateways[array_rand($gateways)],
-                'gateway_transaction_id' => 'txn_' . uniqid(),
+                'gateway_transaction_id' => 'txn_'.uniqid(),
                 'status' => $statuses[array_rand($statuses)],
                 'gateway_response' => json_encode([
-                    'transaction_id' => 'txn_' . uniqid(),
+                    'transaction_id' => 'txn_'.uniqid(),
                     'response_code' => rand(0, 1) ? '00' : '05',
-                    'message' => rand(0, 1) ? 'Transaction approved' : 'Transaction declined'
+                    'message' => rand(0, 1) ? 'Transaction approved' : 'Transaction declined',
                 ]),
                 'processed_at' => now()->subDays(rand(1, 90)),
                 'created_at' => now()->subDays(rand(1, 120)),
-                'updated_at' => now()->subDays(rand(1, 60))
+                'updated_at' => now()->subDays(rand(1, 60)),
             ]);
         }
     }

@@ -20,10 +20,10 @@ class CertificateSubmission extends Mailable
 
     public function build()
     {
-        return $this->subject('Certificate Submission - ' . $this->certificate->student_name)
-                    ->view('emails.certificate-submission')
-                    ->with([
-                        'certificate' => $this->certificate
-                    ]);
+        return $this->subject('Certificate Submission - '.$this->certificate->student_name)
+            ->view('emails.certificate-submission')
+            ->with([
+                'certificate' => $this->certificate,
+            ]);
     }
 }

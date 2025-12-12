@@ -14,12 +14,12 @@ class PayPalPayment extends Model
         'status',
         'amount',
         'currency',
-        'metadata'
+        'metadata',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'metadata' => 'array'
+        'metadata' => 'array',
     ];
 
     public function transaction()

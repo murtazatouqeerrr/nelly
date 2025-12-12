@@ -42,7 +42,7 @@ return new class extends Migration
                 'due_month', 'due_day', 'due_year',
                 'security_q1', 'security_q2', 'security_q3', 'security_q4', 'security_q5',
                 'security_q6', 'security_q7', 'security_q8', 'security_q9', 'security_q10',
-                'agreement_name', 'terms_agreement', 'registration_completed_at'
+                'agreement_name', 'terms_agreement', 'registration_completed_at',
             ]);
         });
     }

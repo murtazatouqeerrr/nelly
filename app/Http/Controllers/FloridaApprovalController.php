@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FloridaOrderApproval;
 use App\Models\DicdsCertificateOrder;
+use App\Models\FloridaOrderApproval;
 use Illuminate\Http\Request;
 
 class FloridaApprovalController extends Controller

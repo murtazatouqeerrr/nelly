@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\DataExportRequest;
 use App\Models\SecurityLog;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DataExportController extends Controller
 {
     public function requestExport(Request $request): JsonResponse
     {
         try {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 
@@ -41,15 +41,16 @@ class DataExportController extends Controller
 
             return response()->json($exportRequest);
         } catch (\Exception $e) {
-            \Log::error('Data export request failed: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to create export request: ' . $e->getMessage()], 500);
+            \Log::error('Data export request failed: '.$e->getMessage());
+
+            return response()->json(['error' => 'Failed to create export request: '.$e->getMessage()], 500);
         }
     }
 
     public function getStatus(int $id): JsonResponse
     {
         try {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 
@@ -57,21 +58,22 @@ class DataExportController extends Controller
                 ->where('user_id', auth()->id())
                 ->first();
 
-            if (!$request) {
+            if (! $request) {
                 return response()->json(['error' => 'Export request not found'], 404);
             }
 
             return response()->json($request);
         } catch (\Exception $e) {
-            \Log::error('Get export status failed: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to get export status: ' . $e->getMessage()], 500);
+            \Log::error('Get export status failed: '.$e->getMessage());
+
+            return response()->json(['error' => 'Failed to get export status: '.$e->getMessage()], 500);
         }
     }
 
     public function download(int $id): JsonResponse
     {
         try {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 
@@ -80,7 +82,7 @@ class DataExportController extends Controller
                 ->where('status', 'completed')
                 ->first();
 
-            if (!$request) {
+            if (! $request) {
                 return response()->json(['error' => 'Export request not found or not completed'], 404);
             }
 
@@ -98,8 +100,9 @@ class DataExportController extends Controller
 
             return response()->json(['download_url' => $request->file_path]);
         } catch (\Exception $e) {
-            \Log::error('Export download failed: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to download export: ' . $e->getMessage()], 500);
+            \Log::error('Export download failed: '.$e->getMessage());
+
+            return response()->json(['error' => 'Failed to download export: '.$e->getMessage()], 500);
         }
     }
 }

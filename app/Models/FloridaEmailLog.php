@@ -9,7 +9,7 @@ class FloridaEmailLog extends Model
     protected $fillable = [
         'template_id', 'enrollment_id', 'recipient_email', 'recipient_name', 'subject', 'content',
         'florida_variables_used', 'dicds_reference', 'status', 'gateway_message_id', 'gateway_response',
-        'opened_at', 'delivered_at', 'sent_at'
+        'opened_at', 'delivered_at', 'sent_at',
     ];
 
     protected $casts = [
@@ -17,7 +17,7 @@ class FloridaEmailLog extends Model
         'gateway_response' => 'array',
         'opened_at' => 'datetime',
         'delivered_at' => 'datetime',
-        'sent_at' => 'datetime'
+        'sent_at' => 'datetime',
     ];
 
     public function template()

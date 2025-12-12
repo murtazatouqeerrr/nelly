@@ -9,26 +9,26 @@ return new class extends Migration
     public function up()
     {
         // Missouri Form 4444 Management
-        if (!Schema::hasTable('missouri_form4444s')) {
+        if (! Schema::hasTable('missouri_form4444s')) {
             Schema::create('missouri_form4444s', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('enrollment_id')->constrained('user_course_enrollments')->onDelete('cascade');
-            $table->string('form_number')->unique();
-            $table->timestamp('completion_date')->nullable();
-            $table->timestamp('submission_deadline')->nullable();
-            $table->enum('submission_method', ['point_reduction', 'court_ordered', 'insurance_discount', 'voluntary']);
-            $table->boolean('court_signature_required')->default(false);
-            $table->boolean('submitted_to_dor')->default(false);
-            $table->timestamp('dor_submission_date')->nullable();
-            $table->enum('status', ['pending_completion', 'ready_for_submission', 'awaiting_court_signature', 'submitted_to_dor', 'expired'])->default('pending_completion');
-            $table->string('pdf_path')->nullable();
-            $table->timestamps();
-        });
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->foreignId('enrollment_id')->constrained('user_course_enrollments')->onDelete('cascade');
+                $table->string('form_number')->unique();
+                $table->timestamp('completion_date')->nullable();
+                $table->timestamp('submission_deadline')->nullable();
+                $table->enum('submission_method', ['point_reduction', 'court_ordered', 'insurance_discount', 'voluntary']);
+                $table->boolean('court_signature_required')->default(false);
+                $table->boolean('submitted_to_dor')->default(false);
+                $table->timestamp('dor_submission_date')->nullable();
+                $table->enum('status', ['pending_completion', 'ready_for_submission', 'awaiting_court_signature', 'submitted_to_dor', 'expired'])->default('pending_completion');
+                $table->string('pdf_path')->nullable();
+                $table->timestamps();
+            });
         }
 
         // Missouri Course Structure
-        if (!Schema::hasTable('missouri_course_structures')) {
+        if (! Schema::hasTable('missouri_course_structures')) {
             Schema::create('missouri_course_structures', function (Blueprint $table) {
                 $table->id();
                 $table->integer('chapter_number');
@@ -42,7 +42,7 @@ return new class extends Migration
         }
 
         // Missouri Quiz Bank
-        if (!Schema::hasTable('missouri_quiz_banks')) {
+        if (! Schema::hasTable('missouri_quiz_banks')) {
             Schema::create('missouri_quiz_banks', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('chapter_id')->nullable()->constrained('missouri_course_structures')->onDelete('cascade');

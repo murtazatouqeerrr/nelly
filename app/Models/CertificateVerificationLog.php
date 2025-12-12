@@ -11,11 +11,11 @@ class CertificateVerificationLog extends Model
         'verified_by',
         'ip_address',
         'user_agent',
-        'verified_at'
+        'verified_at',
     ];
 
     protected $casts = [
-        'verified_at' => 'datetime'
+        'verified_at' => 'datetime',
     ];
 
     public function certificate()

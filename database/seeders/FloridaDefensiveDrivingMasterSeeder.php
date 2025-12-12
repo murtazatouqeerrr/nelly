@@ -8,10 +8,10 @@ class FloridaDefensiveDrivingMasterSeeder extends Seeder
 {
     /**
      * Run the database seeds for COMPLETE Florida Defensive Driving Course.
-     * 
+     *
      * This master seeder creates the most comprehensive defensive driving course possible,
      * containing EVERY SINGLE PIECE of content from the Delaware 6-hour document.
-     * 
+     *
      * Course includes:
      * - 17 comprehensive chapters covering ALL aspects of defensive driving
      * - Chapter quizzes with detailed explanations
@@ -24,23 +24,23 @@ class FloridaDefensiveDrivingMasterSeeder extends Seeder
         $this->command->info('🚗 Creating COMPLETE Florida Defensive Driving Course from Delaware Document...');
         $this->command->info('📖 Including EVERY chapter, tip, and question from original document');
         $this->command->info('');
-        
+
         // Run all seeders in sequence
         $this->call(FloridaDefensiveDrivingSeeder::class);
         $this->command->info('✓ Core chapters 1-4 created');
-        
+
         $this->call(FloridaDefensiveDrivingExtendedSeeder::class);
         $this->command->info('✓ Extended chapters 5-8 created');
-        
+
         $this->call(FloridaDefensiveDrivingCompleteSeeder::class);
         $this->command->info('✓ Complete chapters 9-12 created');
-        
+
         $this->call(FloridaDefensiveDrivingFinalSeeder::class);
         $this->command->info('✓ Final chapters 13-16 created');
-        
+
         $this->call(FloridaDefensiveDrivingCompleteAllSeeder::class);
         $this->command->info('✓ Final comprehensive chapter 17 + updated exam created');
-        
+
         $this->command->info('');
         $this->command->info('🎉 ABSOLUTELY COMPLETE Florida Defensive Driving Course created!');
         $this->command->info('📚 EVERY SINGLE PIECE of Delaware document content included!');

@@ -1,4 +1,5 @@
 <?php
+
 // Quick script to mark enrollment as completed
 require __DIR__.'/vendor/autoload.php';
 $app = require_once __DIR__.'/bootstrap/app.php';
@@ -6,7 +7,7 @@ $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
 
 $enrollmentId = $argv[1] ?? null;
 
-if (!$enrollmentId) {
+if (! $enrollmentId) {
     echo "Usage: php fix-completion.php <enrollment_id>\n";
     exit(1);
 }
@@ -26,7 +27,7 @@ foreach ($chapters as $chapter) {
             'is_completed' => true,
             'completed_at' => now(),
             'time_spent' => $chapter->duration ?? 60,
-            'last_accessed_at' => now()
+            'last_accessed_at' => now(),
         ]
     );
 }
@@ -36,7 +37,7 @@ $totalChapters = $chapters->count();
 $enrollment->update([
     'progress_percentage' => 100,
     'completed_at' => now(),
-    'status' => 'completed'
+    'status' => 'completed',
 ]);
 
 echo "✓ Enrollment marked as completed!\n";

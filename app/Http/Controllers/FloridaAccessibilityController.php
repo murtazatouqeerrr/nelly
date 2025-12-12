@@ -17,7 +17,7 @@ class FloridaAccessibilityController extends Controller
                 'reduced_animations' => false,
                 'screen_reader_optimized' => false,
                 'keyboard_navigation' => true,
-                'mobile_optimized' => true
+                'mobile_optimized' => true,
             ]
         );
 
@@ -32,7 +32,7 @@ class FloridaAccessibilityController extends Controller
             'reduced_animations' => 'boolean',
             'screen_reader_optimized' => 'boolean',
             'keyboard_navigation' => 'boolean',
-            'mobile_optimized' => 'boolean'
+            'mobile_optimized' => 'boolean',
         ]);
 
         $preferences = FloridaUserAccessibility::updateOrCreate(
@@ -43,7 +43,7 @@ class FloridaAccessibilityController extends Controller
                 'reduced_animations',
                 'screen_reader_optimized',
                 'keyboard_navigation',
-                'mobile_optimized'
+                'mobile_optimized',
             ])
         );
 
@@ -60,7 +60,7 @@ class FloridaAccessibilityController extends Controller
                 'reduced_animations' => false,
                 'screen_reader_optimized' => false,
                 'keyboard_navigation' => true,
-                'mobile_optimized' => true
+                'mobile_optimized' => true,
             ]
         );
 

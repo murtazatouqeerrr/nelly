@@ -16,13 +16,13 @@ class AuditLog extends Model
         'ip_address',
         'user_agent',
         'url',
-        'method'
+        'method',
     ];
 
     protected $casts = [
         'old_values' => 'array',
         'new_values' => 'array',
-        'created_at' => 'datetime'
+        'created_at' => 'datetime',
     ];
 
     public $timestamps = false;

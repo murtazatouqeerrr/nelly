@@ -10,8 +10,9 @@ class MissouriCompleteQuestionsSeeder extends Seeder
     public function run()
     {
         $missouriCourse = DB::table('florida_courses')->where('state', 'Missouri')->first();
-        if (!$missouriCourse) {
+        if (! $missouriCourse) {
             $this->command->error('Missouri course not found!');
+
             return;
         }
 
@@ -19,26 +20,28 @@ class MissouriCompleteQuestionsSeeder extends Seeder
         DB::table('questions')->where('course_id', $missouriCourse->id)->delete();
 
         $chapters = DB::table('chapters')->where('course_id', $missouriCourse->id)->orderBy('order_index')->get();
-        
+
         $allQuestions = $this->getAllQuestions();
-        
+
         foreach ($allQuestions as $chapterIndex => $questions) {
             $chapter = $chapters[$chapterIndex] ?? null;
-            if (!$chapter) continue;
-            
+            if (! $chapter) {
+                continue;
+            }
+
             foreach ($questions as $index => $q) {
                 $options = [];
                 $correctAnswer = '';
-                
+
                 foreach (['a', 'b', 'c', 'd', 'e'] as $key) {
-                    if (!empty($q[$key])) {
+                    if (! empty($q[$key])) {
                         $options[] = $q[$key];
                         if ($key === strtolower($q['correct'])) {
                             $correctAnswer = $q[$key];
                         }
                     }
                 }
-                
+
                 DB::table('questions')->insert([
                     'chapter_id' => $chapter->id,
                     'course_id' => $missouriCourse->id,
@@ -52,16 +55,16 @@ class MissouriCompleteQuestionsSeeder extends Seeder
                     'updated_at' => now(),
                 ]);
             }
-            
-            $this->command->info("Chapter " . ($chapterIndex + 1) . ": " . count($questions) . " questions seeded");
+
+            $this->command->info('Chapter '.($chapterIndex + 1).': '.count($questions).' questions seeded');
         }
-        
+
         $this->command->info('All Missouri questions seeded successfully!');
     }
-    
+
     private function getAllQuestions()
     {
         // All questions extracted from Missouri quiz docx
-        return include(__DIR__ . '/missouri_questions_data.php');
+        return include __DIR__.'/missouri_questions_data.php';
     }
 }

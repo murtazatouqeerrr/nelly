@@ -18,14 +18,14 @@ class TimerSession extends Model
         'session_token',
         'is_active',
         'is_completed',
-        'bypassed_by_admin'
+        'bypassed_by_admin',
     ];
 
     protected $casts = [
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
         'is_completed' => 'boolean',
-        'bypassed_by_admin' => 'boolean'
+        'bypassed_by_admin' => 'boolean',
     ];
 
     public function user()

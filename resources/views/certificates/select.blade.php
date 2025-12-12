@@ -59,10 +59,9 @@
                                                 <i class="fas fa-check me-2"></i>Already Downloaded
                                             </button>
                                         @else
-                                            <a href="{{ url('/certificate/download?enrollment_id=' . $enrollment->id) }}" 
-                                               class="btn btn-primary"
-                                               onclick="return confirm('⚠️ Warning: After downloading this certificate, you will lose access to this course. Continue?')">
-                                                <i class="fas fa-download me-2"></i>Download Certificate
+                                            <a href="{{ url('/generate-certificate/' . $enrollment->id) }}" 
+                                               class="btn btn-primary">
+                                                <i class="fas fa-certificate me-2"></i>Generate Certificate
                                             </a>
                                         @endif
                                     </div>

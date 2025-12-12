@@ -18,7 +18,7 @@ class EmailLog extends Model
         'gateway_response',
         'opened_at',
         'delivered_at',
-        'sent_at'
+        'sent_at',
     ];
 
     protected $casts = [
@@ -26,7 +26,7 @@ class EmailLog extends Model
         'gateway_response' => 'array',
         'opened_at' => 'datetime',
         'delivered_at' => 'datetime',
-        'sent_at' => 'datetime'
+        'sent_at' => 'datetime',
     ];
 
     public $timestamps = false;

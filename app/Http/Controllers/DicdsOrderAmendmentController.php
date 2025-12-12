@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DicdsOrderAmendment;
 use App\Models\DicdsCertificateOrder;
+use App\Models\DicdsOrderAmendment;
 use Illuminate\Http\Request;
 
 class DicdsOrderAmendmentController extends Controller

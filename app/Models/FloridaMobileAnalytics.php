@@ -14,12 +14,12 @@ class FloridaMobileAnalytics extends Model
         'device_type',
         'course_id',
         'action',
-        'mobile_performance_metric'
+        'mobile_performance_metric',
     ];
 
     protected $casts = [
         'mobile_performance_metric' => 'array',
-        'created_at' => 'datetime'
+        'created_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

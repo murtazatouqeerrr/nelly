@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\State;
+use Illuminate\Database\Seeder;
 
 class StateSeeder extends Seeder
 {
@@ -65,7 +65,7 @@ class StateSeeder extends Seeder
             ['code' => 'VI', 'name' => 'Virgin Islands', 'is_active' => true],
             ['code' => 'GU', 'name' => 'Guam', 'is_active' => true],
             ['code' => 'AS', 'name' => 'American Samoa', 'is_active' => true],
-            ['code' => 'MP', 'name' => 'Northern Mariana Islands', 'is_active' => true]
+            ['code' => 'MP', 'name' => 'Northern Mariana Islands', 'is_active' => true],
         ];
 
         foreach ($states as $state) {

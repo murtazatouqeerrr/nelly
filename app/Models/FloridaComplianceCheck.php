@@ -14,13 +14,13 @@ class FloridaComplianceCheck extends Model
         'details',
         'performed_by',
         'performed_at',
-        'next_due_date'
+        'next_due_date',
     ];
 
     protected $casts = [
         'details' => 'array',
         'performed_at' => 'datetime',
-        'next_due_date' => 'date'
+        'next_due_date' => 'date',
     ];
 
     public function performer(): BelongsTo

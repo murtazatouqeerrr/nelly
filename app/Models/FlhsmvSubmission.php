@@ -16,14 +16,14 @@ class FlhsmvSubmission extends Model
         'error_message',
         'retry_count',
         'submitted_at',
-        'completed_at'
+        'completed_at',
     ];
 
     protected $casts = [
         'submission_data' => 'array',
         'response_data' => 'array',
         'submitted_at' => 'datetime',
-        'completed_at' => 'datetime'
+        'completed_at' => 'datetime',
     ];
 
     public function user()

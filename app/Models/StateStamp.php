@@ -11,18 +11,19 @@ class StateStamp extends Model
         'state_name',
         'logo_path',
         'is_active',
-        'description'
+        'description',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function getLogoUrlAttribute()
     {
         if ($this->logo_path) {
-            return asset('storage/' . $this->logo_path);
+            return asset('storage/'.$this->logo_path);
         }
+
         return null;
     }
 }

@@ -14,11 +14,11 @@ class DicdsAccessRequest extends Model
         'user_group',
         'status',
         'approved_by',
-        'approved_at'
+        'approved_at',
     ];
 
     protected $casts = [
-        'approved_at' => 'datetime'
+        'approved_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

@@ -12,10 +12,10 @@ class Faq extends Model
         'answer',
         'order',
         'is_active',
-        'language'
+        'language',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 }

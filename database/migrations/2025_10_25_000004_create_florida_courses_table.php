@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // Only create table if it does not exist
-        if (!Schema::hasTable('florida_courses')) {
+        if (! Schema::hasTable('florida_courses')) {
             Schema::create('florida_courses', function (Blueprint $table) {
                 $table->id();
                 $table->enum('course_type', ['BDI', 'ADI', 'TLSAE'])->default('BDI');

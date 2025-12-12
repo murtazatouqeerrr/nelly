@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\MissouriQuizBank;
 use App\Models\MissouriCourseStructure;
+use App\Models\MissouriQuizBank;
+use Illuminate\Database\Seeder;
 
 class CompleteQuizSeeder extends Seeder
 {
@@ -20,7 +20,7 @@ class CompleteQuizSeeder extends Seeder
             7 => 'Speed Laws and Backing',
             8 => 'Vehicle Equipment and Weather',
             9 => 'DUI and Substance Abuse',
-            10 => 'Defensive Driving and Road Rage'
+            10 => 'Defensive Driving and Road Rage',
         ];
 
         foreach ($chapters as $num => $title) {
@@ -28,7 +28,7 @@ class CompleteQuizSeeder extends Seeder
                 'chapter_number' => $num,
                 'chapter_title' => $title,
                 'quiz_questions_count' => 10,
-                'passing_score' => 80
+                'passing_score' => 80,
             ]);
 
             $this->seedChapterQuestions($chapter->id, $num);
@@ -38,7 +38,7 @@ class CompleteQuizSeeder extends Seeder
     private function seedChapterQuestions($chapterId, $chapterNum)
     {
         $questions = $this->getQuestionsByChapter($chapterNum);
-        
+
         foreach ($questions as $q) {
             MissouriQuizBank::create([
                 'chapter_id' => $chapterId,
@@ -49,7 +49,7 @@ class CompleteQuizSeeder extends Seeder
                 'option_d' => $q['d'],
                 'correct_answer' => $q['correct'],
                 'category' => $q['category'],
-                'difficulty_level' => 'medium'
+                'difficulty_level' => 'medium',
             ]);
         }
     }
@@ -65,7 +65,7 @@ class CompleteQuizSeeder extends Seeder
                     'c' => 'Are set aside for the use of vehicles turning left or right',
                     'd' => 'Both C and B are correct',
                     'correct' => 'A',
-                    'category' => 'traffic_laws'
+                    'category' => 'traffic_laws',
                 ],
                 [
                     'question' => 'You should scan the road__________ ahead of your vehicle.',
@@ -74,8 +74,8 @@ class CompleteQuizSeeder extends Seeder
                     'c' => '10-15 seconds',
                     'd' => '½ mile',
                     'correct' => 'C',
-                    'category' => 'safe_driving'
-                ]
+                    'category' => 'safe_driving',
+                ],
             ],
             2 => [ // Road Signs
                 [
@@ -85,7 +85,7 @@ class CompleteQuizSeeder extends Seeder
                     'c' => 'to Express traffic regulations',
                     'd' => 'all of the above',
                     'correct' => 'D',
-                    'category' => 'road_signs'
+                    'category' => 'road_signs',
                 ],
                 [
                     'question' => 'A circular sign with letters R R alerts the driver of',
@@ -94,9 +94,9 @@ class CompleteQuizSeeder extends Seeder
                     'c' => 'road construction',
                     'd' => 'none of the above',
                     'correct' => 'A',
-                    'category' => 'road_signs'
-                ]
-            ]
+                    'category' => 'road_signs',
+                ],
+            ],
         ];
 
         return $allQuestions[$chapter] ?? [];

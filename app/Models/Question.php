@@ -16,11 +16,11 @@ class Question extends Model
         'correct_answer',
         'explanation',
         'points',
-        'order_index'
+        'order_index',
     ];
 
     protected $casts = [
-        'options' => 'array'
+        'options' => 'array',
     ];
 
     public function chapter(): BelongsTo

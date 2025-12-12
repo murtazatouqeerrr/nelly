@@ -12,24 +12,24 @@ return [
 
     'username' => env('FLHSMV_USERNAME', ''),
     'password' => env('FLHSMV_PASSWORD', ''),
-    
+
     'wsdl_url' => env('FLHSMV_WSDL_URL', 'https://services.flhsmv.gov/DriverSchoolWebService/wsPrimerComponentService.svc?wsdl'),
-    
+
     'service_url' => env('FLHSMV_SERVICE_URL', 'https://services.flhsmv.gov/DriverSchoolWebService/wsPrimerComponentService.svc'),
-    
+
     'test_wsdl_url' => env('FLHSMV_TEST_WSDL_URL', ''),
     'test_service_url' => env('FLHSMV_TEST_SERVICE_URL', ''),
-    
+
     'environment' => env('FLHSMV_ENVIRONMENT', 'production'), // 'test' or 'production'
-    
+
     'default_school_id' => env('FLHSMV_DEFAULT_SCHOOL_ID', ''),
     'default_instructor_id' => env('FLHSMV_DEFAULT_INSTRUCTOR_ID', ''),
-    
+
     'retry_attempts' => env('FLHSMV_RETRY_ATTEMPTS', 3),
     'retry_delay' => env('FLHSMV_RETRY_DELAY', 300), // seconds
-    
+
     'timeout' => env('FLHSMV_TIMEOUT', 30),
-    
+
     'error_codes' => [
         'AF000' => 'Could not insert address',
         'CC000' => 'School is out of certificates',
@@ -74,6 +74,6 @@ return [
         'VI000' => 'Could not verify instructor',
         'VS000' => 'School validation failed',
         'VS010' => 'Invalid School Type',
-        'VL000' => 'Login failed'
-    ]
+        'VL000' => 'Login failed',
+    ],
 ];

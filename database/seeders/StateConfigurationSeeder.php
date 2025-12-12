@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\StateConfiguration;
 use App\Models\ComplianceRule;
+use App\Models\StateConfiguration;
 use Illuminate\Database\Seeder;
 
 class StateConfigurationSeeder extends Seeder
@@ -19,10 +19,10 @@ class StateConfigurationSeeder extends Seeder
             'api_credentials' => json_encode([
                 'client_id' => 'your_client_id',
                 'client_secret' => 'your_client_secret',
-                'token' => 'your_api_token'
+                'token' => 'your_api_token',
             ]),
             'certificate_template' => 'florida_template',
-            'is_active' => true
+            'is_active' => true,
         ]);
 
         // Florida Compliance Rules
@@ -32,36 +32,36 @@ class StateConfigurationSeeder extends Seeder
                 'rule_name' => 'minimum_course_time',
                 'rule_value' => '240',
                 'description' => 'Minimum 240 minutes (4 hours) course time required',
-                'is_required' => true
+                'is_required' => true,
             ],
             [
                 'rule_type' => 'grading',
                 'rule_name' => 'passing_score',
                 'rule_value' => '80',
                 'description' => 'Minimum 80% passing score on final exam',
-                'is_required' => true
+                'is_required' => true,
             ],
             [
                 'rule_type' => 'submission',
                 'rule_name' => 'submission_deadline_5day',
                 'rule_value' => '5',
                 'description' => 'Submit within 5 days for 5-day election',
-                'is_required' => true
+                'is_required' => true,
             ],
             [
                 'rule_type' => 'submission',
                 'rule_name' => 'submission_deadline_3day',
                 'rule_value' => '3',
                 'description' => 'Submit within 3 days for 3-day election',
-                'is_required' => true
+                'is_required' => true,
             ],
             [
                 'rule_type' => 'content',
                 'rule_name' => 'required_topics',
                 'rule_value' => 'traffic_laws,defensive_driving,substance_abuse',
                 'description' => 'Required course topics for Florida compliance',
-                'is_required' => true
-            ]
+                'is_required' => true,
+            ],
         ];
 
         foreach ($floridaRules as $rule) {
@@ -76,10 +76,10 @@ class StateConfigurationSeeder extends Seeder
             'portal_url' => 'https://portal.dmv.ca.gov',
             'portal_credentials' => json_encode([
                 'username' => 'your_username',
-                'password' => 'your_password'
+                'password' => 'your_password',
             ]),
             'certificate_template' => 'california_template',
-            'is_active' => true
+            'is_active' => true,
         ]);
 
         // California Compliance Rules
@@ -89,15 +89,15 @@ class StateConfigurationSeeder extends Seeder
                 'rule_name' => 'minimum_course_time',
                 'rule_value' => '480',
                 'description' => 'Minimum 480 minutes (8 hours) course time required',
-                'is_required' => true
+                'is_required' => true,
             ],
             [
                 'rule_type' => 'grading',
                 'rule_name' => 'passing_score',
                 'rule_value' => '83',
                 'description' => 'Minimum 83% passing score on final exam',
-                'is_required' => true
-            ]
+                'is_required' => true,
+            ],
         ];
 
         foreach ($californiaRules as $rule) {
@@ -111,7 +111,7 @@ class StateConfigurationSeeder extends Seeder
             'submission_method' => 'email',
             'email_recipient' => 'certificates@txdps.state.tx.us',
             'certificate_template' => 'texas_template',
-            'is_active' => true
+            'is_active' => true,
         ]);
 
         // Texas Compliance Rules
@@ -121,15 +121,15 @@ class StateConfigurationSeeder extends Seeder
                 'rule_name' => 'minimum_course_time',
                 'rule_value' => '360',
                 'description' => 'Minimum 360 minutes (6 hours) course time required',
-                'is_required' => true
+                'is_required' => true,
             ],
             [
                 'rule_type' => 'grading',
                 'rule_name' => 'passing_score',
                 'rule_value' => '70',
                 'description' => 'Minimum 70% passing score on final exam',
-                'is_required' => true
-            ]
+                'is_required' => true,
+            ],
         ];
 
         foreach ($texasRules as $rule) {

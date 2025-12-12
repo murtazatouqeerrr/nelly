@@ -13,8 +13,8 @@ class CourseTimerService
         $timer = CourseTimer::where('chapter_id', $chapterId)
             ->where('chapter_type', $chapterType)
             ->first();
-        
-        if (!$timer || !$timer->is_enabled) {
+
+        if (! $timer || ! $timer->is_enabled) {
             return ['success' => true, 'timer_required' => false];
         }
 
@@ -32,7 +32,7 @@ class CourseTimerService
             return [
                 'success' => true,
                 'session' => $existingSession,
-                'required_time' => $timer->required_time_minutes * 60
+                'required_time' => $timer->required_time_minutes * 60,
             ];
         }
 
@@ -42,21 +42,21 @@ class CourseTimerService
             'chapter_id' => $chapterId,
             'started_at' => now(),
             'time_spent_seconds' => 0,
-            'is_completed' => false
+            'is_completed' => false,
         ]);
 
         return [
             'success' => true,
             'session' => $session,
-            'required_time' => $timer->required_time_minutes * 60
+            'required_time' => $timer->required_time_minutes * 60,
         ];
     }
 
     public function updateTimer($sessionId, $timeSpent)
     {
         $session = TimerSession::find($sessionId);
-        
-        if (!$session) {
+
+        if (! $session) {
             return ['success' => false, 'error' => 'Session not found'];
         }
 
@@ -68,8 +68,9 @@ class CourseTimerService
         if ($timeSpent >= $requiredSeconds) {
             $session->update([
                 'is_completed' => true,
-                'completed_at' => now()
+                'completed_at' => now(),
             ]);
+
             return ['success' => true, 'completed' => true];
         }
 
@@ -86,7 +87,7 @@ class CourseTimerService
             $session->update([
                 'is_completed' => true,
                 'completed_at' => now(),
-                'bypassed_by_admin' => true
+                'bypassed_by_admin' => true,
             ]);
         } else {
             $timer = CourseTimer::where('chapter_id', $chapterId)
@@ -100,7 +101,7 @@ class CourseTimerService
                 'completed_at' => now(),
                 'time_spent_seconds' => 0,
                 'is_completed' => true,
-                'bypassed_by_admin' => true
+                'bypassed_by_admin' => true,
             ]);
         }
 

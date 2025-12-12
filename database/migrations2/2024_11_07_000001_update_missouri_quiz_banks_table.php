@@ -9,19 +9,19 @@ return new class extends Migration
     public function up()
     {
         Schema::table('missouri_quiz_banks', function (Blueprint $table) {
-            if (!Schema::hasColumn('missouri_quiz_banks', 'chapter')) {
+            if (! Schema::hasColumn('missouri_quiz_banks', 'chapter')) {
                 $table->integer('chapter')->after('id');
             }
-            if (!Schema::hasColumn('missouri_quiz_banks', 'question')) {
+            if (! Schema::hasColumn('missouri_quiz_banks', 'question')) {
                 $table->text('question')->after('chapter');
             }
-            if (!Schema::hasColumn('missouri_quiz_banks', 'option_e')) {
+            if (! Schema::hasColumn('missouri_quiz_banks', 'option_e')) {
                 $table->string('option_e')->nullable()->after('option_d');
             }
-            if (!Schema::hasColumn('missouri_quiz_banks', 'difficulty')) {
+            if (! Schema::hasColumn('missouri_quiz_banks', 'difficulty')) {
                 $table->string('difficulty')->default('medium')->after('correct_answer');
             }
-            if (!Schema::hasColumn('missouri_quiz_banks', 'is_final_exam')) {
+            if (! Schema::hasColumn('missouri_quiz_banks', 'is_final_exam')) {
                 $table->boolean('is_final_exam')->default(false)->after('difficulty');
             }
         });

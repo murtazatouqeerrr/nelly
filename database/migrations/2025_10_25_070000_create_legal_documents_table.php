@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('legal_documents')) {
+        if (! Schema::hasTable('legal_documents')) {
             Schema::create('legal_documents', function (Blueprint $table) {
                 $table->id();
                 $table->enum('document_type', [
@@ -16,7 +16,7 @@ return new class extends Migration
                     'terms_of_service',
                     'copyright_notice',
                     'disclaimer',
-                    'refund_policy'
+                    'refund_policy',
                 ]);
                 $table->string('title');
                 $table->text('content');

@@ -14,12 +14,12 @@ class FloridaDataExport extends Model
         'file_path',
         'requested_at',
         'completed_at',
-        'florida_retention_period'
+        'florida_retention_period',
     ];
 
     protected $casts = [
         'requested_at' => 'datetime',
-        'completed_at' => 'datetime'
+        'completed_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class FloridaDefensiveDrivingCompleteSeeder extends Seeder
 {
@@ -12,9 +12,10 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
     {
         // Get the Florida DDC course
         $course = DB::table('florida_courses')->where('title', 'LIKE', '%Defensive Driving%')->first();
-        
-        if (!$course) {
+
+        if (! $course) {
             $this->command->error('Florida Defensive Driving Course not found. Run FloridaDefensiveDrivingSeeder first.');
+
             return;
         }
 
@@ -68,10 +69,10 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
                             'Proceed with caution',
                             'Treat it as a stop sign',
                             'Yield to oncoming traffic',
-                            'Speed up to clear the intersection'
+                            'Speed up to clear the intersection',
                         ],
                         'correct_answer' => 'Treat it as a stop sign',
-                        'explanation' => 'A flashing red signal operates exactly like a stop sign - you must come to a complete stop and proceed when safe.'
+                        'explanation' => 'A flashing red signal operates exactly like a stop sign - you must come to a complete stop and proceed when safe.',
                     ],
                     [
                         'question' => 'What color are construction zone signs?',
@@ -79,12 +80,12 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
                             'Yellow',
                             'Orange',
                             'Red',
-                            'Blue'
+                            'Blue',
                         ],
                         'correct_answer' => 'Orange',
-                        'explanation' => 'Orange signs indicate construction or maintenance zones and provide warnings and guidance for work areas.'
-                    ]
-                ]
+                        'explanation' => 'Orange signs indicate construction or maintenance zones and provide warnings and guidance for work areas.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 10: Licensing and Legal Responsibilities',
@@ -130,10 +131,10 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
                             'A constitutional right',
                             'A privilege that can be revoked',
                             'Guaranteed for all adults',
-                            'Optional for experienced drivers'
+                            'Optional for experienced drivers',
                         ],
                         'correct_answer' => 'A privilege that can be revoked',
-                        'explanation' => 'Driving is a privilege granted by the state that can be suspended or revoked for violations of traffic laws.'
+                        'explanation' => 'Driving is a privilege granted by the state that can be suspended or revoked for violations of traffic laws.',
                     ],
                     [
                         'question' => 'What happens if you drive without insurance?',
@@ -141,12 +142,12 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
                             'Nothing if you don\'t get caught',
                             'Only a small fine',
                             'License suspension and registration suspension',
-                            'Just a warning for first offense'
+                            'Just a warning for first offense',
                         ],
                         'correct_answer' => 'License suspension and registration suspension',
-                        'explanation' => 'Driving without insurance can result in license and registration suspension, plus significant fines.'
-                    ]
-                ]
+                        'explanation' => 'Driving without insurance can result in license and registration suspension, plus significant fines.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 11: Highway and Freeway Driving',
@@ -198,10 +199,10 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
                             'Stop at the end of the on-ramp to look for traffic',
                             'Enter at any speed and let other drivers adjust',
                             'Use the acceleration lane to match traffic speed',
-                            'Always yield to all freeway traffic'
+                            'Always yield to all freeway traffic',
                         ],
                         'correct_answer' => 'Use the acceleration lane to match traffic speed',
-                        'explanation' => 'The acceleration lane is designed to help you reach freeway speeds before merging with traffic.'
+                        'explanation' => 'The acceleration lane is designed to help you reach freeway speeds before merging with traffic.',
                     ],
                     [
                         'question' => 'What is "highway hypnosis"?',
@@ -209,12 +210,12 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
                             'Being mesmerized by oncoming headlights',
                             'A trance-like condition from monotonous driving',
                             'Falling asleep while driving',
-                            'Being distracted by roadside attractions'
+                            'Being distracted by roadside attractions',
                         ],
                         'correct_answer' => 'A trance-like condition from monotonous driving',
-                        'explanation' => 'Highway hypnosis is a dangerous trance-like state caused by continuous, monotonous driving conditions.'
-                    ]
-                ]
+                        'explanation' => 'Highway hypnosis is a dangerous trance-like state caused by continuous, monotonous driving conditions.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 12: Sharing the Road with Large Vehicles',
@@ -268,10 +269,10 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
                             'Same distance',
                             'Twice as much',
                             'Three times as much',
-                            'Half as much'
+                            'Half as much',
                         ],
                         'correct_answer' => 'Twice as much',
-                        'explanation' => 'Due to their weight and size, large trucks require approximately twice the stopping distance of passenger cars.'
+                        'explanation' => 'Due to their weight and size, large trucks require approximately twice the stopping distance of passenger cars.',
                     ],
                     [
                         'question' => 'If you cannot see a truck driver in their side mirror:',
@@ -279,27 +280,27 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
                             'You are in a safe position',
                             'The truck driver cannot see you',
                             'You should speed up to get alongside',
-                            'You should honk your horn'
+                            'You should honk your horn',
                         ],
                         'correct_answer' => 'The truck driver cannot see you',
-                        'explanation' => 'If you can\'t see the truck driver in their mirror, you are in their blind spot and they cannot see you.'
-                    ]
-                ]
-            ]
+                        'explanation' => 'If you can\'t see the truck driver in their mirror, you are in their blind spot and they cannot see you.',
+                    ],
+                ],
+            ],
         ];
 
         foreach ($chapters as $index => $chapterData) {
             // Start chapter numbering from 9 (since previous seeders have chapters 1-8)
             $chapterOrder = $index + 9;
-            
+
             $chapterId = DB::table('chapters')->insertGetId([
                 'course_id' => $courseId,
                 'title' => $chapterData['title'],
                 'content' => $chapterData['content'],
-                
+
                 'order_index' => $chapterOrder,
                 'duration' => $chapterData['duration'],
-                
+
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -317,7 +318,7 @@ class FloridaDefensiveDrivingCompleteSeeder extends Seeder
                         'explanation' => $questionData['explanation'],
                         'order_index' => $qIndex + 1,
                         'points' => 1,
-                        
+
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
                     ]);

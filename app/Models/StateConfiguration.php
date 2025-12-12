@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
 
 class StateConfiguration extends Model
 {
@@ -18,12 +18,12 @@ class StateConfiguration extends Model
         'portal_credentials',
         'email_recipient',
         'certificate_template',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
         'compliance_rules' => 'array',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     protected function apiCredentials(): Attribute

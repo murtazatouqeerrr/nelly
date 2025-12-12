@@ -10,8 +10,9 @@ class CourseChapterController extends Controller
     public function index($courseId)
     {
         $chapters = CourseChapter::where('course_id', $courseId)
-                                ->orderBy('order_index')
-                                ->get();
+            ->orderBy('order_index')
+            ->get();
+
         return response()->json(['data' => $chapters]);
     }
 
@@ -24,15 +25,15 @@ class CourseChapterController extends Controller
             'order_index' => 'required|integer|min:1',
             'duration' => 'required|integer|min:1',
             'required_min_time' => 'required|integer|min:0',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $validated['course_id'] = $courseId;
         $chapter = CourseChapter::create($validated);
-        
+
         return response()->json([
             'message' => 'Chapter created successfully',
-            'data' => $chapter
+            'data' => $chapter,
         ], 201);
     }
 
@@ -45,15 +46,15 @@ class CourseChapterController extends Controller
             'order_index' => 'required|integer|min:1',
             'duration' => 'required|integer|min:1',
             'required_min_time' => 'required|integer|min:0',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $chapter = CourseChapter::findOrFail($id);
         $chapter->update($validated);
-        
+
         return response()->json([
             'message' => 'Chapter updated successfully',
-            'data' => $chapter
+            'data' => $chapter,
         ]);
     }
 
@@ -61,9 +62,9 @@ class CourseChapterController extends Controller
     {
         $chapter = CourseChapter::findOrFail($id);
         $chapter->delete();
-        
+
         return response()->json([
-            'message' => 'Chapter deleted successfully'
+            'message' => 'Chapter deleted successfully',
         ]);
     }
 }

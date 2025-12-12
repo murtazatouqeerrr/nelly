@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('user_legal_consents')) {
+        if (! Schema::hasTable('user_legal_consents')) {
             Schema::create('user_legal_consents', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

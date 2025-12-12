@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DicdsOrderReceipt;
 use App\Models\DicdsCertificateOrder;
+use App\Models\DicdsOrderReceipt;
 use Illuminate\Http\Request;
 
 class DicdsReceiptController extends Controller
@@ -32,7 +32,7 @@ class DicdsReceiptController extends Controller
 
         $receipt = DicdsOrderReceipt::create([
             'order_id' => $order->id,
-            'receipt_number' => 'RCP-' . strtoupper(uniqid()),
+            'receipt_number' => 'RCP-'.strtoupper(uniqid()),
             'receipt_data' => $receiptData,
             'generated_by' => auth()->id(),
             'generated_at' => now(),

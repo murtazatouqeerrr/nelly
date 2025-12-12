@@ -12,7 +12,7 @@ class DicdsHelpController extends Controller
         $request->validate([
             'email' => 'required|email',
             'subject' => 'required|string|max:255',
-            'description' => 'required|string|min:10'
+            'description' => 'required|string|min:10',
         ]);
 
         try {
@@ -22,17 +22,17 @@ class DicdsHelpController extends Controller
                 'description' => $request->description,
                 'email' => $request->email,
                 'status' => 'open',
-                'priority' => 'medium'
+                'priority' => 'medium',
             ]);
 
             return response()->json([
                 'message' => 'Help ticket submitted successfully',
-                'ticket_id' => $ticket->id
+                'ticket_id' => $ticket->id,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Help ticket submitted successfully',
-                'ticket_id' => rand(1000, 9999)
+                'ticket_id' => rand(1000, 9999),
             ]);
         }
     }
@@ -55,10 +55,10 @@ class DicdsHelpController extends Controller
                         'status' => 'open',
                         'priority' => 'high',
                         'user' => ['name' => 'John Doe'],
-                        'created_at' => now()->toISOString()
-                    ]
+                        'created_at' => now()->toISOString(),
+                    ],
                 ],
-                'total' => 1
+                'total' => 1,
             ]);
         }
     }
@@ -67,7 +67,7 @@ class DicdsHelpController extends Controller
     {
         $request->validate([
             'response' => 'required|string',
-            'status' => 'required|in:open,in_progress,resolved,closed'
+            'status' => 'required|in:open,in_progress,resolved,closed',
         ]);
 
         try {
@@ -76,16 +76,16 @@ class DicdsHelpController extends Controller
                 'response' => $request->response,
                 'status' => $request->status,
                 'responded_by' => auth()->id(),
-                'responded_at' => now()
+                'responded_at' => now(),
             ]);
 
             return response()->json([
                 'message' => 'Response sent successfully',
-                'ticket' => $ticket
+                'ticket' => $ticket,
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Response sent successfully'
+                'message' => 'Response sent successfully',
             ]);
         }
     }

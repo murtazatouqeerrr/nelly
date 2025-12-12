@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SchoolCourse extends Model
 {
     protected $table = 'florida_courses';
-    
+
     protected $fillable = [
         'title',
         'description',
@@ -17,14 +17,14 @@ class SchoolCourse extends Model
         'price',
         'min_pass_score',
         'total_duration',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'min_pass_score' => 'integer',
         'total_duration' => 'integer',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function school()

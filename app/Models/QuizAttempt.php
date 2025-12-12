@@ -16,7 +16,7 @@ class QuizAttempt extends Model
         'passed',
         'time_spent',
         'attempted_at',
-        'completed_at'
+        'completed_at',
     ];
 
     protected $casts = [
@@ -24,7 +24,7 @@ class QuizAttempt extends Model
         'passed' => 'boolean',
         'attempted_at' => 'datetime',
         'completed_at' => 'datetime',
-        'score' => 'decimal:2'
+        'score' => 'decimal:2',
     ];
 
     public function enrollment(): BelongsTo

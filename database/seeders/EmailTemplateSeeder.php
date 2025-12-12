@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\EmailTemplate;
+use Illuminate\Database\Seeder;
 
 class EmailTemplateSeeder extends Seeder
 {
@@ -11,18 +11,18 @@ class EmailTemplateSeeder extends Seeder
     {
         // Get the first admin user or create a default one
         $adminUser = \App\Models\User::where('email', 'admin@example.com')->first();
-        if (!$adminUser) {
+        if (! $adminUser) {
             $adminUser = \App\Models\User::first(); // Use first available user
         }
-        
-        if (!$adminUser) {
+
+        if (! $adminUser) {
             // Create a default admin user if none exists
             $adminUser = \App\Models\User::create([
                 'first_name' => 'Admin',
                 'last_name' => 'User',
                 'email' => 'admin@example.com',
                 'password' => bcrypt('password'),
-                'email_verified_at' => now()
+                'email_verified_at' => now(),
             ]);
         }
 
@@ -35,7 +35,7 @@ class EmailTemplateSeeder extends Seeder
                 'variables' => ['user_name', 'site_name'],
                 'category' => 'user',
                 'is_active' => true,
-                'created_by' => $adminUser->id
+                'created_by' => $adminUser->id,
             ],
             [
                 'name' => 'Course Enrollment',
@@ -45,7 +45,7 @@ class EmailTemplateSeeder extends Seeder
                 'variables' => ['user_name', 'course_name'],
                 'category' => 'user',
                 'is_active' => true,
-                'created_by' => $adminUser->id
+                'created_by' => $adminUser->id,
             ],
             [
                 'name' => 'Payment Receipt',
@@ -55,8 +55,8 @@ class EmailTemplateSeeder extends Seeder
                 'variables' => ['amount', 'transaction_id'],
                 'category' => 'user',
                 'is_active' => true,
-                'created_by' => $adminUser->id
-            ]
+                'created_by' => $adminUser->id,
+            ],
         ];
 
         foreach ($templates as $template) {

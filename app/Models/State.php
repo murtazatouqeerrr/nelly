@@ -9,10 +9,10 @@ class State extends Model
     protected $fillable = [
         'code',
         'name',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 }

@@ -14,12 +14,12 @@ class EmailTemplate extends Model
         'variables',
         'category',
         'is_active',
-        'created_by'
+        'created_by',
     ];
 
     protected $casts = [
         'variables' => 'array',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function creator()

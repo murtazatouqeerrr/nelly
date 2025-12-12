@@ -17,7 +17,7 @@ class NotificationSettingController extends Controller
                 'email_system' => true,
                 'sms_reminders' => false,
                 'in_app_notifications' => true,
-                'push_notifications' => true
+                'push_notifications' => true,
             ]
         );
 
@@ -34,7 +34,7 @@ class NotificationSettingController extends Controller
             'email_system' => $request->boolean('email_system'),
             'sms_reminders' => $request->boolean('sms_reminders'),
             'in_app_notifications' => $request->boolean('in_app_notifications'),
-            'push_notifications' => $request->boolean('push_notifications')
+            'push_notifications' => $request->boolean('push_notifications'),
         ]);
 
         return response()->json($settings);

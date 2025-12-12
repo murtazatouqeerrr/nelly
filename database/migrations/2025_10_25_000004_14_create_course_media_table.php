@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // ✅ Prevent "Base table or view already exists" error
-        if (!Schema::hasTable('course_media')) {
+        if (! Schema::hasTable('course_media')) {
             Schema::create('course_media', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('course_id')->constrained()->onDelete('cascade');

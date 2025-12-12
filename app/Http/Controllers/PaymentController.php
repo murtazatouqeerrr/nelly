@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payment;
 use App\Models\Invoice;
+use App\Models\Payment;
 use App\Models\Refund;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,11 +17,13 @@ class PaymentController extends Controller
             $payments = Payment::with(['user', 'enrollment.course'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(20);
-            
+
             \Log::info('Payments loaded successfully', ['count' => $payments->count()]);
+
             return response()->json($payments);
         } catch (\Exception $e) {
-            \Log::error('Error loading payments: ' . $e->getMessage());
+            \Log::error('Error loading payments: '.$e->getMessage());
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -32,7 +34,7 @@ class PaymentController extends Controller
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
-        
+
         return response()->json($payments);
     }
 
@@ -40,7 +42,7 @@ class PaymentController extends Controller
     {
         try {
             \Log::info('PaymentController store called', ['request_data' => $request->all()]);
-            
+
             $request->validate([
                 'user_email' => 'required|email|exists:users,email',
                 'course_id' => 'required|exists:florida_courses,id',
@@ -48,12 +50,12 @@ class PaymentController extends Controller
                 'payment_method' => 'required|string',
                 'status' => 'required|in:completed,pending,failed',
             ]);
-            
+
             \Log::info('Validation passed');
 
             $user = \App\Models\User::where('email', $request->user_email)->first();
-            \Log::info('User found', ['user_id' => $user->id, 'user_name' => $user->first_name . ' ' . $user->last_name]);
-            
+            \Log::info('User found', ['user_id' => $user->id, 'user_name' => $user->first_name.' '.$user->last_name]);
+
             // Create or get enrollment
             $enrollment = \App\Models\UserCourseEnrollment::firstOrCreate([
                 'user_id' => $user->id,
@@ -67,12 +69,12 @@ class PaymentController extends Controller
                 'amount' => $request->amount,
                 'payment_method' => $request->payment_method,
                 'gateway' => 'stripe',
-                'gateway_payment_id' => 'manual_' . time() . '_' . $user->id,
-                'billing_name' => $user->first_name . ' ' . $user->last_name,
+                'gateway_payment_id' => 'manual_'.time().'_'.$user->id,
+                'billing_name' => $user->first_name.' '.$user->last_name,
                 'billing_email' => $user->email,
                 'status' => $request->status,
             ];
-            
+
             \Log::info('Payment data prepared', ['payment_data' => $paymentData]);
 
             $payment = Payment::create($paymentData);
@@ -82,10 +84,11 @@ class PaymentController extends Controller
 
             return response()->json($payment->load(['user', 'enrollment.course', 'invoice']));
         } catch (\Exception $e) {
-            \Log::error('Error creating payment: ' . $e->getMessage(), [
+            \Log::error('Error creating payment: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
-                'request_data' => $request->all()
+                'request_data' => $request->all(),
             ]);
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -100,6 +103,7 @@ class PaymentController extends Controller
             ]);
 
             $payment->update($request->only(['amount', 'payment_method', 'status']));
+
             return response()->json($payment->load(['user', 'enrollment.course']));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -110,6 +114,7 @@ class PaymentController extends Controller
     {
         try {
             $payment->delete();
+
             return response()->json(['message' => 'Payment deleted successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -119,22 +124,22 @@ class PaymentController extends Controller
     public function downloadPDF(Payment $payment)
     {
         $payment->load(['user', 'enrollment.course']);
-        
+
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('payments.receipt', compact('payment'));
-        
-        return $pdf->download('payment-receipt-' . $payment->id . '.pdf');
+
+        return $pdf->download('payment-receipt-'.$payment->id.'.pdf');
     }
 
     public function emailReceipt(Payment $payment)
     {
         $payment->load(['user', 'enrollment.course']);
-        
+
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('payments.receipt', compact('payment'));
-        
+
         \Mail::send('emails.payment-receipt', compact('payment'), function ($message) use ($payment, $pdf) {
             $message->to($payment->user->email)
-                    ->subject('Payment Receipt #' . $payment->id)
-                    ->attachData($pdf->output(), 'payment-receipt-' . $payment->id . '.pdf');
+                ->subject('Payment Receipt #'.$payment->id)
+                ->attachData($pdf->output(), 'payment-receipt-'.$payment->id.'.pdf');
         });
 
         return response()->json(['message' => 'Receipt sent successfully']);
@@ -143,13 +148,14 @@ class PaymentController extends Controller
     public function show(Payment $payment)
     {
         $payment->load(['user', 'enrollment.course', 'invoice', 'refunds']);
+
         return response()->json($payment);
     }
 
     public function refund(Request $request, Payment $payment)
     {
         $request->validate([
-            'amount' => 'required|numeric|min:0|max:' . $payment->amount,
+            'amount' => 'required|numeric|min:0|max:'.$payment->amount,
             'reason' => 'required|string|max:255',
         ]);
 
@@ -164,7 +170,7 @@ class PaymentController extends Controller
 
         // Update payment status based on refund amount
         $totalRefunded = $payment->refunds()->sum('amount');
-        
+
         if ($totalRefunded >= $payment->amount) {
             $payment->update(['status' => 'refunded']);
         } elseif ($totalRefunded > 0) {
@@ -175,25 +181,25 @@ class PaymentController extends Controller
             'refund' => $refund,
             'payment' => $payment->fresh(),
             'total_refunded' => $totalRefunded,
-            'remaining_amount' => $payment->amount - $totalRefunded
+            'remaining_amount' => $payment->amount - $totalRefunded,
         ]);
     }
 
     public function showPayment(Request $request)
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('login')->with('error', 'Please login to continue');
         }
 
         $courseId = $request->course_id;
         $table = $request->input('table', 'florida_courses');
         $user = auth()->user();
-        
+
         // Validate table parameter
-        if (!in_array($table, ['courses', 'florida_courses'])) {
+        if (! in_array($table, ['courses', 'florida_courses'])) {
             return redirect()->back()->with('error', 'Invalid course table specified');
         }
-        
+
         // Determine which model to use based on table parameter
         try {
             if ($table === 'courses') {
@@ -204,7 +210,7 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Course not found');
         }
-        
+
         // Create or get enrollment (required for checkout page)
         $enrollment = \App\Models\UserCourseEnrollment::firstOrCreate([
             'user_id' => $user->id,
@@ -215,7 +221,7 @@ class PaymentController extends Controller
             'enrolled_at' => now(),
             'status' => 'active', // Valid values: active, completed, expired, cancelled
         ]);
-        
+
         return view('payment.checkout', compact('course', 'enrollment'));
     }
 
@@ -230,7 +236,7 @@ class PaymentController extends Controller
 
         $user = auth()->user();
         $table = $request->table;
-        
+
         // Get course from appropriate table
         if ($table === 'courses') {
             $course = \App\Models\Course::findOrFail($request->course_id);
@@ -254,8 +260,8 @@ class PaymentController extends Controller
             'amount' => $request->amount,
             'payment_method' => $request->payment_method,
             'gateway' => $request->payment_method === 'stripe' ? 'stripe' : 'manual',
-            'gateway_payment_id' => 'pay_' . time() . '_' . $user->id,
-            'billing_name' => $user->first_name . ' ' . $user->last_name,
+            'gateway_payment_id' => 'pay_'.time().'_'.$user->id,
+            'billing_name' => $user->first_name.' '.$user->last_name,
             'billing_email' => $user->email,
             'status' => 'completed',
         ]);

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('payment_refunds')) {
+        if (! Schema::hasTable('payment_refunds')) {
             Schema::create('payment_refunds', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('payment_id')->constrained('florida_payments')->onDelete('cascade');

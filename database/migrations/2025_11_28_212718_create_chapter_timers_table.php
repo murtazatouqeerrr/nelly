@@ -20,7 +20,7 @@ return new class extends Migration
             $table->boolean('allow_pause')->default(true);
             $table->boolean('bypass_for_admin')->default(true);
             $table->timestamps();
-            
+
             $table->index(['chapter_id', 'chapter_type']);
         });
     }

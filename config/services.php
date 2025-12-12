@@ -47,10 +47,21 @@ return [
     ],
 
     'florida_dicds' => [
-        'wsdl' => env('FLORIDA_DICDS_WSDL', 'https://services.flhsmv.gov/DriverSchoolWebService/DriverSchoolWebService.asmx?WSDL'),
-        'username' => env('FLORIDA_DICDS_USERNAME'),
-        'password' => env('FLORIDA_DICDS_PASSWORD'),
-        'timeout' => 30,
+        'wsdl' => env('FLORIDA_DICDS_WSDL', 'storage/wsdl/florida-dicds.wsdl'),
+        'username' => env('FLORIDA_USERNAME'),
+        'password' => env('FLORIDA_PASSWORD'),
+        'timeout' => env('FLORIDA_API_TIMEOUT', 60),
+    ],
+
+    'florida' => [
+        'wsdl_url' => env('FLHSMV_WSDL_URL', 'https://services.flhsmv.gov/DriverSchoolWebService/wsPrimerComponentService.svc?wsdl'),
+        'service_url' => env('FLHSMV_SERVICE_URL', 'https://services.flhsmv.gov/DriverSchoolWebService/wsPrimerComponentService.svc'),
+        'username' => env('FLHSMV_USERNAME', 'NMNSEdits'),
+        'password' => env('FLHSMV_PASSWORD', 'LoveFL2025!'),
+        'school_id' => env('FLHSMV_DEFAULT_SCHOOL_ID', '30981'),
+        'instructor_id' => env('FLHSMV_DEFAULT_INSTRUCTOR_ID', '76397'),
+        'timeout' => env('FLHSMV_TIMEOUT', 30),
+        'environment' => env('FLHSMV_ENVIRONMENT', 'production'),
     ],
 
 ];

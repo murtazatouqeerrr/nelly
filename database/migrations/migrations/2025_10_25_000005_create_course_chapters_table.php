@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -26,9 +25,9 @@ return new class extends Migration
         if (Schema::hasTable('florida_courses')) {
             Schema::table('course_chapters', function (Blueprint $table) {
                 $table->foreign('course_id')
-                      ->references('id')
-                      ->on('florida_courses')
-                      ->onDelete('cascade');
+                    ->references('id')
+                    ->on('florida_courses')
+                    ->onDelete('cascade');
             });
         }
     }

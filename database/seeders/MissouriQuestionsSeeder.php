@@ -11,24 +11,27 @@ class MissouriQuestionsSeeder extends Seeder
     {
         // Get Missouri course chapters
         $missouriCourse = DB::table('florida_courses')->where('state', 'Missouri')->first();
-        if (!$missouriCourse) {
+        if (! $missouriCourse) {
             $this->command->error('Missouri course not found!');
+
             return;
         }
 
         $chapters = DB::table('chapters')->where('course_id', $missouriCourse->id)->orderBy('order_index')->get();
-        
+
         $quizData = $this->getQuizData();
-        
+
         foreach ($quizData as $chapterIndex => $questions) {
             $chapter = $chapters[$chapterIndex] ?? null;
-            if (!$chapter) continue;
-            
+            if (! $chapter) {
+                continue;
+            }
+
             foreach ($questions as $index => $q) {
                 $options = array_filter([$q['a'], $q['b'], $q['c'], $q['d'], $q['e'] ?? null]);
                 $correctIndex = ord($q['correct']) - ord('A');
                 $correctAnswer = $options[$correctIndex];
-                
+
                 DB::table('questions')->insert([
                     'chapter_id' => $chapter->id,
                     'course_id' => $missouriCourse->id,
@@ -43,10 +46,10 @@ class MissouriQuestionsSeeder extends Seeder
                 ]);
             }
         }
-        
+
         $this->command->info('Missouri questions seeded successfully!');
     }
-    
+
     private function getQuizData()
     {
         return [

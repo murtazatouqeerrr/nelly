@@ -16,7 +16,7 @@ class FloridaUserAccessibility extends Model
         'reduced_animations',
         'screen_reader_optimized',
         'keyboard_navigation',
-        'mobile_optimized'
+        'mobile_optimized',
     ];
 
     protected $casts = [
@@ -24,7 +24,7 @@ class FloridaUserAccessibility extends Model
         'reduced_animations' => 'boolean',
         'screen_reader_optimized' => 'boolean',
         'keyboard_navigation' => 'boolean',
-        'mobile_optimized' => 'boolean'
+        'mobile_optimized' => 'boolean',
     ];
 
     public function user(): BelongsTo

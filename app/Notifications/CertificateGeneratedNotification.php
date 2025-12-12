@@ -29,7 +29,7 @@ class CertificateGeneratedNotification extends Notification
             ->subject('Your Certificate is Ready!')
             ->view('emails.certificates.generated', [
                 'user' => $notifiable,
-                'certificate' => $this->certificate
+                'certificate' => $this->certificate,
             ]);
 
         // Attach PDF if exists

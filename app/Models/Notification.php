@@ -16,7 +16,7 @@ class Notification extends Model
         'read_at',
         'scheduled_for',
         'sent_at',
-        'metadata'
+        'metadata',
     ];
 
     protected $casts = [
@@ -24,7 +24,7 @@ class Notification extends Model
         'is_read' => 'boolean',
         'read_at' => 'datetime',
         'scheduled_for' => 'datetime',
-        'sent_at' => 'datetime'
+        'sent_at' => 'datetime',
     ];
 
     public function user()
@@ -36,7 +36,7 @@ class Notification extends Model
     {
         $this->update([
             'is_read' => true,
-            'read_at' => now()
+            'read_at' => now(),
         ]);
     }
 }

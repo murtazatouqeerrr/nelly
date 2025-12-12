@@ -3,22 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\LoginAttempt;
-use App\Models\PasswordHistory;
 use App\Models\SecurityLog;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AccountSecurityController extends Controller
 {
     public function getSecuritySettings(): JsonResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         $user = auth()->user();
-        
+
         return response()->json([
             'two_factor_enabled' => false, // Placeholder
             'last_password_change' => $user->updated_at,
@@ -28,7 +27,7 @@ class AccountSecurityController extends Controller
 
     public function changePassword(Request $request): JsonResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -40,7 +39,7 @@ class AccountSecurityController extends Controller
 
         $user = auth()->user();
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (! Hash::check($request->current_password, $user->password)) {
             return response()->json(['error' => 'Current password is incorrect'], 422);
         }
 
@@ -67,7 +66,7 @@ class AccountSecurityController extends Controller
 
     public function getLoginHistory(): JsonResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

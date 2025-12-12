@@ -26,14 +26,14 @@ class Payment extends Model
         'zipcode',
         'refund_reason',
         'refunded_at',
-        'metadata'
+        'metadata',
     ];
 
     protected $casts = [
         'billing_address' => 'array',
         'metadata' => 'array',
         'amount' => 'decimal:2',
-        'refunded_at' => 'datetime'
+        'refunded_at' => 'datetime',
     ];
 
     public function user()

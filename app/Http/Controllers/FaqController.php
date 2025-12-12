@@ -10,10 +10,10 @@ class FaqController extends Controller
     public function index(Request $request)
     {
         $faqs = Faq::where('is_active', true)
-            ->when($request->category, function($query, $category) {
+            ->when($request->category, function ($query, $category) {
                 return $query->where('category', $category);
             })
-            ->when($request->language, function($query, $language) {
+            ->when($request->language, function ($query, $language) {
                 return $query->where('language', $language);
             })
             ->orderBy('order')
@@ -21,7 +21,7 @@ class FaqController extends Controller
             ->groupBy('category');
 
         // For web view
-        if (!$request->expectsJson() && !$request->is('api/*')) {
+        if (! $request->expectsJson() && ! $request->is('api/*')) {
             return view('admin.faqs');
         }
 
@@ -35,7 +35,7 @@ class FaqController extends Controller
             'question' => 'required|string',
             'answer' => 'required|string',
             'order' => 'nullable|integer',
-            'language' => 'nullable|string|size:2'
+            'language' => 'nullable|string|size:2',
         ]);
 
         $faq = Faq::create($request->all());
@@ -52,7 +52,7 @@ class FaqController extends Controller
             'question' => 'string',
             'answer' => 'string',
             'order' => 'nullable|integer',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $faq->update($request->all());

@@ -12,7 +12,7 @@ class SchoolManagementController extends Controller
     {
         $school = FloridaSchool::findOrFail($id);
         $printingEnabled = $request->input('printing_enabled');
-        
+
         SchoolManagementLog::create([
             'school_id' => $id,
             'action' => $printingEnabled ? 'enabled' : 'disabled',
@@ -27,7 +27,7 @@ class SchoolManagementController extends Controller
     public function addCourses(Request $request, $id)
     {
         $school = FloridaSchool::findOrFail($id);
-        
+
         SchoolManagementLog::create([
             'school_id' => $id,
             'action' => 'course_added',

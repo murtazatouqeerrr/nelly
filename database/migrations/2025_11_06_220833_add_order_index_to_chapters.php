@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('chapters', function (Blueprint $table) {
-            if (!Schema::hasColumn('chapters', 'order_index')) {
+            if (! Schema::hasColumn('chapters', 'order_index')) {
                 $table->integer('order_index')->default(0)->after('duration');
             }
         });

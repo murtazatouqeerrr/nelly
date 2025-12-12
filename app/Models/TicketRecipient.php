@@ -9,6 +9,6 @@ class TicketRecipient extends Model
     protected $fillable = ['email', 'name', 'is_active'];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 }

@@ -11,6 +11,7 @@ class CountyController extends Controller
     public function index(): JsonResponse
     {
         $states = Court::distinct()->pluck('state')->filter()->sort()->values();
+
         return response()->json($states);
     }
 
@@ -22,6 +23,7 @@ class CountyController extends Controller
             ->filter()
             ->sort()
             ->values();
+
         return response()->json($counties);
     }
 
@@ -30,6 +32,7 @@ class CountyController extends Controller
         $courts = Court::where('state', $state)
             ->where('county', $county)
             ->get();
+
         return response()->json($courts);
     }
 
@@ -42,6 +45,7 @@ class CountyController extends Controller
         ]);
 
         $court = Court::create($validated);
+
         return response()->json($court, 201);
     }
 
@@ -55,12 +59,14 @@ class CountyController extends Controller
         ]);
 
         $court->update($validated);
+
         return response()->json($court);
     }
 
     public function deleteCourt($id): JsonResponse
     {
         Court::findOrFail($id)->delete();
+
         return response()->json(['message' => 'Court deleted']);
     }
 
@@ -68,12 +74,14 @@ class CountyController extends Controller
     {
         $validated = $request->validate(['state' => 'required|string|unique:courts,state']);
         Court::create(['state' => $validated['state'], 'county' => '', 'court' => '']);
+
         return response()->json(['message' => 'State added'], 201);
     }
 
     public function deleteState($state): JsonResponse
     {
         Court::where('state', $state)->delete();
+
         return response()->json(['message' => 'State deleted']);
     }
 
@@ -84,12 +92,14 @@ class CountyController extends Controller
             'county' => 'required|string',
         ]);
         Court::create(['state' => $validated['state'], 'county' => $validated['county'], 'court' => '']);
+
         return response()->json(['message' => 'County added'], 201);
     }
 
     public function deleteCounty($state, $county): JsonResponse
     {
         Court::where('state', $state)->where('county', $county)->delete();
+
         return response()->json(['message' => 'County deleted']);
     }
 }

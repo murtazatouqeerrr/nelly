@@ -7,18 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class CertificateDistribution extends Model
 {
     protected $table = 'certificate_distribution';
-    
+
     protected $fillable = [
         'certificate_order_id',
         'florida_school_id',
         'course_type',
         'amount_distributed',
         'distributed_by',
-        'distributed_at'
+        'distributed_at',
     ];
 
     protected $casts = [
-        'distributed_at' => 'datetime'
+        'distributed_at' => 'datetime',
     ];
 
     public function order()

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('user_course_enrollments')) {
+        if (! Schema::hasTable('user_course_enrollments')) {
             Schema::create('user_course_enrollments', function (Blueprint $table) {
                 $table->id();
 
@@ -18,8 +18,8 @@ return new class extends Migration
 
                 // Enrollment and progress
                 $table->enum('status', ['enrolled', 'in_progress', 'completed', 'expired', 'active', 'cancelled'])
-                      ->nullable()
-                      ->default('enrolled');
+                    ->nullable()
+                    ->default('enrolled');
                 $table->timestamp('enrolled_at')->nullable();
                 $table->timestamp('started_at')->nullable();
                 $table->timestamp('completed_at')->nullable();
@@ -28,8 +28,8 @@ return new class extends Migration
 
                 // Payment details
                 $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])
-                      ->nullable()
-                      ->default('pending');
+                    ->nullable()
+                    ->default('pending');
                 $table->decimal('amount_paid', 8, 2)->nullable()->default(0);
                 $table->string('payment_method')->nullable();
                 $table->string('payment_id')->nullable();

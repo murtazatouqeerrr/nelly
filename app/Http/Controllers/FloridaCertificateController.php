@@ -13,27 +13,27 @@ class FloridaCertificateController extends Controller
         try {
             // Check if table exists
             $tableExists = DB::getSchemaBuilder()->hasTable('florida_certificates');
-            
-            if (!$tableExists) {
+
+            if (! $tableExists) {
                 return response()->json([
                     'message' => 'Table florida_certificates does not exist. Run: php artisan migrate',
                     'debug' => 'Table check failed',
-                    'data' => []
+                    'data' => [],
                 ]);
             }
-            
+
             // Get certificates from database
             $certificates = DB::table('florida_certificates')->get();
-            
+
             return response()->json([
                 'message' => 'Loaded from database',
                 'debug' => "Found {$certificates->count()} certificates in database",
-                'data' => $certificates
+                'data' => $certificates,
             ]);
-            
+
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Database error: ' . $e->getMessage(),
+                'message' => 'Database error: '.$e->getMessage(),
                 'debug' => 'Exception caught',
                 'data' => [
                     [
@@ -43,9 +43,9 @@ class FloridaCertificateController extends Controller
                         'course_name' => '4-Hour Florida Basic Driver Improvement (BDI) Course',
                         'final_exam_score' => 85.50,
                         'generated_at' => '2025-10-25T00:00:00Z',
-                        'is_sent_to_student' => false
-                    ]
-                ]
+                        'is_sent_to_student' => false,
+                    ],
+                ],
             ]);
         }
     }
@@ -60,7 +60,7 @@ class FloridaCertificateController extends Controller
         } catch (\Exception $e) {
             // Fall through
         }
-        
+
         return response()->json([
             'id' => $id,
             'student_name' => 'John Doe',
@@ -72,7 +72,7 @@ class FloridaCertificateController extends Controller
             'is_sent_to_student' => false,
             'citation_number' => 'ABC1234',
             'citation_county' => 'Miami-Dade',
-            'court_name' => 'Miami-Dade County Court'
+            'court_name' => 'Miami-Dade County Court',
         ]);
     }
 
@@ -92,12 +92,12 @@ class FloridaCertificateController extends Controller
                 'verification_hash' => Str::random(32),
                 'generated_at' => now(),
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ];
-            
+
             $id = DB::table('florida_certificates')->insertGetId($data);
             $data['id'] = $id;
-            
+
             return response()->json(['message' => 'Certificate created successfully', 'data' => $data], 201);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Certificate created (simulated)', 'data' => ['id' => rand(100, 999)]], 201);
@@ -126,9 +126,9 @@ class FloridaCertificateController extends Controller
             'generated_at' => '2025-10-25T00:00:00Z',
             'citation_number' => 'ABC1234',
             'citation_county' => 'Miami-Dade',
-            'court_name' => 'Miami-Dade County Court'
+            'court_name' => 'Miami-Dade County Court',
         ];
-        
+
         return view('certificates.view', compact('certificate'));
     }
 
@@ -143,7 +143,7 @@ class FloridaCertificateController extends Controller
             'generated_at' => '2025-10-25T00:00:00Z',
             'citation_number' => 'ABC1234',
             'citation_county' => 'Miami-Dade',
-            'court_name' => 'Miami-Dade County Court'
+            'court_name' => 'Miami-Dade County Court',
         ];
 
         $htmlContent = "<!DOCTYPE html>
@@ -175,10 +175,10 @@ class FloridaCertificateController extends Controller
     </div>
 </body>
 </html>";
-        
+
         $filename = "florida-certificate-{$certificate->dicds_certificate_number}.html";
-        
-        return response()->streamDownload(function() use ($htmlContent) {
+
+        return response()->streamDownload(function () use ($htmlContent) {
             echo $htmlContent;
         }, $filename, ['Content-Type' => 'text/html']);
     }

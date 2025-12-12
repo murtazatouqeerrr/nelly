@@ -15,13 +15,13 @@ class DicdsLoginAttempt extends Model
         'user_agent',
         'attempted_at',
         'successful',
-        'lockout_triggered'
+        'lockout_triggered',
     ];
 
     protected $casts = [
         'attempted_at' => 'datetime',
         'successful' => 'boolean',
-        'lockout_triggered' => 'boolean'
+        'lockout_triggered' => 'boolean',
     ];
 
     public function user(): BelongsTo

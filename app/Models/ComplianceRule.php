@@ -12,11 +12,11 @@ class ComplianceRule extends Model
         'rule_name',
         'rule_value',
         'description',
-        'is_required'
+        'is_required',
     ];
 
     protected $casts = [
-        'is_required' => 'boolean'
+        'is_required' => 'boolean',
     ];
 
     public function stateConfiguration()

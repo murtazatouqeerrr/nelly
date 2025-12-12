@@ -2,31 +2,32 @@
 
 namespace App\Services;
 
-use App\Models\UserCourseEnrollment;
 use App\Models\DicdsSubmissionLog;
+use App\Models\UserCourseEnrollment;
 use SoapClient;
 
 class FloridaDicdsSoapService
 {
     private $soapClient;
+
     private $wsdl = 'https://services.flhsmv.gov/DriverSchoolWebService/DriverSchoolWebService.asmx?WSDL';
-    
+
     public function __construct()
     {
         $this->soapClient = new SoapClient($this->wsdl, [
             'trace' => 1,
             'exceptions' => true,
-            'cache_wsdl' => WSDL_CACHE_NONE
+            'cache_wsdl' => WSDL_CACHE_NONE,
         ]);
     }
-    
+
     public function submitCompletion(UserCourseEnrollment $enrollment)
     {
         $soapData = $this->buildSoapData($enrollment);
-        
+
         try {
             $response = $this->soapClient->SubmitCourseCompletion($soapData);
-            
+
             $log = DicdsSubmissionLog::create([
                 'enrollment_id' => $enrollment->id,
                 'soap_request' => $this->soapClient->__getLastRequest(),
@@ -34,19 +35,19 @@ class FloridaDicdsSoapService
                 'certificate_number' => $response->CertificateNumber ?? null,
                 'status_code' => $response->StatusCode,
                 'status_message' => $response->StatusMessage,
-                'submitted_at' => now()
+                'submitted_at' => now(),
             ]);
-            
+
             if ($response->StatusCode === 'CC000') {
                 $enrollment->update([
                     'dicds_submission_status' => 'approved',
                     'dicds_certificate_number' => $response->CertificateNumber,
-                    'dicds_response_data' => (array) $response
+                    'dicds_response_data' => (array) $response,
                 ]);
             }
-            
+
             return $response;
-            
+
         } catch (\Exception $e) {
             DicdsSubmissionLog::create([
                 'enrollment_id' => $enrollment->id,
@@ -54,13 +55,13 @@ class FloridaDicdsSoapService
                 'soap_response' => $e->getMessage(),
                 'status_code' => 'ERROR',
                 'status_message' => $e->getMessage(),
-                'submitted_at' => now()
+                'submitted_at' => now(),
             ]);
-            
+
             throw $e;
         }
     }
-    
+
     private function buildSoapData(UserCourseEnrollment $enrollment)
     {
         return [
@@ -88,7 +89,7 @@ class FloridaDicdsSoapService
             'mvStreet' => $enrollment->user->address,
             'mvCity' => $enrollment->user->city,
             'mvState' => $enrollment->user->state,
-            'mvZipCode' => $enrollment->user->zip_code
+            'mvZipCode' => $enrollment->user->zip_code,
         ];
     }
 }

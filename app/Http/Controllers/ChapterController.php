@@ -12,17 +12,17 @@ class ChapterController extends Controller
     {
         try {
             $chapters = Chapter::orderBy('course_id')->orderBy('order_index')->get();
-            
-            $result = $chapters->map(function($chapter) {
+
+            $result = $chapters->map(function ($chapter) {
                 // Try to get course from both tables
                 $course = \App\Models\Course::find($chapter->course_id);
                 $courseType = 'courses';
-                
-                if (!$course) {
+
+                if (! $course) {
                     $course = \App\Models\FloridaCourse::find($chapter->course_id);
                     $courseType = 'florida_courses';
                 }
-                
+
                 return [
                     'id' => $chapter->id,
                     'title' => $chapter->title,
@@ -33,26 +33,27 @@ class ChapterController extends Controller
                     'order_index' => $chapter->order_index,
                     'course' => $course ? [
                         'id' => $course->id,
-                        'title' => $course->title
-                    ] : null
+                        'title' => $course->title,
+                    ] : null,
                 ];
             });
-            
+
             // Sort by course name
             $result = $result->sortBy('course_name')->values();
-            
+
             return response()->json($result);
         } catch (\Exception $e) {
-            \Log::error('Error loading all chapters: ' . $e->getMessage());
+            \Log::error('Error loading all chapters: '.$e->getMessage());
             \Log::error($e->getTraceAsString());
+
             return response()->json(['error' => 'Failed to load chapters', 'message' => $e->getMessage()], 500);
         }
     }
-    
+
     public function index(Course $course)
     {
         $chapters = $course->chapters()->orderBy('order_index')->get();
-        
+
         return response()->json($chapters);
     }
 
@@ -63,11 +64,11 @@ class ChapterController extends Controller
             'content' => 'required|string',
             'video_url' => 'nullable|url',
             'duration' => 'required|integer|min:1',
-            'order_index' => 'required|integer'
+            'order_index' => 'required|integer',
         ]);
-        
+
         $validated['course_id'] = $course->id;
-        
+
         return response()->json(Chapter::create($validated), 201);
     }
 
@@ -83,21 +84,21 @@ class ChapterController extends Controller
             'content' => 'required|string',
             'video_url' => 'nullable|url',
             'duration' => 'required|integer|min:1',
-            'order_index' => 'required|integer'
+            'order_index' => 'required|integer',
         ]);
-        
+
         $chapter->update($validated);
-        
+
         return response()->json($chapter);
     }
 
     public function destroy(Chapter $chapter)
     {
         $chapter->delete();
-        
+
         return response()->json(['message' => 'Chapter deleted successfully']);
     }
-    
+
     public function indexWeb($courseId)
     {
         try {
@@ -106,47 +107,47 @@ class ChapterController extends Controller
                 ->where('is_active', true)
                 ->orderBy('order_index')
                 ->get();
-            
+
             \Log::info("ChapterController: Found {$chapters->count()} chapters for course_id: {$courseId}");
-            
+
             // Get enrollment ID from request to check completion status
             $enrollmentId = request('enrollmentId');
-            
+
             if ($enrollmentId) {
-                // Get user_id from enrollment
-                $enrollment = \App\Models\UserCourseEnrollment::find($enrollmentId);
-                $userId = $enrollment ? $enrollment->user_id : auth()->id();
-                
+                // Check completion status for each chapter
                 foreach ($chapters as $chapter) {
-                    $progress = \App\Models\ChapterProgress::where('user_id', $userId)
+                    $progress = \App\Models\UserCourseProgress::where('enrollment_id', $enrollmentId)
                         ->where('chapter_id', $chapter->id)
+                        ->where('is_completed', true)
                         ->first();
-                    
-                    $chapter->is_completed = $progress ? ($progress->status === 'completed') : false;
+
+                    $chapter->is_completed = $progress ? true : false;
                     $chapter->chapter_type = 'chapters';
                 }
             } else {
                 foreach ($chapters as $chapter) {
+                    $chapter->is_completed = false;
                     $chapter->chapter_type = 'chapters';
                 }
             }
-            
+
             return response()->json($chapters);
         } catch (\Exception $e) {
-            \Log::error('Chapter indexWeb error: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            \Log::error('Chapter indexWeb error: '.$e->getMessage());
+            \Log::error('Stack trace: '.$e->getTraceAsString());
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    
+
     public function storeWeb(Request $request, $courseId)
     {
         try {
             \Log::info('Chapter store request received', [
                 'course_id' => $courseId,
-                'data' => $request->all()
+                'data' => $request->all(),
             ]);
-            
+
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
@@ -154,42 +155,42 @@ class ChapterController extends Controller
                 'required_min_time' => 'nullable|integer|min:0',
                 'order_index' => 'nullable|integer|min:0',
                 'video_url' => 'nullable|string',
-                'media.*' => 'nullable|file|max:51200'
+                'media.*' => 'nullable|file|max:51200',
             ]);
-            
+
             $validated['course_id'] = $courseId;
             $validated['required_min_time'] = $validated['required_min_time'] ?? $validated['duration'];
-            
+
             // Auto-generate order_index if not provided
-            if (!isset($validated['order_index'])) {
+            if (! isset($validated['order_index'])) {
                 $maxOrder = Chapter::where('course_id', $courseId)->max('order_index') ?? 0;
                 $validated['order_index'] = $maxOrder + 1;
             }
-            
+
             // Handle file upload if present
             if ($request->hasFile('media')) {
                 $files = $request->file('media');
-                
+
                 // Handle single file or array of files
-                if (!is_array($files)) {
+                if (! is_array($files)) {
                     $files = [$files];
                 }
-                
+
                 foreach ($files as $file) {
                     $originalName = $file->getClientOriginalName();
-                    $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
-                    
-                    if (!file_exists(storage_path('app/public/course-media'))) {
+                    $filename = time().'_'.preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
+
+                    if (! file_exists(storage_path('app/public/course-media'))) {
                         mkdir(storage_path('app/public/course-media'), 0755, true);
                     }
-                    
+
                     $path = $file->storeAs('course-media', $filename, 'public');
                     $mimeType = $file->getClientMimeType();
-                    $fileUrl = '/storage/course-media/' . $filename;
-                    
+                    $fileUrl = '/storage/course-media/'.$filename;
+
                     // Handle videos
                     if (in_array($mimeType, ['video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo', 'video/webm'])) {
-                        if (!isset($validated['video_url']) || !$validated['video_url']) {
+                        if (! isset($validated['video_url']) || ! $validated['video_url']) {
                             $validated['video_url'] = $fileUrl;
                         }
                     }
@@ -201,41 +202,41 @@ class ChapterController extends Controller
                     else {
                         $validated['content'] .= "\n\n<div class='chapter-media'><a href='{$fileUrl}' target='_blank' class='btn btn-outline-primary'><i class='fas fa-download'></i> Download {$originalName}</a></div>";
                     }
-                    
+
                     // Only process first file for now
                     break;
                 }
             }
-            
-            
+
             unset($validated['media']);
-            
+
             $chapter = \App\Models\Chapter::create($validated);
-            
+
             \Log::info('Chapter created successfully', ['chapter' => $chapter]);
-            
+
             return response()->json($chapter, 201);
         } catch (\Exception $e) {
-            \Log::error('Chapter store error: ' . $e->getMessage());
+            \Log::error('Chapter store error: '.$e->getMessage());
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    
+
     public function destroyWeb(Chapter $chapter)
     {
         $chapter->delete();
-        
+
         return response()->json(['message' => 'Chapter deleted successfully']);
     }
-    
+
     public function updateWeb(Request $request, $id)
     {
         try {
             $chapter = \App\Models\Chapter::findOrFail($id);
-            
+
             \Log::info('Chapter update request received', [
                 'chapter_id' => $chapter->id,
-                'data' => $request->all()
+                'data' => $request->all(),
             ]);
 
             $validated = $request->validate([
@@ -247,32 +248,32 @@ class ChapterController extends Controller
                 'video_url' => 'nullable|string|max:500',
                 'is_active' => 'nullable|boolean',
                 'media' => 'nullable|array',
-                'media.*' => 'file|max:51200'
+                'media.*' => 'file|max:51200',
             ]);
-            
+
             if (isset($validated['required_min_time'])) {
                 $validated['required_min_time'] = $validated['required_min_time'] ?? $validated['duration'];
             }
-            
+
             // Handle multiple file uploads if present
             if ($request->hasFile('media')) {
                 $files = $request->file('media');
-                if (!is_array($files)) {
+                if (! is_array($files)) {
                     $files = [$files]; // Convert single file to array
                 }
-                
+
                 foreach ($files as $file) {
                     $originalName = $file->getClientOriginalName();
-                    $filename = time() . '_' . uniqid() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
-                    
-                    if (!file_exists(storage_path('app/public/course-media'))) {
+                    $filename = time().'_'.uniqid().'_'.preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
+
+                    if (! file_exists(storage_path('app/public/course-media'))) {
                         mkdir(storage_path('app/public/course-media'), 0755, true);
                     }
-                    
+
                     $path = $file->storeAs('course-media', $filename, 'public');
                     $mimeType = $file->getClientMimeType();
-                    $fileUrl = '/files/' . $filename;
-                    
+                    $fileUrl = '/files/'.$filename;
+
                     if (in_array($mimeType, ['video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo', 'video/webm'])) {
                         // For videos, add to content as embedded video (don't touch video_url field)
                         $validated['content'] .= "\n\n<div class='chapter-media'><video src='{$fileUrl}' controls width='100%' style='max-height: 400px;'></video></div>";
@@ -285,22 +286,23 @@ class ChapterController extends Controller
                     }
                 }
             }
-            
+
             unset($validated['media']);
-            
+
             $chapter->update($validated);
-            
+
             \Log::info('Chapter updated successfully', ['chapter_id' => $chapter->id]);
-            
+
             return response()->json($chapter);
         } catch (\Exception $e) {
             \Log::error('Chapter update failed', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            return response()->json(['error' => 'Failed to update chapter: ' . $e->getMessage()], 500);
+
+            return response()->json(['error' => 'Failed to update chapter: '.$e->getMessage()], 500);
         }
     }
-    
+
     public function saveQuizResults(Request $request)
     {
         try {
@@ -310,9 +312,9 @@ class ChapterController extends Controller
                 'correct_answers' => 'required|integer',
                 'wrong_answers' => 'required|integer',
                 'percentage' => 'required|numeric',
-                'answers' => 'required|array'
+                'answers' => 'required|array',
             ]);
-            
+
             $result = \DB::table('chapter_quiz_results')->insert([
                 'user_id' => auth()->id(),
                 'chapter_id' => $validated['chapter_id'],
@@ -322,12 +324,13 @@ class ChapterController extends Controller
                 'percentage' => $validated['percentage'],
                 'answers' => json_encode($validated['answers']),
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
-            
+
             return response()->json(['success' => true, 'message' => 'Quiz results saved']);
         } catch (\Exception $e) {
-            \Log::error('Failed to save quiz results: ' . $e->getMessage());
+            \Log::error('Failed to save quiz results: '.$e->getMessage());
+
             return response()->json(['error' => 'Failed to save results'], 500);
         }
     }

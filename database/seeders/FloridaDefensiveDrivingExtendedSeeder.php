@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class FloridaDefensiveDrivingExtendedSeeder extends Seeder
 {
@@ -12,9 +12,10 @@ class FloridaDefensiveDrivingExtendedSeeder extends Seeder
     {
         // Get the Florida DDC course
         $course = DB::table('florida_courses')->where('title', 'LIKE', '%Defensive Driving%')->first();
-        
-        if (!$course) {
+
+        if (! $course) {
             $this->command->error('Florida Defensive Driving Course not found. Run FloridaDefensiveDrivingSeeder first.');
+
             return;
         }
 
@@ -59,12 +60,12 @@ class FloridaDefensiveDrivingExtendedSeeder extends Seeder
                         'question' => 'When driving in wet weather, you should reduce your speed by approximately:',
                         'options' => [
                             '2-3 mph',
-                            '5-10 mph', 
+                            '5-10 mph',
                             '15-20 mph',
-                            '25-30 mph'
+                            '25-30 mph',
                         ],
                         'correct_answer' => '5-10 mph',
-                        'explanation' => 'Reducing speed by 5-10 mph in wet conditions helps maintain traction and control.'
+                        'explanation' => 'Reducing speed by 5-10 mph in wet conditions helps maintain traction and control.',
                     ],
                     [
                         'question' => 'Roads are most slippery:',
@@ -72,12 +73,12 @@ class FloridaDefensiveDrivingExtendedSeeder extends Seeder
                             'During heavy downpours',
                             'In the first rainfall after a dry period',
                             'When it has been raining for several hours',
-                            'Only during winter storms'
+                            'Only during winter storms',
                         ],
                         'correct_answer' => 'In the first rainfall after a dry period',
-                        'explanation' => 'The first rain after dry weather loosens accumulated oil on the road surface, making it very slippery.'
-                    ]
-                ]
+                        'explanation' => 'The first rain after dry weather loosens accumulated oil on the road surface, making it very slippery.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 6: Intersections and Right-of-Way',
@@ -117,10 +118,10 @@ class FloridaDefensiveDrivingExtendedSeeder extends Seeder
                             'The larger vehicle',
                             'The vehicle on the left',
                             'The vehicle on the right',
-                            'The vehicle going straight'
+                            'The vehicle going straight',
                         ],
                         'correct_answer' => 'The vehicle on the right',
-                        'explanation' => 'When vehicles arrive simultaneously at a four-way stop, the vehicle on the right has the right-of-way.'
+                        'explanation' => 'When vehicles arrive simultaneously at a four-way stop, the vehicle on the right has the right-of-way.',
                     ],
                     [
                         'question' => 'How far before an intersection should you activate your turn signal?',
@@ -128,12 +129,12 @@ class FloridaDefensiveDrivingExtendedSeeder extends Seeder
                             '50 feet',
                             '75 feet',
                             '100 feet',
-                            '150 feet'
+                            '150 feet',
                         ],
                         'correct_answer' => '100 feet',
-                        'explanation' => 'Turn signals should be activated at least 100 feet before reaching an intersection to give other drivers adequate warning.'
-                    ]
-                ]
+                        'explanation' => 'Turn signals should be activated at least 100 feet before reaching an intersection to give other drivers adequate warning.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 7: Fatigue and Emotional Control',
@@ -174,10 +175,10 @@ class FloridaDefensiveDrivingExtendedSeeder extends Seeder
                             '50,000',
                             '75,000',
                             '100,000',
-                            '125,000'
+                            '125,000',
                         ],
                         'correct_answer' => '100,000',
-                        'explanation' => 'Statistics show that 100,000 accidents each year are caused by drivers falling asleep at the wheel.'
+                        'explanation' => 'Statistics show that 100,000 accidents each year are caused by drivers falling asleep at the wheel.',
                     ],
                     [
                         'question' => 'What percentage of drivers have fallen asleep at the wheel at least once?',
@@ -185,12 +186,12 @@ class FloridaDefensiveDrivingExtendedSeeder extends Seeder
                             '21%',
                             '31%',
                             '41%',
-                            '51%'
+                            '51%',
                         ],
                         'correct_answer' => '31%',
-                        'explanation' => 'Studies show that 31% of all drivers have fallen asleep at the wheel at least once.'
-                    ]
-                ]
+                        'explanation' => 'Studies show that 31% of all drivers have fallen asleep at the wheel at least once.',
+                    ],
+                ],
             ],
             [
                 'title' => 'Chapter 8: Collision Avoidance and Defensive Techniques',
@@ -236,10 +237,10 @@ Large trucks have significant blind spots:
                             '5-8 seconds (about 500 feet)',
                             '10-15 seconds (about 1/4 mile)',
                             '20-25 seconds (about 1/2 mile)',
-                            '30 seconds (about 1 mile)'
+                            '30 seconds (about 1 mile)',
                         ],
                         'correct_answer' => '10-15 seconds (about 1/4 mile)',
-                        'explanation' => 'At highway speeds, scanning 10-15 seconds ahead (about 1/4 mile) allows adequate time to identify and respond to hazards.'
+                        'explanation' => 'At highway speeds, scanning 10-15 seconds ahead (about 1/4 mile) allows adequate time to identify and respond to hazards.',
                     ],
                     [
                         'question' => 'When facing a potential collision, which option is often the best choice?',
@@ -247,27 +248,27 @@ Large trucks have significant blind spots:
                             'Speed up',
                             'Stop suddenly',
                             'Evade (steer away)',
-                            'Close your eyes and hope'
+                            'Close your eyes and hope',
                         ],
                         'correct_answer' => 'Evade (steer away)',
-                        'explanation' => 'Evasive steering is often the best collision avoidance technique, which is why defensive drivers always maintain escape routes.'
-                    ]
-                ]
-            ]
+                        'explanation' => 'Evasive steering is often the best collision avoidance technique, which is why defensive drivers always maintain escape routes.',
+                    ],
+                ],
+            ],
         ];
 
         foreach ($extendedChapters as $index => $chapterData) {
             // Start chapter numbering from 5 (since main seeder has chapters 1-4)
             $chapterOrder = $index + 5;
-            
+
             $chapterId = DB::table('chapters')->insertGetId([
                 'course_id' => $courseId,
                 'title' => $chapterData['title'],
                 'content' => $chapterData['content'],
-                
+
                 'order_index' => $chapterOrder,
                 'duration' => $chapterData['duration'],
-                
+
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -285,7 +286,7 @@ Large trucks have significant blind spots:
                         'explanation' => $questionData['explanation'],
                         'order_index' => $qIndex + 1,
                         'points' => 1,
-                        
+
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
                     ]);

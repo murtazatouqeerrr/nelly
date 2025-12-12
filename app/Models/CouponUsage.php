@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class CouponUsage extends Model
 {
     protected $table = 'coupon_usage';
-    
+
     protected $fillable = [
         'coupon_id',
         'user_id',
         'discount_amount',
         'original_amount',
-        'final_amount'
+        'final_amount',
     ];
 
     public function coupon()

@@ -11,7 +11,7 @@ class CertificateQrCode extends Model
         'qr_code_data',
         'qr_code_image',
         'verification_url',
-        'scanned_count'
+        'scanned_count',
     ];
 
     public function certificate()

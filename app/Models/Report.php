@@ -11,12 +11,12 @@ class Report extends Model
         'type',
         'filters',
         'created_by',
-        'is_public'
+        'is_public',
     ];
 
     protected $casts = [
         'filters' => 'array',
-        'is_public' => 'boolean'
+        'is_public' => 'boolean',
     ];
 
     public function creator()

@@ -12,12 +12,12 @@ class FlhsmvSubmissionQueue extends Model
         'scheduled_at',
         'attempts',
         'last_attempt_at',
-        'status'
+        'status',
     ];
 
     protected $casts = [
         'scheduled_at' => 'datetime',
-        'last_attempt_at' => 'datetime'
+        'last_attempt_at' => 'datetime',
     ];
 
     public function submission()

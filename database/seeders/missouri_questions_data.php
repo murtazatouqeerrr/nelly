@@ -1,4 +1,5 @@
 <?php
+
 return [
     // Chapter 1: Missouri Traffic Laws & City Driving
     [
@@ -13,7 +14,7 @@ return [
         ['q' => 'Missouri\'s "Move Over Law" states in part that,', 'a' => 'When an emergency vehicle approaches, motorists must move over.', 'b' => 'When law enforcement flashes a blue light, traffic must move over.', 'c' => 'When a trucker is in your blind spot, the motorist must move over.', 'd' => 'When a slow-moving vehicle blocks 5 or more cars it must move over.', 'e' => '', 'correct' => 'A'],
         ['q' => 'Motorcycles are on city streets, and:', 'a' => '98% of accidents with motorcycles and bikes result in injury.', 'b' => 'Drivers of cars often violate the motorcyclist right of way.', 'c' => 'It can be harder to see motorcyclists on the road because of their size.', 'd' => 'All of the above.', 'e' => '', 'correct' => 'D'],
     ],
-    
+
     // Chapter 2: Traffic Signs and Signals
     [
         ['q' => 'The purpose of traffic signs are', 'a' => 'to serve as traffic control', 'b' => 'to communicate warnings', 'c' => 'to Express traffic regulations', 'd' => 'all of the above', 'e' => '', 'correct' => 'D'],
@@ -27,7 +28,7 @@ return [
         ['q' => 'Signs with a red circle with a diagonal line through it always means', 'a' => 'proceed with caution', 'b' => 'yield', 'c' => 'traffic signal ahead', 'd' => '"NO" (not allowed)', 'e' => '', 'correct' => 'D'],
         ['q' => 'Failure to stop one a school buses lights are flashing red:', 'a' => 'carries a 90 to 120 day license suspension.', 'b' => 'carries a maximum 180 day license suspension for first offenders', 'c' => 'A and B', 'd' => 'carries a minimum two month license suspension', 'e' => '', 'correct' => 'A'],
     ],
-    
+
     // Chapter 3: Intersections and Right-of-Way
     [
         ['q' => 'you may not make a U-turn______.', 'a' => 'on a one-way street.', 'b' => 'in front of a fire station', 'c' => 'when vehicles may hit you.', 'd' => 'all of the above', 'e' => 'none of the above', 'correct' => 'D'],
@@ -41,7 +42,7 @@ return [
         ['q' => 'when turning left at an intersection,', 'a' => 'you may have to turn even into oncoming traffic, in order to clear it.', 'b' => 'you may turn only when it is safe to do so.', 'c' => 'you may block traffic if you need to get across.', 'd' => 'all of the above.', 'e' => '', 'correct' => 'B'],
         ['q' => 'roundabout are used:', 'a' => 'more often now in Missouri.', 'b' => 'to create safer high speed limits.', 'c' => 'we are low traffic doesn\'t justify a 4 way stop.', 'd' => 'A and C.', 'e' => '', 'correct' => 'D'],
     ],
-    
+
     // Chapter 4-10 placeholder
     [['q' => 'Class F licenses allow drivers to operate________.', 'a' => 'Any noncommercial vehicles.', 'b' => 'Only motorcycles.', 'c' => 'Any four-axle vehicle.', 'd' => 'None of the above.', 'e' => '', 'correct' => 'A']],
     [['q' => 'Freeway drivers should always be familiar with______.', 'a' => 'alternative routes', 'b' => 'exits', 'c' => 'Side streets', 'd' => 'A and B are correct', 'e' => 'none of the above', 'correct' => 'D']],
@@ -50,7 +51,7 @@ return [
     [['q' => 'If you run into water on the road, don\'t ______.', 'a' => 'Drive in the tracks of the car ahead.', 'b' => 'Judge how deep floodwater is before you enter it.', 'c' => 'Accelerate at a good pace through rushing water.', 'd' => 'Test your brakes by gently pushing down on them.', 'e' => '', 'correct' => 'C']],
     [['q' => 'In Chapter 9, we discuss that the __________ are a myth.', 'a' => 'Stages of intoxication', 'b' => 'Explanations of BAC charts', 'c' => 'intoxicating effects of brown vs. clear drinks', 'd' => 'severe penalties for any DUI related charge', 'e' => '', 'correct' => 'C']],
     [['q' => 'Which of the following statements are true?', 'a' => 'Honking can be considered aggressive driving.', 'b' => 'Forcing a driver to pull over to have a chat or get a phone number is friendly', 'c' => 'Cutting off a driver is acceptable because it happens everyday.', 'd' => 'Making obscene gestures is basically harmless.', 'e' => '', 'correct' => 'A']],
-    
+
     // Chapter 11: Final Exam
     [
         ['q' => 'Class F licenses allow drivers to operate ______.', 'a' => 'Any non-commercial vehicle.', 'b' => 'only motorcycles', 'c' => 'Any four-axle vehicle', 'd' => 'None of the above.', 'e' => '', 'correct' => 'A'],

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // ✅ Prevents "table already exists" error
-        if (!Schema::hasTable('invoices')) {
+        if (! Schema::hasTable('invoices')) {
             Schema::create('invoices', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('payment_id')->constrained()->onDelete('cascade');

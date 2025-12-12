@@ -13,7 +13,9 @@ class EnrollmentConfirmation extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+
     public $course;
+
     public $enrollment;
 
     public function __construct($user, $course, $enrollment)
@@ -26,7 +28,7 @@ class EnrollmentConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Enrollment Confirmation - ' . $this->course->title,
+            subject: 'Enrollment Confirmation - '.$this->course->title,
         );
     }
 

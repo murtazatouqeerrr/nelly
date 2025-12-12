@@ -8,7 +8,7 @@ class FloridaFeeRemittance extends Model
 {
     protected $fillable = [
         'remittance_date', 'total_assessment_fees', 'total_courses', 'payment_method',
-        'florida_reference_number', 'submitted_by', 'submitted_at', 'processed_by_florida', 'processed_at'
+        'florida_reference_number', 'submitted_by', 'submitted_at', 'processed_by_florida', 'processed_at',
     ];
 
     protected $casts = [
@@ -16,7 +16,7 @@ class FloridaFeeRemittance extends Model
         'submitted_at' => 'datetime',
         'processed_at' => 'datetime',
         'processed_by_florida' => 'boolean',
-        'total_assessment_fees' => 'decimal:2'
+        'total_assessment_fees' => 'decimal:2',
     ];
 
     public function submitter()

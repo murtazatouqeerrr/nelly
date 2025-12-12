@@ -15,11 +15,11 @@ class Chapter extends Model
         'video_url',
         'order_index',
         'duration',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function course(): BelongsTo

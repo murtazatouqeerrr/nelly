@@ -11,13 +11,13 @@ class DicdsWelcomeController extends Controller
     {
         try {
             $messages = DicdsSystemMessage::where('is_active', true)
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->whereNull('start_date')
-                          ->orWhere('start_date', '<=', now());
+                        ->orWhere('start_date', '<=', now());
                 })
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->whereNull('end_date')
-                          ->orWhere('end_date', '>=', now());
+                        ->orWhere('end_date', '>=', now());
                 })
                 ->orderBy('message_type')
                 ->orderBy('created_at', 'desc')
@@ -25,7 +25,7 @@ class DicdsWelcomeController extends Controller
 
             return response()->json([
                 'messages' => $messages,
-                'user' => auth()->user()
+                'user' => auth()->user(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -33,10 +33,10 @@ class DicdsWelcomeController extends Controller
                     [
                         'title' => 'Welcome to Florida DICDS',
                         'content' => 'Welcome to the Florida Driver Improvement Course Data System. Please click Continue to proceed.',
-                        'message_type' => 'welcome'
-                    ]
+                        'message_type' => 'welcome',
+                    ],
                 ],
-                'user' => auth()->user()
+                'user' => auth()->user(),
             ]);
         }
     }
@@ -45,7 +45,7 @@ class DicdsWelcomeController extends Controller
     {
         return response()->json([
             'redirect' => '/dicds/main-menu',
-            'message' => 'Proceeding to main menu'
+            'message' => 'Proceeding to main menu',
         ]);
     }
 }

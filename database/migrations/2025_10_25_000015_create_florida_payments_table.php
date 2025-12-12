@@ -2,14 +2,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('florida_payments')) {
+        if (! Schema::hasTable('florida_payments')) {
             Schema::create('florida_payments', function (Blueprint $table) {
                 $table->id();
 
@@ -38,7 +38,7 @@ return new class extends Migration
                     'completed',
                     'failed',
                     'refunded',
-                    'disputed'
+                    'disputed',
                 ])->default('pending');
                 $table->string('payment_method')->nullable();
 

@@ -12,12 +12,12 @@ class MissouriCourseStructure extends Model
         'content',
         'quiz_questions_count',
         'passing_score',
-        'time_requirement_minutes'
+        'time_requirement_minutes',
     ];
 
     const MISSOURI_CHAPTERS = [
         1 => 'Missouri Traffic Laws',
-        2 => 'Road Signs and Signals', 
+        2 => 'Road Signs and Signals',
         3 => 'Defensive Driving Techniques',
         4 => 'Highway and Interstate Driving',
         5 => 'Night Driving Safety',
@@ -26,10 +26,11 @@ class MissouriCourseStructure extends Model
         8 => 'Weather and Road Conditions',
         9 => 'Emergency Procedures',
         10 => 'Sharing the Road',
-        11 => 'Missouri Point System and Penalties'
+        11 => 'Missouri Point System and Penalties',
     ];
 
-    public function quizQuestions() { 
-        return $this->hasMany(MissouriQuizBank::class, 'chapter_id'); 
+    public function quizQuestions()
+    {
+        return $this->hasMany(MissouriQuizBank::class, 'chapter_id');
     }
 }

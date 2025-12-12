@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CertificateInventory extends Model
 {
     protected $table = 'certificate_inventory';
-    
+
     protected $fillable = [
         'course_type',
         'delivery_type',
@@ -16,10 +16,10 @@ class CertificateInventory extends Model
         'available_count',
         'provider_hold',
         'school_hold',
-        'last_updated'
+        'last_updated',
     ];
 
     protected $casts = [
-        'last_updated' => 'datetime'
+        'last_updated' => 'datetime',
     ];
 }

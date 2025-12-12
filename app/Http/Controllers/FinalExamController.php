@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\MissouriQuizBank;
 use App\Models\QuizAttempt;
+use Illuminate\Http\Request;
 
 class FinalExamController extends Controller
 {
@@ -14,7 +14,7 @@ class FinalExamController extends Controller
         $questions = MissouriQuizBank::inRandomOrder()
             ->limit(50)
             ->get()
-            ->map(function($q) {
+            ->map(function ($q) {
                 return [
                     'id' => $q->id,
                     'question_text' => $q->question_text,
@@ -22,8 +22,8 @@ class FinalExamController extends Controller
                         'A' => $q->option_a,
                         'B' => $q->option_b,
                         'C' => $q->option_c,
-                        'D' => $q->option_d
-                    ]
+                        'D' => $q->option_d,
+                    ],
                 ];
             });
 
@@ -31,7 +31,7 @@ class FinalExamController extends Controller
             'exam_id' => uniqid('final_'),
             'questions' => $questions,
             'passing_score' => 80,
-            'time_limit' => null // No time limit
+            'time_limit' => null, // No time limit
         ]);
     }
 
@@ -57,7 +57,7 @@ class FinalExamController extends Controller
             'quiz_type' => 'final_exam',
             'score' => $score,
             'passed' => $passed,
-            'answers' => json_encode($answers)
+            'answers' => json_encode($answers),
         ]);
 
         return response()->json([
@@ -65,7 +65,7 @@ class FinalExamController extends Controller
             'correct' => $correct,
             'total' => $total,
             'passed' => $passed,
-            'can_retake' => !$passed
+            'can_retake' => ! $passed,
         ]);
     }
 }

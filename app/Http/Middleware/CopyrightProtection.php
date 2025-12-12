@@ -15,10 +15,10 @@ class CopyrightProtection
         $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
         $response->headers->set('Pragma', 'no-cache');
         $response->headers->set('Expires', '0');
-        
+
         // Prevent iframe embedding
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
-        
+
         // Add CSP headers
         $response->headers->set('Content-Security-Policy', "frame-ancestors 'self'");
 

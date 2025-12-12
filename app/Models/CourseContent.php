@@ -11,11 +11,11 @@ class CourseContent extends Model
         'content_type',
         'content',
         'order',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function chapter()

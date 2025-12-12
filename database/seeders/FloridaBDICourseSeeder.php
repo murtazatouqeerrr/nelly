@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class FloridaBDICourseSeeder extends Seeder
 {
@@ -15,17 +15,17 @@ class FloridaBDICourseSeeder extends Seeder
             'course_type' => 'BDI',
             'title' => 'Florida Driving/Ticket Dismissal - 4-Hour Basic Driver Improvement Course (BDI)',
             'description' => 'Florida Basic Driver Improvement Course for ticket dismissal',
-            'state' => 'FL',
-            'passing_score' => 80,
-            'duration' => 240,
+            'state_code' => 'FL',
+            'min_pass_score' => 80,
+            'total_duration' => 240,
             'price' => 19.95,
-            
+
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
 
         $chapters = $this->getChapters();
-        
+
         foreach ($chapters as $index => $chapter) {
             $chapterId = DB::table('chapters')->insertGetId([
                 'course_id' => $courseId,
@@ -33,7 +33,7 @@ class FloridaBDICourseSeeder extends Seeder
                 'content' => '',
                 'order_index' => $index + 1,
                 'duration' => $chapter['duration'],
-                
+
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -41,7 +41,7 @@ class FloridaBDICourseSeeder extends Seeder
             foreach ($chapter['questions'] as $qIndex => $q) {
                 // Get the correct answer text from options array using the index
                 $correctAnswerText = $q['o'][$q['c']];
-                
+
                 DB::table('questions')->insert([
                     'chapter_id' => $chapterId,
                     'course_id' => $courseId,
@@ -64,11 +64,11 @@ class FloridaBDICourseSeeder extends Seeder
             'course_type' => 'Driver Improvement',
             'title' => 'Missouri Driver Improvement Course',
             'description' => 'Missouri State-Approved Driver Improvement Course',
-            'state' => 'MO',
-            'passing_score' => 80,
-            'duration' => 240,
+            'state_code' => 'MO',
+            'min_pass_score' => 80,
+            'total_duration' => 240,
             'price' => 29.99,
-            
+
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);

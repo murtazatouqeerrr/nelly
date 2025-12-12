@@ -12,7 +12,7 @@ class FloridaPayment extends Model
         'gateway_payment_id', 'gateway_intent_id', 'payment_status', 'payment_method',
         'billing_name', 'billing_email', 'billing_address', 'florida_fee_remitted',
         'florida_fee_remittance_date', 'florida_remittance_reference', 'refund_reason',
-        'refunded_at', 'metadata'
+        'refunded_at', 'metadata',
     ];
 
     protected $casts = [
@@ -24,7 +24,7 @@ class FloridaPayment extends Model
         'base_course_price' => 'decimal:2',
         'florida_assessment_fee' => 'decimal:2',
         'convenience_fee' => 'decimal:2',
-        'total_amount' => 'decimal:2'
+        'total_amount' => 'decimal:2',
     ];
 
     public function user()

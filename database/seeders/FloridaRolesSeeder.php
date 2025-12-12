@@ -20,8 +20,8 @@ class FloridaRolesSeeder extends Seeder
                     'manage_schools',
                     'manage_instructors',
                     'distribute_certificates',
-                    'manage_users'
-                ]
+                    'manage_users',
+                ],
             ],
             [
                 'name' => 'DRS Provider User',
@@ -29,8 +29,8 @@ class FloridaRolesSeeder extends Seeder
                 'permissions' => [
                     'enter_school_data',
                     'enter_instructor_data',
-                    'distribute_certificates'
-                ]
+                    'distribute_certificates',
+                ],
             ],
             [
                 'name' => 'DRS School Admin',
@@ -38,8 +38,8 @@ class FloridaRolesSeeder extends Seeder
                 'permissions' => [
                     'order_certificates',
                     'enter_student_data',
-                    'view_school_reports'
-                ]
+                    'view_school_reports',
+                ],
             ],
             [
                 'name' => 'Student',
@@ -47,9 +47,9 @@ class FloridaRolesSeeder extends Seeder
                 'permissions' => [
                     'take_courses',
                     'view_certificates',
-                    'view_progress'
-                ]
-            ]
+                    'view_progress',
+                ],
+            ],
         ];
 
         foreach ($roles as $roleData) {
@@ -61,7 +61,7 @@ class FloridaRolesSeeder extends Seeder
 
         // Create super admin user
         $adminRole = Role::where('slug', 'drs_provider_admin')->first();
-        
+
         User::firstOrCreate(
             ['email' => 'admin@floridatraffic.com'],
             [
@@ -69,7 +69,7 @@ class FloridaRolesSeeder extends Seeder
                 'first_name' => 'Super',
                 'last_name' => 'Admin',
                 'password' => Hash::make('password123'),
-                'status' => 'active'
+                'status' => 'active',
             ]
         );
     }

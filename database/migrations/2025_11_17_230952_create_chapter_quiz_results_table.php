@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('percentage', 5, 2);
             $table->json('answers')->nullable();
             $table->timestamps();
-            
+
             $table->index(['user_id', 'chapter_id']);
         });
     }

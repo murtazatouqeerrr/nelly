@@ -17,13 +17,13 @@ class FloridaSecurityLog extends Model
         'location_data',
         'description',
         'florida_metadata',
-        'risk_level'
+        'risk_level',
     ];
 
     protected $casts = [
         'location_data' => 'array',
         'florida_metadata' => 'array',
-        'created_at' => 'datetime'
+        'created_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

@@ -16,11 +16,11 @@ class CertificateLookupController extends Controller
         ]);
 
         $query = FloridaCertificate::query();
-        
+
         if ($validated['search_type'] === 'certificate_number') {
             $query->where('certificate_number', $validated['search_term']);
         } else {
-            $query->where('student_last_name', 'LIKE', '%' . $validated['search_term'] . '%');
+            $query->where('student_last_name', 'LIKE', '%'.$validated['search_term'].'%');
         }
 
         $results = $query->get();
@@ -39,7 +39,7 @@ class CertificateLookupController extends Controller
     public function reprint($id)
     {
         $certificate = FloridaCertificate::findOrFail($id);
-        
+
         CertificateLookupLog::where('searched_by', auth()->id())
             ->latest()
             ->first()

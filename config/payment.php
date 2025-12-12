@@ -23,6 +23,13 @@ return [
         'currency' => env('PAYPAL_CURRENCY', 'USD'),
     ],
 
+    'authorizenet' => [
+        'login_id' => env('AUTHORIZENET_LOGIN_ID', ''),
+        'transaction_key' => env('AUTHORIZENET_TRANSACTION_KEY', ''),
+        'mode' => env('AUTHORIZENET_MODE', 'sandbox'), // 'sandbox' or 'production'
+        'currency' => env('AUTHORIZENET_CURRENCY', 'USD'),
+    ],
+
     'course_prices' => [
         'bdi_4hour' => env('COURSE_PRICE_BDI_4HOUR', 29.99),
         'adi_4hour' => env('COURSE_PRICE_ADI_4HOUR', 29.99),

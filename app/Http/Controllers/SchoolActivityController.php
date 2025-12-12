@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SchoolActivityReport;
 use App\Models\FloridaCertificate;
+use App\Models\SchoolActivityReport;
 use Illuminate\Http\Request;
 
 class SchoolActivityController extends Controller

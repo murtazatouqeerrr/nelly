@@ -13,11 +13,11 @@ class DashboardWidget extends Model
         'position_y',
         'width',
         'height',
-        'settings'
+        'settings',
     ];
 
     protected $casts = [
-        'settings' => 'array'
+        'settings' => 'array',
     ];
 
     public function user()

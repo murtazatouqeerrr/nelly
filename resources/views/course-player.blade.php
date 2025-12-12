@@ -43,12 +43,20 @@
             color: white;
         }
         .chapter-item.completed {
-            opacity: 0.7;
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
         }
-        .chapter-item.completed::after {
-            content: ' ✓';
-            color: green;
+        .chapter-item.completed::before {
+            content: '✓ ';
+            color: #28a745;
             font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+        .chapter-item.completed .chapter-status {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 0.85em;
         }
         .btn-primary {
             background-color: var(--accent);
@@ -315,9 +323,11 @@
             container.innerHTML = chapters.map((chapter, index) => {
                 const isCompleted = chapter.is_completed || false;
                 const completedClass = isCompleted ? 'completed' : '';
+                const completedBadge = isCompleted ? '<span class="chapter-status">Completed</span>' : '';
                 return `
                     <div class="chapter-item ${completedClass}" onclick="selectChapter(${chapter.id})" data-chapter-id="${chapter.id}">
                         <strong>${index + 1}. ${chapter.title}</strong>
+                        ${completedBadge}
                         <br>
                         <small class="text-muted">${chapter.duration} minutes</small>
                     </div>
@@ -493,6 +503,20 @@
                 if (response.ok) {
                     console.log('Chapter completed:', data);
                     
+                    // Update the chapter in the local chapters array
+                    const chapterIndex = chapters.findIndex(c => c.id === targetChapterId);
+                    if (chapterIndex !== -1) {
+                        chapters[chapterIndex].is_completed = true;
+                    }
+                    
+                    // Update the progress percentage
+                    if (currentEnrollment) {
+                        currentEnrollment.progress_percentage = data.progress_percentage;
+                    }
+                    
+                    // Refresh the chapters display to show green mark
+                    displayChapters();
+                    
                     // Show success message
                     const message = data.enrollment_completed 
                         ? '🎉 Congratulations! You have completed the course! Your certificate is being generated.'
@@ -500,13 +524,10 @@
                     
                     alert(message);
                     
-                    // Reload course data to update progress
-                    await loadCourseData();
-                    
                     // If course completed, redirect to certificate page after a moment
                     if (data.enrollment_completed) {
                         setTimeout(() => {
-                            window.location.href = '/certificates/select';
+                            window.location.href = '/generate-certificates';
                         }, 2000);
                     }
                 } else {
@@ -738,6 +759,15 @@
             const modal = document.getElementById('quizResultsModal');
             if (modal) {
                 modal.remove();
+            }
+            
+            // Find current chapter index and load next chapter
+            const currentChapterId = parseInt(document.querySelector('.chapter-item.active')?.getAttribute('data-chapter-id'));
+            const currentIndex = chapters.findIndex(c => c.id === currentChapterId);
+            
+            if (currentIndex !== -1 && currentIndex < chapters.length - 1) {
+                const nextChapter = chapters[currentIndex + 1];
+                selectChapter(nextChapter.id);
             }
         }
         

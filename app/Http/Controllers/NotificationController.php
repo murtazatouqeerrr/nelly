@@ -20,6 +20,7 @@ class NotificationController extends Controller
         }
 
         $notifications = $query->orderBy('created_at', 'desc')->paginate(20);
+
         return response()->json($notifications);
     }
 
@@ -30,17 +31,18 @@ class NotificationController extends Controller
         }
 
         $notification->markAsRead();
+
         return response()->json(['message' => 'Notification marked as read']);
     }
 
     public function markAllAsRead()
     {
         Notification::where('user_id', auth()->id())
-                   ->where('is_read', false)
-                   ->update([
-                       'is_read' => true,
-                       'read_at' => now()
-                   ]);
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'read_at' => now(),
+            ]);
 
         return response()->json(['message' => 'All notifications marked as read']);
     }
@@ -48,8 +50,8 @@ class NotificationController extends Controller
     public function unreadCount()
     {
         $count = Notification::where('user_id', auth()->id())
-                            ->where('is_read', false)
-                            ->count();
+            ->where('is_read', false)
+            ->count();
 
         return response()->json(['count' => $count]);
     }
@@ -60,10 +62,11 @@ class NotificationController extends Controller
             'user_id' => 'required|exists:users,id',
             'type' => 'required|in:email,sms,in_app,push',
             'title' => 'required|string|max:255',
-            'message' => 'required|string'
+            'message' => 'required|string',
         ]);
 
         $notification = Notification::create($request->all());
+
         return response()->json($notification);
     }
 }

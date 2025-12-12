@@ -16,7 +16,7 @@ class CourseMedia extends Model
         'file_size',
         'mime_type',
         'order_index',
-        'is_active'
+        'is_active',
     ];
 
     public function course()

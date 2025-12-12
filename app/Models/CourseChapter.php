@@ -14,11 +14,11 @@ class CourseChapter extends Model
         'order_index',
         'duration',
         'required_min_time',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function course()

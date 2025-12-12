@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Course;
-use App\Models\UserCourseEnrollment;
-use App\Models\Payment;
 use App\Models\Certificate;
-use Illuminate\Http\Request;
+use App\Models\Course;
+use App\Models\Payment;
+use App\Models\User;
+use App\Models\UserCourseEnrollment;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -31,12 +29,12 @@ class DashboardController extends Controller
             DB::raw('MONTH(created_at) as month'),
             DB::raw('COUNT(*) as count')
         )
-        ->whereYear('created_at', date('Y'))
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get()
-        ->pluck('count', 'month')
-        ->toArray();
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->pluck('count', 'month')
+            ->toArray();
 
         // Fill missing months with 0
         $enrollmentChart = [];
@@ -49,13 +47,13 @@ class DashboardController extends Controller
             DB::raw('MONTH(created_at) as month'),
             DB::raw('SUM(amount) as total')
         )
-        ->where('status', 'completed')
-        ->whereYear('created_at', date('Y'))
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get()
-        ->pluck('total', 'month')
-        ->toArray();
+            ->where('status', 'completed')
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->pluck('total', 'month')
+            ->toArray();
 
         $revenueChart = [];
         for ($i = 1; $i <= 12; $i++) {
@@ -68,13 +66,14 @@ class DashboardController extends Controller
                 'enrollments',
                 'enrollments as completed_count' => function ($query) {
                     $query->whereNotNull('completed_at');
-                }
+                },
             ])
             ->get()
             ->map(function ($course) {
-                $course->completion_rate = $course->enrollments_count > 0 
+                $course->completion_rate = $course->enrollments_count > 0
                     ? round(($course->completed_count / $course->enrollments_count) * 100, 2)
                     : 0;
+
                 return $course;
             });
 
@@ -100,14 +99,14 @@ class DashboardController extends Controller
             'recent_activities' => [
                 'enrollments' => $recentEnrollments,
                 'payments' => $recentPayments,
-            ]
+            ],
         ]);
     }
 
     public function getUserStats()
     {
         $user = auth()->user();
-        
+
         $stats = [
             'total_enrollments' => $user->enrollments()->count(),
             'completed_courses' => $user->enrollments()->whereNotNull('completed_at')->count(),
@@ -122,11 +121,11 @@ class DashboardController extends Controller
 
         // Progress data
         $enrollments = $user->enrollments()->with(['course', 'progress'])->get();
-        
+
         $progressData = $enrollments->map(function ($enrollment) {
             $totalChapters = $enrollment->course->chapters()->count();
             $completedChapters = $enrollment->progress()->count();
-            
+
             return [
                 'course_title' => $enrollment->course->title,
                 'progress_percentage' => $totalChapters > 0 ? round(($completedChapters / $totalChapters) * 100, 2) : 0,

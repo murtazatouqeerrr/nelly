@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\ChapterProgress;
-use App\Models\QuizAttempt;
-use App\Models\MissouriForm4444;
-use App\Models\UserCourseEnrollment;
 use App\Events\CourseCompleted;
+use App\Models\ChapterProgress;
+use App\Models\MissouriForm4444;
+use App\Models\QuizAttempt;
+use App\Models\UserCourseEnrollment;
+use Illuminate\Http\Request;
 
 class CourseCompletionController extends Controller
 {
@@ -33,8 +33,8 @@ class CourseCompletionController extends Controller
             'final_exam_passed' => $finalExamPassed,
             'requirements_met' => [
                 'all_chapters' => $completedChapters >= 11,
-                'final_exam' => $finalExamPassed
-            ]
+                'final_exam' => $finalExamPassed,
+            ],
         ]);
     }
 
@@ -45,7 +45,7 @@ class CourseCompletionController extends Controller
 
         // Verify eligibility
         $eligibility = $this->checkEligibility($userId);
-        if (!$eligibility->getData()->can_complete) {
+        if (! $eligibility->getData()->can_complete) {
             return response()->json(['error' => 'Course requirements not met'], 400);
         }
 
@@ -53,7 +53,7 @@ class CourseCompletionController extends Controller
         $enrollment = UserCourseEnrollment::findOrFail($enrollmentId);
         $enrollment->update([
             'status' => 'completed',
-            'completion_date' => now()
+            'completion_date' => now(),
         ]);
 
         // Dispatch course completed event
@@ -63,18 +63,18 @@ class CourseCompletionController extends Controller
         $form = MissouriForm4444::create([
             'user_id' => $userId,
             'enrollment_id' => $enrollmentId,
-            'form_number' => 'MO-4444-' . time(),
+            'form_number' => 'MO-4444-'.time(),
             'completion_date' => now(),
             'submission_deadline' => now()->addDays(15),
             'submission_method' => $request->submission_method ?? 'point_reduction',
-            'status' => 'ready_for_submission'
+            'status' => 'ready_for_submission',
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Course completed successfully',
             'form_4444' => $form,
-            'completion_date' => now()
+            'completion_date' => now(),
         ]);
     }
 }

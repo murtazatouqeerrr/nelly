@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TicketMail;
 use App\Models\SupportTicket;
 use App\Models\SupportTicketReply;
 use App\Models\TicketRecipient;
-use App\Mail\TicketMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -15,38 +15,39 @@ class SupportTicketController extends Controller
     {
         try {
             \Log::info('=== Support Tickets Index START ===');
-            \Log::info('User authenticated: ' . (auth()->check() ? 'yes' : 'no'));
-            \Log::info('User ID: ' . (auth()->id() ?? 'null'));
-            
+            \Log::info('User authenticated: '.(auth()->check() ? 'yes' : 'no'));
+            \Log::info('User ID: '.(auth()->id() ?? 'null'));
+
             $query = SupportTicket::with(['user']);
 
             if (auth()->check() && auth()->user()->role_id != 1) {
-                \Log::info('Filtering tickets for user: ' . auth()->id());
+                \Log::info('Filtering tickets for user: '.auth()->id());
                 $query->where('user_id', auth()->id());
             } else {
                 \Log::info('Loading all tickets (admin or not authenticated)');
             }
 
-            $tickets = $query->when($request->status, function($q, $status) {
-                    return $q->where('status', $status);
-                })
+            $tickets = $query->when($request->status, function ($q, $status) {
+                return $q->where('status', $status);
+            })
                 ->orderBy('created_at', 'desc')
                 ->paginate(20);
 
-            \Log::info('Tickets loaded: ' . $tickets->count());
+            \Log::info('Tickets loaded: '.$tickets->count());
             \Log::info('=== Support Tickets Index END ===');
 
             // For web view
-            if (!$request->expectsJson() && !$request->is('api/*')) {
+            if (! $request->expectsJson() && ! $request->is('api/*')) {
                 return view('admin.support.tickets');
             }
 
             return response()->json($tickets);
         } catch (\Exception $e) {
             \Log::error('=== Support Tickets Index ERROR ===');
-            \Log::error('Error: ' . $e->getMessage());
-            \Log::error('File: ' . $e->getFile() . ':' . $e->getLine());
-            \Log::error('Stack: ' . $e->getTraceAsString());
+            \Log::error('Error: '.$e->getMessage());
+            \Log::error('File: '.$e->getFile().':'.$e->getLine());
+            \Log::error('Stack: '.$e->getTraceAsString());
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -56,12 +57,12 @@ class SupportTicketController extends Controller
         try {
             \Log::info('=== Support Ticket Store START ===');
             \Log::info('Request data: ', $request->all());
-            
+
             $request->validate([
                 'subject' => 'required|string|max:255',
                 'category' => 'nullable|string',
                 'priority' => 'nullable|in:low,medium,high,critical',
-                'description' => 'required|string'
+                'description' => 'required|string',
             ]);
 
             \Log::info('Validation passed');
@@ -72,36 +73,37 @@ class SupportTicketController extends Controller
                 'description' => $request->description,
                 'email' => auth()->user()->email,
                 'priority' => $request->priority ?? 'medium',
-                'status' => 'open'
+                'status' => 'open',
             ]);
 
-            \Log::info('Ticket created: ' . $ticket->id);
-            
+            \Log::info('Ticket created: '.$ticket->id);
+
             // Send email to all active recipients
             try {
                 $recipients = TicketRecipient::where('is_active', true)->get();
-                \Log::info('Found ' . $recipients->count() . ' active recipients');
-                
+                \Log::info('Found '.$recipients->count().' active recipients');
+
                 foreach ($recipients as $recipient) {
                     try {
                         Mail::to($recipient->email)->send(new TicketMail($ticket));
-                        \Log::info('Email sent to: ' . $recipient->email);
+                        \Log::info('Email sent to: '.$recipient->email);
                     } catch (\Exception $e) {
-                        \Log::error('Failed to send email to ' . $recipient->email . ': ' . $e->getMessage());
+                        \Log::error('Failed to send email to '.$recipient->email.': '.$e->getMessage());
                     }
                 }
             } catch (\Exception $e) {
-                \Log::error('Error sending emails: ' . $e->getMessage());
+                \Log::error('Error sending emails: '.$e->getMessage());
             }
-            
+
             \Log::info('=== Support Ticket Store END ===');
 
             return response()->json(['success' => true, 'ticket' => $ticket]);
         } catch (\Exception $e) {
             \Log::error('=== Support Ticket Store ERROR ===');
-            \Log::error('Error: ' . $e->getMessage());
-            \Log::error('File: ' . $e->getFile() . ':' . $e->getLine());
-            \Log::error('Stack: ' . $e->getTraceAsString());
+            \Log::error('Error: '.$e->getMessage());
+            \Log::error('File: '.$e->getFile().':'.$e->getLine());
+            \Log::error('Stack: '.$e->getTraceAsString());
+
             return response()->json(['error' => $e->getMessage()], 422);
         }
     }
@@ -122,14 +124,14 @@ class SupportTicketController extends Controller
         $ticket = SupportTicket::findOrFail($id);
 
         $request->validate([
-            'message' => 'required|string'
+            'message' => 'required|string',
         ]);
 
         $reply = SupportTicketReply::create([
             'support_ticket_id' => $ticket->id,
             'user_id' => auth()->id(),
             'message' => $request->message,
-            'is_staff_reply' => auth()->user()->role_id == 1
+            'is_staff_reply' => auth()->user()->role_id == 1,
         ]);
 
         $ticket->update(['status' => 'replied']);
@@ -142,12 +144,12 @@ class SupportTicketController extends Controller
         $ticket = SupportTicket::findOrFail($id);
 
         $request->validate([
-            'status' => 'required|in:open,replied,resolved,closed'
+            'status' => 'required|in:open,replied,resolved,closed',
         ]);
 
         $ticket->update([
             'status' => $request->status,
-            'resolved_at' => $request->status === 'resolved' ? now() : null
+            'resolved_at' => $request->status === 'resolved' ? now() : null,
         ]);
 
         return response()->json(['success' => true, 'ticket' => $ticket]);

@@ -14,14 +14,14 @@ class UserCourseProgress extends Model
         'completed_at',
         'time_spent',
         'is_completed',
-        'last_accessed_at'
+        'last_accessed_at',
     ];
 
     protected $casts = [
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
         'last_accessed_at' => 'datetime',
-        'is_completed' => 'boolean'
+        'is_completed' => 'boolean',
     ];
 
     public function enrollment(): BelongsTo
@@ -36,9 +36,10 @@ class UserCourseProgress extends Model
         if ($courseChapter) {
             return $this->belongsTo(CourseChapter::class, 'chapter_id');
         }
+
         return $this->belongsTo(Chapter::class, 'chapter_id');
     }
-    
+
     public function courseChapter(): BelongsTo
     {
         return $this->belongsTo(CourseChapter::class, 'chapter_id');

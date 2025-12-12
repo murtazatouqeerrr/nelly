@@ -1,10 +1,9 @@
 <?php
+
 // This script creates a default admin user directly in the database
 // Usage: php create_admin.php
 
 require_once 'vendor/autoload.php';
-
-use Illuminate\Support\Facades\Hash;
 
 // Load environment variables
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -30,12 +29,12 @@ try {
     ]);
 
     // Check if roles exist, if not create them
-    $stmt = $pdo->query("SELECT COUNT(*) FROM roles");
+    $stmt = $pdo->query('SELECT COUNT(*) FROM roles');
     $roleCount = $stmt->fetchColumn();
 
     if ($roleCount == 0) {
         echo "Creating roles...\n";
-        
+
         // Insert roles
         $roles = [
             ['name' => 'Super Admin', 'slug' => 'super-admin', 'permissions' => json_encode(['*'])],
@@ -43,17 +42,17 @@ try {
             ['name' => 'Instructor', 'slug' => 'instructor', 'permissions' => json_encode(['courses.create', 'courses.edit'])],
             ['name' => 'Student', 'slug' => 'student', 'permissions' => json_encode(['courses.view', 'profile.edit'])],
         ];
-        
+
         foreach ($roles as $role) {
-            $stmt = $pdo->prepare("INSERT INTO roles (name, slug, permissions, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())");
+            $stmt = $pdo->prepare('INSERT INTO roles (name, slug, permissions, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())');
             $stmt->execute([$role['name'], $role['slug'], $role['permissions']]);
         }
-        
+
         echo "Roles created successfully.\n";
     }
 
     // Check if admin user already exists
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
     $stmt->execute(['admin@example.com']);
     $user = $stmt->fetch();
 
@@ -61,37 +60,36 @@ try {
         echo "Admin user already exists.\n";
     } else {
         // Get the super admin role ID
-        $stmt = $pdo->prepare("SELECT id FROM roles WHERE slug = ?");
+        $stmt = $pdo->prepare('SELECT id FROM roles WHERE slug = ?');
         $stmt->execute(['super-admin']);
         $role = $stmt->fetch();
 
-        if (!$role) {
+        if (! $role) {
             echo "Error: Super Admin role not found.\n";
             exit(1);
         }
 
         // Create the admin user
         $hashedPassword = password_hash('password', PASSWORD_DEFAULT);
-        
-        $stmt = $pdo->prepare("INSERT INTO users (role_id, first_name, last_name, email, password, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+
+        $stmt = $pdo->prepare('INSERT INTO users (role_id, first_name, last_name, email, password, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())');
         $stmt->execute([
             $role['id'],
             'Super',
             'Admin',
             'admin@example.com',
             $hashedPassword,
-            'active'
+            'active',
         ]);
-        
+
         echo "Admin user created successfully!\n";
         echo "Email: admin@example.com\n";
         echo "Password: password\n";
     }
 
 } catch (PDOException $e) {
-    echo "Database error: " . $e->getMessage() . "\n";
+    echo 'Database error: '.$e->getMessage()."\n";
     exit(1);
 }
 
 echo "Script completed.\n";
-?>

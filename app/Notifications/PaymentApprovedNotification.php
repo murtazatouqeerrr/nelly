@@ -26,10 +26,10 @@ class PaymentApprovedNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Payment Approved - Order #' . $this->payment->id)
+            ->subject('Payment Approved - Order #'.$this->payment->id)
             ->view('emails.payments.approved', [
                 'user' => $notifiable,
-                'payment' => $this->payment
+                'payment' => $this->payment,
             ]);
     }
 }

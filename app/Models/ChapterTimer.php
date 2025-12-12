@@ -12,14 +12,14 @@ class ChapterTimer extends Model
         'required_time_minutes',
         'is_enabled',
         'allow_pause',
-        'bypass_for_admin'
+        'bypass_for_admin',
     ];
 
     protected $casts = [
         'is_enabled' => 'boolean',
         'allow_pause' => 'boolean',
         'bypass_for_admin' => 'boolean',
-        'required_time_minutes' => 'integer'
+        'required_time_minutes' => 'integer',
     ];
 
     public function chapter()
@@ -27,6 +27,7 @@ class ChapterTimer extends Model
         if ($this->chapter_type === 'florida_chapters') {
             return $this->belongsTo(Chapter::class, 'chapter_id');
         }
+
         return $this->belongsTo(Chapter::class, 'chapter_id');
     }
 }

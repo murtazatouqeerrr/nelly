@@ -14,14 +14,14 @@ class StateSubmissionLog extends Model
         'status_code',
         'status_message',
         'submitted_by',
-        'submitted_at'
+        'submitted_at',
     ];
 
     protected $casts = [
         'submitted_data' => 'array',
         'response_data' => 'array',
         'submitted_at' => 'datetime',
-        'created_at' => 'datetime'
+        'created_at' => 'datetime',
     ];
 
     public $timestamps = false;

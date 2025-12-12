@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Mail\WelcomeMail;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class RegistrationController extends Controller
@@ -12,67 +12,67 @@ class RegistrationController extends Controller
     public function showStep(Request $request, $step = 1)
     {
         // Regenerate CSRF token for step 1 to handle external redirects
-        if ($step == 1 || !$step) {
+        if ($step == 1 || ! $step) {
             $request->session()->regenerateToken();
         }
-        
+
         $step = (int) $step;
         if ($step < 1 || $step > 4) {
             $step = 1;
         }
-        
+
         // Validate that previous steps are completed before allowing access to current step
         if ($step > 1) {
             // Check if previous step data exists
             for ($i = 1; $i < $step; $i++) {
-                if (!session()->has('registration_step_' . $i)) {
+                if (! session()->has('registration_step_'.$i)) {
                     // Previous step not completed, redirect to step 1
                     return redirect()->route('register.step', 1)
                         ->with('error', 'Please complete the registration steps in order.');
                 }
             }
         }
-        
+
         // Store course enrollment parameters in session if provided (only on step 1)
         if ($step === 1 && $request->has('course_id') && $request->has('course_enroll')) {
             $region = $request->input('region', 'florida');
             $table = strtolower($region) === 'missouri' ? 'courses' : 'florida_courses';
-            
+
             $enrollmentData = [
                 'course_id' => $request->course_id,
                 'course_enroll' => $request->course_enroll === 'true',
                 'region' => $region,
-                'table' => $table
+                'table' => $table,
             ];
-            
+
             session(['pending_course_enrollment' => $enrollmentData]);
-            
+
             \Log::info('Pending course enrollment stored in session', $enrollmentData);
         }
-        
-        return view('registration.step' . $step, compact('step'));
+
+        return view('registration.step'.$step, compact('step'));
     }
-    
+
     public function processStep(Request $request, $step)
     {
         $step = (int) $step;
-        
+
         // Validate based on step
         $validatedData = $this->validateStep($request, $step);
-        
+
         // Store step data in session
-        $sessionKey = 'registration_step_' . $step;
+        $sessionKey = 'registration_step_'.$step;
         session([$sessionKey => $validatedData]);
-        
+
         // Move to next step or complete registration
         if ($step < 4) {
             return redirect()->route('register.step', $step + 1);
         }
-        
+
         // Complete registration (step 4)
         return $this->completeRegistration();
     }
-    
+
     private function validateStep(Request $request, $step)
     {
         switch ($step) {
@@ -89,7 +89,7 @@ class RegistrationController extends Controller
                         'regex:/[a-z]/',      // must contain at least one lowercase letter
                         'regex:/[A-Z]/',      // must contain at least one uppercase letter
                         'regex:/[0-9]/',      // must contain at least one digit
-                        'regex:/[@$!%*#?&()]/' // must contain a special character
+                        'regex:/[@$!%*#?&()]/', // must contain a special character
                     ],
                     'password_confirmation' => ['required', 'string', 'same:password'],
                 ], [
@@ -101,7 +101,7 @@ class RegistrationController extends Controller
                     'password.regex' => 'Password must contain uppercase, lowercase, number, and special character (!@#$&*()).',
                     'password_confirmation.same' => 'Passwords must match.',
                 ]);
-                
+
             case 2:
                 return $request->validate([
                     'mailing_address' => ['required', 'string', 'max:500'],
@@ -114,7 +114,7 @@ class RegistrationController extends Controller
                     'gender' => ['required', 'string', 'in:male,female'],
                     'birth_month' => ['required', 'integer', 'between:1,12'],
                     'birth_day' => ['required', 'integer', 'between:1,31'],
-                    'birth_year' => ['required', 'integer', 'between:1950,' . date('Y')],
+                    'birth_year' => ['required', 'integer', 'between:1950,'.date('Y')],
                     'driver_license' => ['required', 'string', 'max:50'],
                     'license_state' => ['required', 'string', 'max:50'],
                     'license_class' => ['required', 'string', 'max:50'],
@@ -122,7 +122,7 @@ class RegistrationController extends Controller
                     'citation_number' => ['required', 'string', 'max:100'],
                     'due_month' => ['required', 'integer', 'between:1,12'],
                     'due_day' => ['required', 'integer', 'between:1,31'],
-                    'due_year' => ['required', 'integer', 'between:' . date('Y') . ',' . (date('Y') + 2)],
+                    'due_year' => ['required', 'integer', 'between:'.date('Y').','.(date('Y') + 2)],
                 ], [
                     'city.regex' => 'City name can only contain letters, spaces, hyphens, and apostrophes.',
                     'zip.regex' => 'Zip code must be 5 digits or 5+4 format (e.g., 12345 or 12345-6789).',
@@ -136,7 +136,7 @@ class RegistrationController extends Controller
                     'due_day.between' => 'Due date day must be between 1 and 31.',
                     'due_year.between' => 'Due date year must be current year or within next 2 years.',
                 ]);
-                
+
             case 3:
                 return $request->validate([
                     'q1' => ['required', 'string', 'regex:/^\d{4}$/', 'size:4'],
@@ -161,7 +161,7 @@ class RegistrationController extends Controller
                     'q9.regex' => 'Hair color can only contain letters and spaces.',
                     'q10.regex' => 'City name can only contain letters, spaces, hyphens, and apostrophes.',
                 ]);
-                
+
             case 4:
                 return $request->validate([
                     'agreement_name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s\-\']+$/'],
@@ -170,12 +170,12 @@ class RegistrationController extends Controller
                     'agreement_name.regex' => 'Name can only contain letters, spaces, hyphens, and apostrophes.',
                     'terms_agreement.accepted' => 'You must agree to the terms and conditions.',
                 ]);
-                
+
             default:
                 return [];
         }
     }
-    
+
     private function completeRegistration()
     {
         // Get all step data from session
@@ -183,13 +183,13 @@ class RegistrationController extends Controller
         $step2 = session('registration_step_2', []);
         $step3 = session('registration_step_3', []);
         $step4 = session('registration_step_4', []);
-        
+
         // Validate that all required steps are completed
-        if (empty($step1) || !isset($step1['first_name']) || !isset($step1['email'])) {
+        if (empty($step1) || ! isset($step1['first_name']) || ! isset($step1['email'])) {
             return redirect()->route('register.step', 1)
                 ->with('error', 'Please complete step 1 first.');
         }
-        
+
         // Create user with all registration data
         $user = User::create([
             // Step 1 - Basic Info
@@ -199,7 +199,7 @@ class RegistrationController extends Controller
             'password' => bcrypt($step1['password']),
             'role_id' => 4, // Student role
             'status' => 'active',
-            
+
             // Step 2 - Personal Info (existing fields)
             'mailing_address' => $step2['mailing_address'] ?? null,
             'city' => $step2['city'] ?? null,
@@ -213,7 +213,7 @@ class RegistrationController extends Controller
             'birth_day' => $step2['birth_day'] ?? null,
             'birth_year' => $step2['birth_year'] ?? null,
             'driver_license' => $step2['driver_license'] ?? null,
-            
+
             // Step 2 - New fields
             'license_state' => $step2['license_state'] ?? null,
             'license_class' => $step2['license_class'] ?? null,
@@ -222,7 +222,7 @@ class RegistrationController extends Controller
             'due_month' => $step2['due_month'] ?? null,
             'due_day' => $step2['due_day'] ?? null,
             'due_year' => $step2['due_year'] ?? null,
-            
+
             // Step 3 - Security Questions
             'security_q1' => $step3['q1'] ?? null,
             'security_q2' => $step3['q2'] ?? null,
@@ -234,44 +234,44 @@ class RegistrationController extends Controller
             'security_q8' => $step3['q8'] ?? null,
             'security_q9' => $step3['q9'] ?? null,
             'security_q10' => $step3['q10'] ?? null,
-            
+
             // Step 4 - Agreement
             'agreement_name' => $step4['agreement_name'] ?? null,
             'terms_agreement' => isset($step4['terms_agreement']),
             'registration_completed_at' => now(),
         ]);
-        
+
         // Send welcome email
         Mail::to($user->email)->send(new WelcomeMail($user));
-        
+
         // Check if there's a pending course enrollment
         $pendingEnrollment = session('pending_course_enrollment');
-        
+
         \Log::info('Checking pending enrollment', ['pending' => $pendingEnrollment]);
-        
+
         if ($pendingEnrollment && isset($pendingEnrollment['course_enroll']) && $pendingEnrollment['course_enroll']) {
             // Log the user in
             auth()->login($user);
-            
+
             \Log::info('User logged in, redirecting to payment', [
                 'user_id' => $user->id,
                 'course_id' => $pendingEnrollment['course_id'],
-                'table' => $pendingEnrollment['table']
+                'table' => $pendingEnrollment['table'],
             ]);
-            
+
             // Clear registration session data
             session()->forget(['registration_step_1', 'registration_step_2', 'registration_step_3', 'registration_step_4']);
-            
+
             // Redirect to payment page with course ID and table
             return redirect()->route('payment.show', [
                 'course_id' => $pendingEnrollment['course_id'],
-                'table' => $pendingEnrollment['table']
+                'table' => $pendingEnrollment['table'],
             ])->with('success', 'Registration completed! Please complete payment to enroll in the course.');
         }
-        
+
         // Clear session data
         session()->forget(['registration_step_1', 'registration_step_2', 'registration_step_3', 'registration_step_4', 'pending_course_enrollment']);
-        
+
         return redirect()->route('login')->with('success', 'Registration completed successfully! Please login with your credentials.');
     }
 }

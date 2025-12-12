@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\MissouriQuizBank;
 use App\Models\MissouriCourseStructure;
+use App\Models\MissouriQuizBank;
+use Illuminate\Database\Seeder;
 
 class MissouriQuizSeederPart3 extends Seeder
 {
     public function run()
     {
         $chapters = MissouriCourseStructure::orderBy('chapter_number')->get();
-        
+
         $quizzes = [
             // Chapter 7 Quiz
             [7, 'Alcohol is a:', 'stimulant.', 'depressant.', 'hallucinogen.', 'narcotic.', null, 'B', 'easy'],
@@ -65,7 +65,7 @@ class MissouriQuizSeederPart3 extends Seeder
         foreach ($quizzes as $quiz) {
             $chapterNum = $quiz[0];
             $chapter = $chapters->where('chapter_number', $chapterNum)->first();
-            
+
             if ($chapter) {
                 MissouriQuizBank::create([
                     'chapter_id' => $chapter->id,
@@ -76,7 +76,7 @@ class MissouriQuizSeederPart3 extends Seeder
                     'option_d' => $quiz[5],
                     'option_e' => $quiz[6],
                     'correct_answer' => $quiz[7],
-                    'difficulty_level' => $quiz[8]
+                    'difficulty_level' => $quiz[8],
                 ]);
             }
         }

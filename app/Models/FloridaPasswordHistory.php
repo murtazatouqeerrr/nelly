@@ -12,11 +12,11 @@ class FloridaPasswordHistory extends Model
     protected $fillable = [
         'user_id',
         'password_hash',
-        'changed_at'
+        'changed_at',
     ];
 
     protected $casts = [
-        'changed_at' => 'datetime'
+        'changed_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

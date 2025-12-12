@@ -20,7 +20,7 @@ class EmailLogController extends Controller
         }
 
         if ($request->has('recipient_email')) {
-            $query->where('recipient_email', 'like', '%' . $request->recipient_email . '%');
+            $query->where('recipient_email', 'like', '%'.$request->recipient_email.'%');
         }
 
         if ($request->has('date_from')) {
@@ -32,6 +32,7 @@ class EmailLogController extends Controller
         }
 
         $logs = $query->orderBy('sent_at', 'desc')->paginate(50);
+
         return response()->json($logs);
     }
 
@@ -48,7 +49,7 @@ class EmailLogController extends Controller
             'opened' => EmailLog::where('status', 'opened')->count(),
             'failed' => EmailLog::where('status', 'failed')->count(),
             'bounced' => EmailLog::where('status', 'bounced')->count(),
-            'today_sent' => EmailLog::whereDate('sent_at', today())->count()
+            'today_sent' => EmailLog::whereDate('sent_at', today())->count(),
         ];
 
         return response()->json($stats);

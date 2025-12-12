@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class TexasDefensiveDrivingCompleteSeeder extends Seeder
 {
@@ -12,16 +12,16 @@ class TexasDefensiveDrivingCompleteSeeder extends Seeder
     {
         // Create Texas course first
         $courseId = $this->createTexasCourse();
-        
+
         // Add all chapters
         $this->addChapters($courseId);
-        
+
         // Add quiz questions for each chapter
         $this->addQuizQuestions($courseId);
-        
+
         // Add final exam questions
         $this->addFinalExamQuestions($courseId);
-        
+
         $this->command->info('Texas Defensive Driving Course seeded successfully!');
     }
 
@@ -29,9 +29,10 @@ class TexasDefensiveDrivingCompleteSeeder extends Seeder
     {
         // Check if course already exists
         $existingCourse = DB::table('florida_courses')->where('title', 'LIKE', 'Texas%Ticket Dismissal%')->first();
-        
+
         if ($existingCourse) {
             $this->command->info('Texas Ticket Dismissal course already exists, updating...');
+
             return $existingCourse->id;
         }
 
@@ -39,13 +40,13 @@ class TexasDefensiveDrivingCompleteSeeder extends Seeder
         $courseId = DB::table('florida_courses')->insertGetId([
             'title' => 'Texas Driving/Ticket Dismissal - 6 Hour Defensive Driving Course',
             'description' => 'Complete 6-hour Texas Defensive Driving Course approved by TDLR for ticket dismissal. License Number: CP007',
-            'state' => 'TX',
+            'state_code' => 'TX',
             'course_type' => 'Ticket Dismissal',
-            'duration' => 360,
+            'total_duration' => 360,
             'price' => 28.00,
-            'passing_score' => 70,
+            'min_pass_score' => 70,
             'is_active' => true,
-            'certificate_type' => 'CP007',
+            'certificate_template' => 'CP007',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
@@ -54,19 +55,20 @@ class TexasDefensiveDrivingCompleteSeeder extends Seeder
         $insuranceCourseId = DB::table('florida_courses')->insertGetId([
             'title' => 'Texas Insurance Discount - 6 Hour Defensive Driving Course',
             'description' => 'Complete 6-hour Texas Defensive Driving Course approved by TDLR for insurance discounts. License Number: CP007',
-            'state' => 'TX',
+            'state_code' => 'TX',
             'course_type' => 'Insurance Discount',
-            'duration' => 360,
+            'total_duration' => 360,
             'price' => 28.00,
-            'passing_score' => 70,
+            'min_pass_score' => 70,
             'is_active' => true,
-            'certificate_type' => 'CP007',
+            'certificate_template' => 'CP007',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
 
         $this->command->info("Created Texas Ticket Dismissal course with ID: {$courseId}");
         $this->command->info("Created Texas Insurance Discount course with ID: {$insuranceCourseId}");
+
         return $courseId;
     }
 
@@ -688,25 +690,27 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
     private function addQuizQuestions($courseId)
     {
         $chapters = DB::table('chapters')->where('course_id', $courseId)->get();
-        
+
         foreach ($chapters as $chapter) {
-            if ($chapter->title === 'Final Exam') continue; // Skip final exam chapter
-            
+            if ($chapter->title === 'Final Exam') {
+                continue;
+            } // Skip final exam chapter
+
             $questions = $this->getQuizQuestionsForChapter($chapter->order_index);
-            
+
             foreach ($questions as $index => $question) {
                 $options = array_values(array_filter([
                     $question['options']['A'],
                     $question['options']['B'],
                     $question['options']['C'],
                     $question['options']['D'],
-                    $question['options']['E'] ?? null
+                    $question['options']['E'] ?? null,
                 ]));
-                
+
                 // Convert letter to actual answer text
                 $correctIndex = ord($question['correct']) - ord('A');
                 $correctAnswer = $options[$correctIndex];
-                
+
                 DB::table('questions')->insert([
                     'course_id' => $courseId,
                     'chapter_id' => $chapter->id,
@@ -722,7 +726,7 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                 ]);
             }
         }
-        
+
         $this->command->info('Added quiz questions for all chapters');
     }
 
@@ -738,10 +742,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Changes in climate',
                             'C' => 'Changes in taxes',
                             'D' => 'Changes in technology',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'D',
-                        'explanation' => 'Traffic laws must adapt to technological changes that affect driving.'
+                        'explanation' => 'Traffic laws must adapt to technological changes that affect driving.',
                     ],
                     [
                         'question' => 'What is the primary reason traffic laws exist?',
@@ -750,10 +754,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Punishing motorists',
                             'C' => 'Maintaining social order',
                             'D' => 'Preventing cost to cities',
-                            'E' => 'Ensuring driver safety'
+                            'E' => 'Ensuring driver safety',
                         ],
                         'correct' => 'E',
-                        'explanation' => 'The primary purpose of traffic laws is to ensure the safety of all road users.'
+                        'explanation' => 'The primary purpose of traffic laws is to ensure the safety of all road users.',
                     ],
                     [
                         'question' => 'Traffic laws help to establish a sense of ________ so that all drivers can expect predictable driving behavior from each other.',
@@ -762,13 +766,13 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'pleasantness',
                             'C' => 'suspicion',
                             'D' => 'common understanding',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'D',
-                        'explanation' => 'Traffic laws create common understanding among drivers about expected behaviors.'
-                    ]
+                        'explanation' => 'Traffic laws create common understanding among drivers about expected behaviors.',
+                    ],
                 ];
-                
+
             case 2: // Traffic Safety Problem
                 return [
                     [
@@ -778,10 +782,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Avoiding no-zones',
                             'C' => '3-second system',
                             'D' => 'Signaling',
-                            'E' => 'All of the above'
+                            'E' => 'All of the above',
                         ],
                         'correct' => 'E',
-                        'explanation' => 'All listed techniques are important for safe driving.'
+                        'explanation' => 'All listed techniques are important for safe driving.',
                     ],
                     [
                         'question' => 'The Space Cushion and 3 Count System are examples of:',
@@ -790,13 +794,13 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Modern defensive driving techniques',
                             'C' => 'Traffic law violations',
                             'D' => 'Vehicle maintenance procedures',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'B',
-                        'explanation' => 'These are modern defensive driving techniques developed for today\'s traffic conditions.'
-                    ]
+                        'explanation' => 'These are modern defensive driving techniques developed for today\'s traffic conditions.',
+                    ],
                 ];
-                
+
             case 3: // Careless Driving
                 return [
                     [
@@ -806,10 +810,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Injury or death',
                             'C' => 'Insurance increases',
                             'D' => 'Improved driving skills',
-                            'E' => 'Legal actions'
+                            'E' => 'Legal actions',
                         ],
                         'correct' => 'D',
-                        'explanation' => 'Careless driving does not improve driving skills; it leads to negative consequences.'
+                        'explanation' => 'Careless driving does not improve driving skills; it leads to negative consequences.',
                     ],
                     [
                         'question' => 'Texas law considers motor vehicles as ________ when handled improperly.',
@@ -818,13 +822,13 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'deadly weapons',
                             'C' => 'transportation tools',
                             'D' => 'luxury items',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'B',
-                        'explanation' => 'Texas law recognizes that improperly operated vehicles can be deadly weapons.'
-                    ]
+                        'explanation' => 'Texas law recognizes that improperly operated vehicles can be deadly weapons.',
+                    ],
                 ];
-                
+
             case 4: // DUI
                 return [
                     [
@@ -834,10 +838,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'neutralize',
                             'C' => 'magnify',
                             'D' => 'stop',
-                            'E' => 'none of the above'
+                            'E' => 'none of the above',
                         ],
                         'correct' => 'C',
-                        'explanation' => 'Mixing drugs with alcohol typically magnifies the effects of both substances.'
+                        'explanation' => 'Mixing drugs with alcohol typically magnifies the effects of both substances.',
                     ],
                     [
                         'question' => 'Just one drink can impair your _____.',
@@ -846,10 +850,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'response time',
                             'C' => 'vision',
                             'D' => 'coordination',
-                            'E' => 'all of the above'
+                            'E' => 'all of the above',
                         ],
                         'correct' => 'E',
-                        'explanation' => 'Even one drink can impair all aspects of driving ability.'
+                        'explanation' => 'Even one drink can impair all aspects of driving ability.',
                     ],
                     [
                         'question' => 'In general it is illegal for any driver under age 21 to _____.',
@@ -858,10 +862,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'consume alcohol',
                             'C' => 'possess alcohol',
                             'D' => 'drive with a BAC of .01% or higher',
-                            'E' => 'all of the above'
+                            'E' => 'all of the above',
                         ],
                         'correct' => 'E',
-                        'explanation' => 'Texas has zero tolerance laws for drivers under 21.'
+                        'explanation' => 'Texas has zero tolerance laws for drivers under 21.',
                     ],
                     [
                         'question' => 'Lane drifting, erratic behavior and speeding up and slowing down help identify _____.',
@@ -870,13 +874,13 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'a drowsy driver',
                             'C' => 'a drunk at a bar',
                             'D' => 'a drunk on the road',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'D',
-                        'explanation' => 'These are classic signs of an impaired driver on the road.'
-                    ]
+                        'explanation' => 'These are classic signs of an impaired driver on the road.',
+                    ],
                 ];
-                
+
             case 5: // Operator Responsibilities
                 return [
                     [
@@ -886,10 +890,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Continue driving',
                             'C' => 'Pull over in a safe area and take a nap',
                             'D' => 'Switch drivers, if driving with a passenger',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'B',
-                        'explanation' => 'Continuing to drive while fatigued is dangerous and should be avoided.'
+                        'explanation' => 'Continuing to drive while fatigued is dangerous and should be avoided.',
                     ],
                     [
                         'question' => 'When points on your driving record add up, it means _____.',
@@ -898,10 +902,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'a losing score',
                             'C' => 'you win',
                             'D' => 'a visit to the local jail',
-                            'E' => 'you earn a bonus'
+                            'E' => 'you earn a bonus',
                         ],
                         'correct' => 'B',
-                        'explanation' => 'Points on your driving record are bad - they represent a losing score.'
+                        'explanation' => 'Points on your driving record are bad - they represent a losing score.',
                     ],
                     [
                         'question' => 'A Class ____ license allows operation of a standard passenger vehicle.',
@@ -910,10 +914,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'B',
                             'C' => 'C',
                             'D' => 'D',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'C',
-                        'explanation' => 'A Class C license is for standard passenger vehicles.'
+                        'explanation' => 'A Class C license is for standard passenger vehicles.',
                     ],
                     [
                         'question' => 'A Texas Driver\'s License is usually valid for ____ years.',
@@ -922,13 +926,13 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => '5',
                             'C' => '6',
                             'D' => '8',
-                            'E' => '10'
+                            'E' => '10',
                         ],
                         'correct' => 'C',
-                        'explanation' => 'Texas driver\'s licenses are typically valid for 6 years.'
-                    ]
+                        'explanation' => 'Texas driver\'s licenses are typically valid for 6 years.',
+                    ],
                 ];
-                
+
             case 6: // Pedestrians
                 return [
                     [
@@ -938,10 +942,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Cross at designated crosswalks',
                             'C' => 'Hold up traffic as you walk across',
                             'D' => 'Expect all traffic to stop for you at all times',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'B',
-                        'explanation' => 'Pedestrians should cross at designated crosswalks for safety.'
+                        'explanation' => 'Pedestrians should cross at designated crosswalks for safety.',
                     ],
                     [
                         'question' => 'Blind pedestrians can usually be recognized by:',
@@ -950,10 +954,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'A white cane and seeing-eye dog',
                             'C' => 'Dark glasses',
                             'D' => 'Walking quickly',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'B',
-                        'explanation' => 'White canes and seeing-eye dogs are the primary identifiers of blind pedestrians.'
+                        'explanation' => 'White canes and seeing-eye dogs are the primary identifiers of blind pedestrians.',
                     ],
                     [
                         'question' => 'A driver must stop for a pedestrian in the road:',
@@ -962,10 +966,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Only when they are crossing at a crosswalk',
                             'C' => 'Only when they are crossing legally',
                             'D' => 'Only when it is convenient',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'A',
-                        'explanation' => 'Drivers must exercise due care and stop for pedestrians at all times.'
+                        'explanation' => 'Drivers must exercise due care and stop for pedestrians at all times.',
                     ],
                     [
                         'question' => 'The signal indicating it is safe to cross a street is:',
@@ -974,13 +978,13 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'A red raised hand',
                             'C' => 'A white raised hand',
                             'D' => 'A white walking person',
-                            'E' => 'None of the above'
+                            'E' => 'None of the above',
                         ],
                         'correct' => 'D',
-                        'explanation' => 'A white walking person symbol indicates it is safe for pedestrians to cross.'
-                    ]
+                        'explanation' => 'A white walking person symbol indicates it is safe for pedestrians to cross.',
+                    ],
                 ];
-                
+
             case 7: // Driving Maneuvers
                 return [
                     [
@@ -990,10 +994,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Skipping',
                             'C' => 'Vortex',
                             'D' => 'Motion',
-                            'E' => 'Slipping'
+                            'E' => 'Slipping',
                         ],
                         'correct' => 'A',
-                        'explanation' => 'Hydroplaning occurs when tires lose contact with the road surface due to water.'
+                        'explanation' => 'Hydroplaning occurs when tires lose contact with the road surface due to water.',
                     ],
                     [
                         'question' => 'In fog, you should use:',
@@ -1002,10 +1006,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => 'Low beam headlights',
                             'C' => 'No headlights',
                             'D' => 'Hazard lights only',
-                            'E' => 'Parking lights only'
+                            'E' => 'Parking lights only',
                         ],
                         'correct' => 'B',
-                        'explanation' => 'Low beam headlights should be used in fog to avoid glare reflection.'
+                        'explanation' => 'Low beam headlights should be used in fog to avoid glare reflection.',
                     ],
                     [
                         'question' => 'On a wet road, you should reduce your speed by about:',
@@ -1014,13 +1018,13 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                             'B' => '10 mph',
                             'C' => '15 mph',
                             'D' => '20 mph',
-                            'E' => '25 mph'
+                            'E' => '25 mph',
                         ],
                         'correct' => 'B',
-                        'explanation' => 'Reducing speed by about 10 mph on wet roads helps prevent hydroplaning.'
-                    ]
+                        'explanation' => 'Reducing speed by about 10 mph on wet roads helps prevent hydroplaning.',
+                    ],
                 ];
-                
+
             default:
                 return [];
         }
@@ -1032,9 +1036,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
             ->where('course_id', $courseId)
             ->where('title', 'Final Exam')
             ->first();
-            
-        if (!$finalExamChapter) {
+
+        if (! $finalExamChapter) {
             $this->command->error('Final Exam chapter not found');
+
             return;
         }
 
@@ -1046,9 +1051,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'Ensure driver safety',
                     'C' => 'Control traffic flow',
                     'D' => 'Punish bad drivers',
-                    'E' => 'None of the above'
+                    'E' => 'None of the above',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'Which BAC level is considered legally intoxicated in Texas for drivers 21 and over?',
@@ -1057,9 +1062,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '0.06%',
                     'C' => '0.08%',
                     'D' => '0.10%',
-                    'E' => '0.12%'
+                    'E' => '0.12%',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'For drivers under 21, the legal BAC limit in Texas is:',
@@ -1068,9 +1073,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '0.04%',
                     'C' => '0.08%',
                     'D' => 'Any detectable amount',
-                    'E' => 'Same as adults'
+                    'E' => 'Same as adults',
                 ],
-                'correct' => 'D'
+                'correct' => 'D',
             ],
             [
                 'question' => 'Hydroplaning occurs when:',
@@ -1079,9 +1084,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'Tires ride up on water surface',
                     'C' => 'Brakes are applied too hard',
                     'D' => 'Vehicle speed is too slow',
-                    'E' => 'Road is completely dry'
+                    'E' => 'Road is completely dry',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'In Texas, a regular driver\'s license is valid for:',
@@ -1090,9 +1095,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '5 years',
                     'C' => '6 years',
                     'D' => '8 years',
-                    'E' => '10 years'
+                    'E' => '10 years',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'When approaching a pedestrian with a white cane, you should:',
@@ -1101,9 +1106,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'Speed up to pass quickly',
                     'C' => 'Stop and yield right of way',
                     'D' => 'Flash your lights',
-                    'E' => 'Maintain normal speed'
+                    'E' => 'Maintain normal speed',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'The "3 Count System" refers to:',
@@ -1112,9 +1117,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'Following distance technique',
                     'C' => 'Number of mirrors to check',
                     'D' => 'Gear shifting pattern',
-                    'E' => 'Turn signal timing'
+                    'E' => 'Turn signal timing',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'Points on your Texas driving record remain for:',
@@ -1123,9 +1128,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '2 years',
                     'C' => '3 years',
                     'D' => '5 years',
-                    'E' => 'Permanently'
+                    'E' => 'Permanently',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'The minimum passing score for this course is:',
@@ -1134,9 +1139,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '65%',
                     'C' => '70%',
                     'D' => '75%',
-                    'E' => '80%'
+                    'E' => '80%',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'In fog, you should use _______ headlights.',
@@ -1145,9 +1150,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'low beam',
                     'C' => 'no',
                     'D' => 'flashing',
-                    'E' => 'parking'
+                    'E' => 'parking',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'Drowsy driving impairs your abilities similar to:',
@@ -1156,9 +1161,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'Drunk driving',
                     'C' => 'Speeding',
                     'D' => 'Aggressive driving',
-                    'E' => 'None of the above'
+                    'E' => 'None of the above',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'A Class C license allows you to drive:',
@@ -1167,9 +1172,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'Motorcycles only',
                     'C' => 'Standard passenger vehicles',
                     'D' => 'Buses',
-                    'E' => 'Trucks over 26,000 lbs'
+                    'E' => 'Trucks over 26,000 lbs',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'The Implied Consent Law means:',
@@ -1178,9 +1183,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'You consent to BAC testing when requested',
                     'C' => 'You consent to vehicle searches',
                     'D' => 'You consent to pay fines',
-                    'E' => 'You consent to license suspension'
+                    'E' => 'You consent to license suspension',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'Pedestrians have the right of way:',
@@ -1189,9 +1194,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'Only when signals permit',
                     'C' => 'At all times',
                     'D' => 'Only during daylight',
-                    'E' => 'Never'
+                    'E' => 'Never',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'On wet roads, reduce speed by approximately:',
@@ -1200,9 +1205,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '10 mph',
                     'C' => '15 mph',
                     'D' => '20 mph',
-                    'E' => '25 mph'
+                    'E' => '25 mph',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'The Space Cushion technique helps with:',
@@ -1211,9 +1216,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'Following distance',
                     'C' => 'Lane changing',
                     'D' => 'Turning',
-                    'E' => 'Backing up'
+                    'E' => 'Backing up',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'Texas requires student information to be kept for:',
@@ -1222,9 +1227,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '2 years',
                     'C' => '3 years',
                     'D' => '5 years',
-                    'E' => '7 years'
+                    'E' => '7 years',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'DummiesTrafficSchool.com\'s Texas provider license number is:',
@@ -1233,9 +1238,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'CP006',
                     'C' => 'CP007',
                     'D' => 'CP008',
-                    'E' => 'CP009'
+                    'E' => 'CP009',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'Alcohol begins to impair reaction time at a BAC as low as:',
@@ -1244,9 +1249,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '0.02%',
                     'C' => '0.05%',
                     'D' => '0.08%',
-                    'E' => '0.10%'
+                    'E' => '0.10%',
                 ],
-                'correct' => 'A'
+                'correct' => 'A',
             ],
             [
                 'question' => 'The body can metabolize approximately _____ of alcohol per hour.',
@@ -1255,9 +1260,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'one ounce',
                     'C' => 'one and a half ounces',
                     'D' => 'two ounces',
-                    'E' => 'three ounces'
+                    'E' => 'three ounces',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'Driving is considered a _______ in Texas.',
@@ -1266,9 +1271,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'privilege',
                     'C' => 'necessity',
                     'D' => 'requirement',
-                    'E' => 'guarantee'
+                    'E' => 'guarantee',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'You may not park within _____ feet of a fire hydrant.',
@@ -1277,9 +1282,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '15',
                     'C' => '20',
                     'D' => '25',
-                    'E' => '30'
+                    'E' => '30',
                 ],
-                'correct' => 'B'
+                'correct' => 'B',
             ],
             [
                 'question' => 'Exhausted drivers cause approximately _______ collisions per year.',
@@ -1288,9 +1293,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '150,000',
                     'C' => '200,000',
                     'D' => '250,000',
-                    'E' => '300,000'
+                    'E' => '300,000',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'This course must be completed at least _____ hours before your court deadline.',
@@ -1299,9 +1304,9 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => '18',
                     'C' => '24',
                     'D' => '48',
-                    'E' => '72'
+                    'E' => '72',
                 ],
-                'correct' => 'C'
+                'correct' => 'C',
             ],
             [
                 'question' => 'Common understanding among drivers helps create:',
@@ -1310,10 +1315,10 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                     'B' => 'Confusion',
                     'C' => 'Equilibrium',
                     'D' => 'Chaos',
-                    'E' => 'Conflict'
+                    'E' => 'Conflict',
                 ],
-                'correct' => 'C'
-            ]
+                'correct' => 'C',
+            ],
         ];
 
         foreach ($finalExamQuestions as $index => $question) {
@@ -1322,13 +1327,13 @@ Remember: The key to safe driving is being predictable, courteous, and always aw
                 $question['options']['B'],
                 $question['options']['C'],
                 $question['options']['D'],
-                $question['options']['E'] ?? null
+                $question['options']['E'] ?? null,
             ]));
-            
+
             // Convert letter to actual answer text
             $correctIndex = ord($question['correct']) - ord('A');
             $correctAnswer = $options[$correctIndex];
-            
+
             DB::table('questions')->insert([
                 'course_id' => $courseId,
                 'chapter_id' => $finalExamChapter->id,

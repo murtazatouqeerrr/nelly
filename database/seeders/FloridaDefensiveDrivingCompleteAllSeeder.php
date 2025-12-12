@@ -2,18 +2,19 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class FloridaDefensiveDrivingCompleteAllSeeder extends Seeder
 {
     public function run()
     {
         $course = DB::table('florida_courses')->where('course_type', 'BDI')->first();
-        
-        if (!$course) {
+
+        if (! $course) {
             $this->command->error('Florida Defensive Driving Course not found.');
+
             return;
         }
 
@@ -92,10 +93,10 @@ Like Eastern philosophies:
 2. Manage time and space efficiently (Feng Shui)
 3. Courtesy comes back to you (Karma)
 4. Cultivate good habits naturally (Zen)',
-            
+
             'order_index' => 17,
             'duration' => 45,
-            
+
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
@@ -107,10 +108,10 @@ Like Eastern philosophies:
                     'A man in a wheelchair on the sidewalk',
                     'A girl on a skateboard in the road',
                     'A mom on a scooter in the parking lot',
-                    'None of the above - all are pedestrians'
+                    'None of the above - all are pedestrians',
                 ],
                 'correct_answer' => 'None of the above - all are pedestrians',
-                'explanation' => 'People on skateboards, scooters, wheelchairs, and other mobility devices are all considered pedestrians.'
+                'explanation' => 'People on skateboards, scooters, wheelchairs, and other mobility devices are all considered pedestrians.',
             ],
             [
                 'question' => 'What percentage of road rage cases involve the car being used as a weapon?',
@@ -118,10 +119,10 @@ Like Eastern philosophies:
                     '23%',
                     '37%',
                     '44%',
-                    '54%'
+                    '54%',
                 ],
                 'correct_answer' => '44%',
-                'explanation' => 'In 44% of road rage incidents, the vehicle itself is used as a weapon, while 23% involve conventional weapons.'
+                'explanation' => 'In 44% of road rage incidents, the vehicle itself is used as a weapon, while 23% involve conventional weapons.',
             ],
             [
                 'question' => 'When parking uphill, you should:',
@@ -129,10 +130,10 @@ Like Eastern philosophies:
                     'Point front wheels toward the curb',
                     'Point front wheels away from the curb and let vehicle roll back',
                     'Keep wheels straight',
-                    'Point wheels toward traffic'
+                    'Point wheels toward traffic',
                 ],
                 'correct_answer' => 'Point front wheels away from the curb and let vehicle roll back',
-                'explanation' => 'When parking uphill, point wheels away from curb so if the vehicle rolls, it will be stopped by the curb.'
+                'explanation' => 'When parking uphill, point wheels away from curb so if the vehicle rolls, it will be stopped by the curb.',
             ],
             [
                 'question' => 'What percentage of drivers have fallen asleep at the wheel at least once?',
@@ -140,11 +141,11 @@ Like Eastern philosophies:
                     '21%',
                     '31%',
                     '41%',
-                    '51%'
+                    '51%',
                 ],
                 'correct_answer' => '31%',
-                'explanation' => 'Studies show that 31% of all drivers have fallen asleep at the wheel at least once, highlighting the danger of drowsy driving.'
-            ]
+                'explanation' => 'Studies show that 31% of all drivers have fallen asleep at the wheel at least once, highlighting the danger of drowsy driving.',
+            ],
         ];
 
         foreach ($questions as $index => $questionData) {
@@ -158,7 +159,7 @@ Like Eastern philosophies:
                 'explanation' => $questionData['explanation'],
                 'order_index' => $index + 1,
                 'points' => 1,
-                
+
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -169,62 +170,62 @@ Like Eastern philosophies:
     {
         // Update final exam with complete questions from the document
         $examChapter = DB::table('chapters')->where('course_id', $courseId)->where('title', 'Final Exam')->first();
-        
+
         if ($examChapter) {
             // Delete existing final exam questions
             DB::table('questions')->where('chapter_id', $examChapter->id)->delete();
-            
+
             $finalExamQuestions = [
                 [
                     'question' => 'Drivers must obey signals from school crossing guards _____.',
                     'options' => ['during school hours', 'if they go to that school', 'at all times', 'if it isn\'t a school holiday'],
-                    'correct_answer' => 'at all times'
+                    'correct_answer' => 'at all times',
                 ],
                 [
                     'question' => 'If you are traveling down a one way street, _____.',
                     'options' => ['watch for traffic going the wrong way', 'make sure you are going in the right direction', 'Both A and B are correct', 'keep your turn signal on'],
-                    'correct_answer' => 'Both A and B are correct'
+                    'correct_answer' => 'Both A and B are correct',
                 ],
                 [
                     'question' => 'The purpose of traffic signs are ____.',
                     'options' => ['to serve as traffic control', 'to communicate warnings', 'to express traffic regulations', 'all of the above'],
-                    'correct_answer' => 'all of the above'
+                    'correct_answer' => 'all of the above',
                 ],
                 [
                     'question' => 'You can make a right turn on red, provided _______.',
                     'options' => ['you have first stopped completely', 'there are no posted signs that prohibit it', 'you have checked for oncoming traffic', 'A, B, C are correct'],
-                    'correct_answer' => 'A, B, C are correct'
+                    'correct_answer' => 'A, B, C are correct',
                 ],
                 [
                     'question' => 'Cars that carry heavy loads, large vehicles, and trucks all need _____ distance to stop as regular cars.',
                     'options' => ['less', 'the same', 'more', 'diminishing'],
-                    'correct_answer' => 'more'
+                    'correct_answer' => 'more',
                 ],
                 [
                     'question' => 'Many people will instinctively _____ an animal on the road, causing a hazard to other drivers.',
                     'options' => ['make friends with', 'catch', 'swerve around', 'stop'],
-                    'correct_answer' => 'swerve around'
+                    'correct_answer' => 'swerve around',
                 ],
                 [
                     'question' => 'If a person has had more than one drink an hour, ____ hour(s) of sobering up should be allowed for each extra drink.',
                     'options' => ['1', '2', '3', '½'],
-                    'correct_answer' => '1'
+                    'correct_answer' => '1',
                 ],
                 [
                     'question' => 'To yield means ____.',
                     'options' => ['to cease all action', 'to outmaneuver', 'to take possession of', 'to give up (an advantage, for example) to another'],
-                    'correct_answer' => 'to give up (an advantage, for example) to another'
+                    'correct_answer' => 'to give up (an advantage, for example) to another',
                 ],
                 [
                     'question' => 'Lane drifting, erratic behavior and speeding up and slowing down help identify _____.',
                     'options' => ['a person evading police', 'a drowsy driver', 'a drunk at a bar', 'a drunk on the road'],
-                    'correct_answer' => 'a drunk on the road'
+                    'correct_answer' => 'a drunk on the road',
                 ],
                 [
                     'question' => '_____ can contribute to bad driving.',
                     'options' => ['Fatigue', 'Emotions', 'Cell phone use', 'All of the above'],
-                    'correct_answer' => 'All of the above'
-                ]
+                    'correct_answer' => 'All of the above',
+                ],
             ];
 
             foreach ($finalExamQuestions as $index => $questionData) {
@@ -238,7 +239,7 @@ Like Eastern philosophies:
                     'explanation' => '',
                     'order_index' => $index + 1,
                     'points' => 1,
-                    
+
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);

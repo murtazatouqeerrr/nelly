@@ -11,6 +11,7 @@ class StateStampController extends Controller
     public function index()
     {
         $stamps = StateStamp::orderBy('state_name')->get();
+
         return view('admin.state-stamps.index', compact('stamps'));
     }
 
@@ -20,7 +21,7 @@ class StateStampController extends Controller
             'state_code' => 'required|string|size:2|unique:state_stamps,state_code',
             'state_name' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
         ]);
 
         $logoPath = null;
@@ -33,12 +34,12 @@ class StateStampController extends Controller
             'state_name' => $validated['state_name'],
             'logo_path' => $logoPath,
             'description' => $validated['description'] ?? null,
-            'is_active' => true
+            'is_active' => true,
         ]);
 
         return response()->json([
             'success' => true,
-            'stamp' => $stamp
+            'stamp' => $stamp,
         ]);
     }
 
@@ -50,7 +51,7 @@ class StateStampController extends Controller
             'state_name' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         if ($request->hasFile('logo')) {
@@ -68,24 +69,24 @@ class StateStampController extends Controller
 
         return response()->json([
             'success' => true,
-            'stamp' => $stamp
+            'stamp' => $stamp,
         ]);
     }
 
     public function destroy($id)
     {
         $stamp = StateStamp::findOrFail($id);
-        
+
         // Delete logo file
         if ($stamp->logo_path) {
             Storage::disk('public')->delete($stamp->logo_path);
         }
-        
+
         $stamp->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'State stamp deleted successfully'
+            'message' => 'State stamp deleted successfully',
         ]);
     }
 
@@ -96,7 +97,7 @@ class StateStampController extends Controller
             ->first();
 
         return response()->json([
-            'stamp' => $stamp
+            'stamp' => $stamp,
         ]);
     }
 }

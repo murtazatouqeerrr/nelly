@@ -31,7 +31,7 @@ class ConsentController extends Controller
         $consents = UserLegalConsent::where('user_id', auth()->id())
             ->with('document')
             ->get();
-        
+
         return response()->json($consents);
     }
 
@@ -41,7 +41,7 @@ class ConsentController extends Controller
             ->with('document')
             ->orderBy('consented_at', 'desc')
             ->get();
-        
+
         return response()->json($history);
     }
 }

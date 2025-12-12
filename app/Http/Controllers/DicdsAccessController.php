@@ -25,10 +25,10 @@ class DicdsAccessController extends Controller
                         'user_group' => 'Florida Traffic School',
                         'status' => 'pending',
                         'user' => ['name' => 'John Doe', 'email' => 'john@example.com'],
-                        'created_at' => now()->toISOString()
-                    ]
+                        'created_at' => now()->toISOString(),
+                    ],
                 ],
-                'total' => 1
+                'total' => 1,
             ]);
         }
     }
@@ -38,7 +38,7 @@ class DicdsAccessController extends Controller
         $request->validate([
             'desired_application' => 'required|in:Driver School Certificates',
             'desired_role' => 'required|in:DRS_Provider_Admin,DRS_Provider_User,DRS_School_Admin',
-            'user_group' => 'required|string'
+            'user_group' => 'required|string',
         ]);
 
         try {
@@ -47,16 +47,16 @@ class DicdsAccessController extends Controller
                 'desired_application' => $request->desired_application,
                 'desired_role' => $request->desired_role,
                 'user_group' => $request->user_group,
-                'status' => 'pending'
+                'status' => 'pending',
             ]);
 
             return response()->json([
                 'message' => 'Access request submitted successfully',
-                'request' => $accessRequest
+                'request' => $accessRequest,
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Access request submitted successfully'
+                'message' => 'Access request submitted successfully',
             ]);
         }
     }
@@ -64,7 +64,7 @@ class DicdsAccessController extends Controller
     public function approve(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:approved,denied'
+            'status' => 'required|in:approved,denied',
         ]);
 
         try {
@@ -72,16 +72,16 @@ class DicdsAccessController extends Controller
             $accessRequest->update([
                 'status' => $request->status,
                 'approved_by' => auth()->id(),
-                'approved_at' => now()
+                'approved_at' => now(),
             ]);
 
             return response()->json([
-                'message' => 'Access request ' . $request->status . ' successfully',
-                'request' => $accessRequest
+                'message' => 'Access request '.$request->status.' successfully',
+                'request' => $accessRequest,
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Access request processed successfully'
+                'message' => 'Access request processed successfully',
             ]);
         }
     }

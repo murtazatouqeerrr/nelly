@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -25,7 +25,7 @@ return new class extends Migration
             AND COLUMN_NAME = 'chapter_id'
             AND REFERENCED_TABLE_NAME IS NOT NULL
         ");
-        if (!empty($foreignKeys)) {
+        if (! empty($foreignKeys)) {
             $fkName = $foreignKeys[0]->CONSTRAINT_NAME;
             DB::statement("ALTER TABLE missouri_quiz_banks DROP FOREIGN KEY `$fkName`");
         }
@@ -36,7 +36,7 @@ return new class extends Migration
         });
 
         // Add option_e if not exists
-        if (!Schema::hasColumn('missouri_quiz_banks', 'option_e')) {
+        if (! Schema::hasColumn('missouri_quiz_banks', 'option_e')) {
             Schema::table('missouri_quiz_banks', function (Blueprint $table) {
                 $table->string('option_e')->nullable()->after('option_d');
             });
@@ -61,7 +61,7 @@ return new class extends Migration
         ");
 
         // Add is_final_exam if not exists
-        if (!Schema::hasColumn('missouri_quiz_banks', 'is_final_exam')) {
+        if (! Schema::hasColumn('missouri_quiz_banks', 'is_final_exam')) {
             Schema::table('missouri_quiz_banks', function (Blueprint $table) {
                 $table->boolean('is_final_exam')->default(false)->after('state_required');
             });
@@ -77,9 +77,9 @@ return new class extends Migration
         // Re-add foreign key constraint properly
         Schema::table('missouri_quiz_banks', function (Blueprint $table) {
             $table->foreign('chapter_id')
-                  ->references('id')
-                  ->on('missouri_course_structures')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('missouri_course_structures')
+                ->onDelete('cascade');
         });
     }
 
@@ -94,7 +94,7 @@ return new class extends Migration
             AND COLUMN_NAME = 'chapter_id'
             AND REFERENCED_TABLE_NAME IS NOT NULL
         ");
-        if (!empty($foreignKeys)) {
+        if (! empty($foreignKeys)) {
             $fkName = $foreignKeys[0]->CONSTRAINT_NAME;
             DB::statement("ALTER TABLE missouri_quiz_banks DROP FOREIGN KEY `$fkName`");
         }
@@ -106,16 +106,16 @@ return new class extends Migration
             if (Schema::hasColumn('missouri_quiz_banks', 'is_final_exam')) {
                 $table->dropColumn('is_final_exam');
             }
-            if (!Schema::hasColumn('missouri_quiz_banks', 'chapter')) {
+            if (! Schema::hasColumn('missouri_quiz_banks', 'chapter')) {
                 $table->integer('chapter')->nullable();
             }
-            if (!Schema::hasColumn('missouri_quiz_banks', 'category')) {
+            if (! Schema::hasColumn('missouri_quiz_banks', 'category')) {
                 $table->enum('category', [
                     'traffic_laws',
                     'road_signs',
                     'safe_driving',
                     'alcohol_drugs',
-                    'defensive_driving'
+                    'defensive_driving',
                 ])->after('correct_answer');
             }
         });
@@ -141,9 +141,9 @@ return new class extends Migration
         // Re-add foreign key
         Schema::table('missouri_quiz_banks', function (Blueprint $table) {
             $table->foreign('chapter_id')
-                  ->references('id')
-                  ->on('missouri_course_structures')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('missouri_course_structures')
+                ->onDelete('cascade');
         });
     }
 };
