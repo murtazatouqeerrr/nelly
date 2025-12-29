@@ -3,7 +3,7 @@
 @section('title', 'Web Service Info')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" style="margin-left: 300px; max-width: calc(100% - 320px); padding: 20px;">
     <h1 class="mb-4">DICDS Web Service Info</h1>
     
     <div class="card">

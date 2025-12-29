@@ -27,6 +27,9 @@ class Payment extends Model
         'refund_reason',
         'refunded_at',
         'metadata',
+        'coupon_code',
+        'discount_amount',
+        'original_amount',
     ];
 
     protected $casts = [

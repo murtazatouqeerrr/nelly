@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Certificate Inventory')
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" style="margin-left: 300px; max-width: calc(100% - 320px); padding: 20px;">
     <h1 class="mb-4">Certificate Inventory Management</h1>
     
     <div class="card">

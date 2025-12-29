@@ -3,7 +3,7 @@
 @section('title', 'User Consents')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" style="margin-left: 300px; max-width: calc(100% - 320px); padding: 20px;">
     <h1 class="mb-4">User Legal Consents</h1>
     
     <div class="card">

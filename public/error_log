@@ -1,0 +1,1254 @@
+[27-Dec-2025 12:55:11 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:14 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:17 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:20 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:23 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:26 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:29 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:29 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:30 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:32 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:35 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:37 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:38 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:41 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:44 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:47 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:50 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:53 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:59 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:55:59 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:02 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:05 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:08 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:11 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:14 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:17 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:19 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:20 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:23 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:26 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:29 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:32 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:34 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:35 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:35 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:38 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:41 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:43 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:44 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:44 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:47 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:50 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:53 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:56:59 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:02 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:05 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:08 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:11 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:14 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:17 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:20 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:23 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:26 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:26 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:29 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:32 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:35 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:38 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:41 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:44 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:47 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:50 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:53 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:57:59 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:02 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:05 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:08 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:11 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:14 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:17 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:20 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:23 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:26 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:29 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:32 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:35 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:38 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:41 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:44 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:47 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:50 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:53 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:58:59 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:02 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:05 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:08 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:11 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:13 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:14 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:17 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:20 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:23 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:26 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:29 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:32 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:35 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:38 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:38 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:38 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:38 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:41 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:44 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:47 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:50 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:50 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:50 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:52 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:54 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 12:59:57 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:00 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:03 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:06 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:09 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:12 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:15 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:18 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:21 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:24 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:27 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:30 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:33 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:36 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:39 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:42 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:45 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:48 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:51 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:54 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:55 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:55 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:57 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:00:57 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:00 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:03 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:06 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:09 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:12 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:15 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:18 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:21 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:24 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:27 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:30 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:33 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:36 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:39 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:42 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:45 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:48 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:51 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:54 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:01:57 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:00 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:03 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:06 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:09 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:12 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:15 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:16 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:18 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:21 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:24 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:27 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:30 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:33 America/Boise] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.4.0". You are running 8.3.28. in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/ewyqummy/course.dummiestrafficschool.com/vendor/autoload.php(22): ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584::getLoader()
+#2 /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php(14): require('/home2/ewyqummy...')
+#3 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/vendor/composer/platform_check.php on line 22
+[27-Dec-2025 13:02:36 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/ewyqummy/course.dummiestrafficschool.com/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php on line 14
+[27-Dec-2025 13:02:39 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/ewyqummy/course.dummiestrafficschool.com/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php on line 14
+[27-Dec-2025 13:02:42 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/ewyqummy/course.dummiestrafficschool.com/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php on line 14
+[27-Dec-2025 13:02:45 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/ewyqummy/course.dummiestrafficschool.com/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php on line 14
+[27-Dec-2025 13:02:48 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/ewyqummy/course.dummiestrafficschool.com/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php on line 14
+[27-Dec-2025 13:02:51 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/ewyqummy/course.dummiestrafficschool.com/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php on line 14
+[27-Dec-2025 13:02:54 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/ewyqummy/course.dummiestrafficschool.com/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php on line 14
+[27-Dec-2025 13:02:57 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/ewyqummy/course.dummiestrafficschool.com/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php on line 14
+[27-Dec-2025 13:03:00 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/ewyqummy/course.dummiestrafficschool.com/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/ewyqummy/course.dummiestrafficschool.com/public/index.php on line 14

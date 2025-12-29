@@ -15,15 +15,17 @@ class ChapterQuestion extends Model
         'explanation',
         'points',
         'order_index',
+        'quiz_set',
     ];
 
     protected $casts = [
         'points' => 'integer',
         'order_index' => 'integer',
+        'quiz_set' => 'integer',
     ];
 
     public function chapter()
     {
-        return $this->belongsTo(CourseChapter::class, 'chapter_id');
+        return $this->belongsTo(Chapter::class, 'chapter_id');
     }
 }

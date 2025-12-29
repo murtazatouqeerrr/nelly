@@ -3,7 +3,7 @@
 @section('title', 'DICDS Certificate Orders')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" style="margin-left: 300px; max-width: calc(100% - 320px); padding: 20px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Florida DICDS Certificate Orders</h1>
         <button class="btn btn-primary" onclick="showCreateModal()">

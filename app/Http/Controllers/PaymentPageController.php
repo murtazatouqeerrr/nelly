@@ -154,6 +154,10 @@ class PaymentPageController extends Controller
             'state' => 'required|string',
             'country' => 'required|string',
             'zipcode' => 'required|string',
+            'amount' => 'sometimes|numeric|min:0',
+            'original_amount' => 'sometimes|numeric|min:0',
+            'coupon_code' => 'nullable|string|max:6',
+            'discount_amount' => 'sometimes|numeric|min:0',
         ]);
 
         $enrollment = UserCourseEnrollment::findOrFail($request->enrollment_id);
@@ -218,10 +222,18 @@ class PaymentPageController extends Controller
             $customerData->setId(auth()->id());
             $customerData->setEmail(auth()->user()->email);
 
+            // Use coupon amount if provided, otherwise use enrollment amount
+            $paymentAmount = $request->has('amount') ? $request->amount : $enrollment->amount_paid;
+            
+            // Update enrollment amount if coupon was applied
+            if ($request->has('coupon_code') && $request->coupon_code) {
+                $enrollment->update(['amount_paid' => $paymentAmount]);
+            }
+
             // Create a transaction
             $transactionRequestType = new AnetAPI\TransactionRequestType;
             $transactionRequestType->setTransactionType('authCaptureTransaction');
-            $transactionRequestType->setAmount($enrollment->amount_paid);
+            $transactionRequestType->setAmount($paymentAmount);
             $transactionRequestType->setOrder($order);
             $transactionRequestType->setPayment($paymentOne);
             $transactionRequestType->setBillTo($customerAddress);
@@ -255,7 +267,8 @@ class PaymentPageController extends Controller
                             'authorizenet',
                             $transactionId,
                             $request->only(['address', 'city', 'state', 'country', 'zipcode']),
-                            'authorizenet'
+                            'authorizenet',
+                            $request->only(['coupon_code', 'discount_amount', 'original_amount'])
                         );
 
                         return response()->json([
@@ -301,27 +314,73 @@ class PaymentPageController extends Controller
 
     public function processDummy(Request $request)
     {
-        $request->validate([
-            'enrollment_id' => 'required|exists:user_course_enrollments,id',
-            'amount' => 'required|numeric|min:0.01',
-        ]);
-
-        $enrollment = UserCourseEnrollment::findOrFail($request->enrollment_id);
-
-        if ($enrollment->user_id !== auth()->id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         try {
+            \Log::info('Dummy payment started', ['request' => $request->all()]);
+            
+            $request->validate([
+                'enrollment_id' => 'required|exists:user_course_enrollments,id',
+                'amount' => 'required|numeric|min:0.01',
+                'original_amount' => 'sometimes|numeric|min:0',
+                'coupon_code' => 'nullable|string|max:6',
+                'discount_amount' => 'sometimes|numeric|min:0',
+            ]);
+
+            $enrollment = UserCourseEnrollment::findOrFail($request->enrollment_id);
+            \Log::info('Enrollment found', ['enrollment_id' => $enrollment->id]);
+
+            if ($enrollment->user_id !== auth()->id()) {
+                \Log::warning('Unauthorized dummy payment attempt', [
+                    'enrollment_user_id' => $enrollment->user_id,
+                    'auth_user_id' => auth()->id()
+                ]);
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+
+            // Update enrollment amount if coupon was applied
+            if ($request->has('coupon_code') && $request->coupon_code) {
+                \Log::info('Updating enrollment amount for coupon', [
+                    'old_amount' => $enrollment->amount_paid,
+                    'new_amount' => $request->amount,
+                    'coupon_code' => $request->coupon_code
+                ]);
+                $enrollment->update(['amount_paid' => $request->amount]);
+            }
+
+            \Log::info('Calling completePayment method');
+            
             // Use 'stripe' as gateway since enum doesn't include 'dummy' yet
-            $this->completePayment($enrollment, 'stripe', 'dummy_'.time().'_'.auth()->id(), [], 'dummy');
+            $this->completePayment(
+                $enrollment, 
+                'stripe', 
+                'dummy_'.time().'_'.auth()->id(), 
+                [], 
+                'dummy',
+                $request->only(['coupon_code', 'discount_amount', 'original_amount'])
+            );
 
-            return response()->json(['success' => true, 'redirect' => route('payment.success')]);
+            \Log::info('Payment completed successfully');
 
+            return response()->json([
+                'success' => true, 
+                'redirect' => route('payment.success'),
+                'message' => 'Payment processed successfully'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Dummy payment validation error', ['errors' => $e->errors()]);
+            return response()->json(['error' => 'Validation failed', 'details' => $e->errors()], 422);
         } catch (\Exception $e) {
-            \Log::error('Dummy payment error: '.$e->getMessage());
+            \Log::error('Dummy payment error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
-            return response()->json(['error' => 'Payment processing failed'], 500);
+            return response()->json([
+                'error' => 'Payment processing failed', 
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -335,64 +394,134 @@ class PaymentPageController extends Controller
         return view('payment.cancel');
     }
 
-    private function completePayment($enrollment, $gateway, $gatewayPaymentId, $addressData = [], $paymentMethod = null)
+    private function completePayment($enrollment, $gateway, $gatewayPaymentId, $addressData = [], $paymentMethod = null, $couponData = [])
     {
-        // Update enrollment
-        $enrollment->update([
-            'payment_status' => 'paid',
-            'payment_method' => $paymentMethod ?? $gateway,
-            'payment_id' => $gatewayPaymentId,
-        ]);
-
-        // Create payment record
-        $payment = Payment::create([
-            'user_id' => $enrollment->user_id,
-            'enrollment_id' => $enrollment->id,
-            'amount' => $enrollment->amount_paid,
-            'payment_method' => $paymentMethod ?? $gateway,
-            'gateway' => $gateway,
-            'gateway_payment_id' => $gatewayPaymentId,
-            'billing_name' => auth()->user()->first_name.' '.auth()->user()->last_name,
-            'billing_email' => auth()->user()->email,
-            'address' => $addressData['address'] ?? null,
-            'city' => $addressData['city'] ?? null,
-            'state' => $addressData['state'] ?? null,
-            'country' => $addressData['country'] ?? null,
-            'zipcode' => $addressData['zipcode'] ?? null,
-            'status' => 'completed',
-        ]);
-
-        // Generate and send payment receipt via email
         try {
-            $course = $this->findCourse($enrollment->course_id);
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('payments.receipt', compact('payment'));
+            \Log::info('Starting completePayment', [
+                'enrollment_id' => $enrollment->id,
+                'gateway' => $gateway,
+                'payment_method' => $paymentMethod
+            ]);
 
-            \Mail::send('emails.payment-receipt', compact('payment', 'course'), function ($message) use ($payment, $pdf) {
-                $message->to($payment->billing_email)
-                    ->subject('Payment Receipt #'.$payment->id.' - Traffic School')
-                    ->attachData($pdf->output(), 'payment-receipt-'.$payment->id.'.pdf');
-            });
+            // Update enrollment
+            $enrollment->update([
+                'payment_status' => 'paid',
+                'payment_method' => $paymentMethod ?? $gateway,
+                'payment_id' => $gatewayPaymentId,
+            ]);
 
-            \Log::info('Payment receipt sent', ['payment_id' => $payment->id, 'email' => $payment->billing_email]);
+            \Log::info('Enrollment updated to paid status');
+
+            // Create payment record
+            $paymentData = [
+                'user_id' => $enrollment->user_id,
+                'enrollment_id' => $enrollment->id,
+                'amount' => $enrollment->amount_paid,
+                'payment_method' => $paymentMethod ?? $gateway,
+                'gateway' => $gateway,
+                'gateway_payment_id' => $gatewayPaymentId,
+                'billing_name' => auth()->user()->first_name.' '.auth()->user()->last_name,
+                'billing_email' => auth()->user()->email,
+                'address' => $addressData['address'] ?? null,
+                'city' => $addressData['city'] ?? null,
+                'state' => $addressData['state'] ?? null,
+                'country' => $addressData['country'] ?? null,
+                'zipcode' => $addressData['zipcode'] ?? null,
+                'status' => 'completed',
+            ];
+
+            // Add coupon data if provided
+            if (!empty($couponData['coupon_code'])) {
+                \Log::info('Processing coupon data', ['coupon_code' => $couponData['coupon_code']]);
+                
+                $paymentData['coupon_code'] = $couponData['coupon_code'];
+                $paymentData['discount_amount'] = $couponData['discount_amount'] ?? 0;
+                $paymentData['original_amount'] = $couponData['original_amount'] ?? $enrollment->amount_paid;
+                
+                // Mark coupon as used
+                try {
+                    if ($coupon = \App\Models\Coupon::where('code', $couponData['coupon_code'])->first()) {
+                        $coupon->markAsUsed();
+                        
+                        // Create coupon usage record
+                        \App\Models\CouponUsage::create([
+                            'coupon_id' => $coupon->id,
+                            'user_id' => $enrollment->user_id,
+                            'discount_amount' => $couponData['discount_amount'] ?? 0,
+                            'original_amount' => $couponData['original_amount'] ?? $enrollment->amount_paid,
+                            'final_amount' => $enrollment->amount_paid,
+                        ]);
+                        
+                        \Log::info('Coupon marked as used and usage recorded');
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Error processing coupon: ' . $e->getMessage());
+                    // Don't fail the payment for coupon errors
+                }
+            }
+
+            $payment = Payment::create($paymentData);
+            \Log::info('Payment record created', ['payment_id' => $payment->id]);
+
+            // Generate and send payment receipt via email (non-blocking)
+            try {
+                $course = $this->findCourse($enrollment->course_id);
+                if ($course) {
+                    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('payments.receipt', compact('payment'));
+
+                    \Mail::send('emails.payment-receipt', compact('payment', 'course'), function ($message) use ($payment, $pdf) {
+                        $message->to($payment->billing_email)
+                            ->subject('Payment Receipt #'.$payment->id.' - Traffic School')
+                            ->attachData($pdf->output(), 'payment-receipt-'.$payment->id.'.pdf');
+                    });
+
+                    \Log::info('Payment receipt sent', ['payment_id' => $payment->id, 'email' => $payment->billing_email]);
+                }
+            } catch (\Exception $e) {
+                \Log::error('Payment receipt email error: '.$e->getMessage());
+                // Don't fail the payment for email errors
+            }
+
+            // Send enrollment confirmation email (non-blocking)
+            try {
+                $course = $this->findCourse($enrollment->course_id);
+                if ($course && class_exists('\App\Mail\EnrollmentConfirmation')) {
+                    \Mail::to(auth()->user()->email)->send(new \App\Mail\EnrollmentConfirmation(
+                        auth()->user(),
+                        $course,
+                        $enrollment
+                    ));
+                    \Log::info('Enrollment confirmation email sent');
+                }
+            } catch (\Exception $e) {
+                \Log::error('Enrollment email error: '.$e->getMessage());
+                // Don't fail the payment for email errors
+            }
+
+            // Dispatch events (non-blocking)
+            try {
+                if (class_exists('\App\Events\UserEnrolled')) {
+                    event(new \App\Events\UserEnrolled($enrollment));
+                }
+                if (class_exists('\App\Events\PaymentApproved')) {
+                    event(new \App\Events\PaymentApproved($payment));
+                }
+                \Log::info('Events dispatched successfully');
+            } catch (\Exception $e) {
+                \Log::error('Event dispatch error: '.$e->getMessage());
+                // Don't fail the payment for event errors
+            }
+
+            \Log::info('Payment completion finished successfully');
+
         } catch (\Exception $e) {
-            \Log::error('Payment receipt email error: '.$e->getMessage());
+            \Log::error('Critical error in completePayment', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            throw $e; // Re-throw critical errors
         }
-
-        // Send enrollment confirmation email
-        try {
-            $course = $this->findCourse($enrollment->course_id);
-            \Mail::to(auth()->user()->email)->send(new \App\Mail\EnrollmentConfirmation(
-                auth()->user(),
-                $course,
-                $enrollment
-            ));
-        } catch (\Exception $e) {
-            \Log::error('Enrollment email error: '.$e->getMessage());
-        }
-
-        // Dispatch events
-        event(new UserEnrolled($enrollment));
-        event(new PaymentApproved($payment));
     }
 
     private function findCourse($courseId)

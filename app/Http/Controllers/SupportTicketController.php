@@ -121,37 +121,77 @@ class SupportTicketController extends Controller
 
     public function reply(Request $request, $id)
     {
-        $ticket = SupportTicket::findOrFail($id);
+        try {
+            $ticket = SupportTicket::findOrFail($id);
 
-        $request->validate([
-            'message' => 'required|string',
-        ]);
+            $request->validate([
+                'message' => 'required|string',
+            ]);
 
-        $reply = SupportTicketReply::create([
-            'support_ticket_id' => $ticket->id,
-            'user_id' => auth()->id(),
-            'message' => $request->message,
-            'is_staff_reply' => auth()->user()->role_id == 1,
-        ]);
+            // Check if user is admin/super-admin by checking role slug
+            $isStaffReply = auth()->user()->role && in_array(auth()->user()->role->slug, ['super-admin', 'admin']);
 
-        $ticket->update(['status' => 'replied']);
+            $reply = SupportTicketReply::create([
+                'support_ticket_id' => $ticket->id,
+                'user_id' => auth()->id(),
+                'message' => $request->message,
+                'is_staff_reply' => $isStaffReply,
+            ]);
 
-        return response()->json(['success' => true, 'reply' => $reply]);
+            $ticket->update(['status' => 'replied']);
+
+            return response()->json(['success' => true, 'reply' => $reply]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Ticket not found'], 404);
+        } catch (\Exception $e) {
+            \Log::error('Reply error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
 
     public function updateStatus(Request $request, $id)
     {
-        $ticket = SupportTicket::findOrFail($id);
+        try {
+            $ticket = SupportTicket::findOrFail($id);
 
-        $request->validate([
-            'status' => 'required|in:open,replied,resolved,closed',
-        ]);
+            $request->validate([
+                'status' => 'required|in:open,replied,resolved,closed',
+            ]);
 
-        $ticket->update([
-            'status' => $request->status,
-            'resolved_at' => $request->status === 'resolved' ? now() : null,
-        ]);
+            $ticket->update([
+                'status' => $request->status,
+                'resolved_at' => $request->status === 'resolved' ? now() : null,
+            ]);
 
-        return response()->json(['success' => true, 'ticket' => $ticket]);
+            return response()->json(['success' => true, 'ticket' => $ticket]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Ticket not found'], 404);
+        } catch (\Exception $e) {
+            \Log::error('Update status error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
+    }
+
+    public function getReplies($id)
+    {
+        try {
+            $ticket = SupportTicket::findOrFail($id);
+
+            if (auth()->user()->role && !in_array(auth()->user()->role->slug, ['super-admin', 'admin']) && $ticket->user_id != auth()->id()) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+
+            $replies = SupportTicketReply::where('support_ticket_id', $id)
+                ->with('user')
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            return response()->json($replies);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Ticket not found'], 404);
+        } catch (\Exception $e) {
+            \Log::error('Get replies error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
 }

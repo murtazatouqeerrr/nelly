@@ -5,8 +5,70 @@ use App\Http\Controllers\FloridaSoapProxyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// CSRF Token Refresh API
+Route::get('/api/csrf-token', function () {
+    return response()->json([
+        'csrf_token' => csrf_token()
+    ]);
+});
+
+// CSRF Test Route
+Route::get('/test-csrf', function () {
+    return view('test-csrf');
+});
+
+Route::post('/test-csrf', function (Illuminate\Http\Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'message' => 'required|string|max:1000',
+    ]);
+    
+    return redirect('/test-csrf')->with('success', 'Form submitted successfully! CSRF protection is working.');
+});
+
 // Florida SOAP Proxy - allows requests from any IP to reach Florida's server
 Route::post('/api/florida-soap-proxy', [FloridaSoapProxyController::class, 'proxy']);
+
+// Test route for timer system
+Route::get('/test-timer', function () {
+    // Check if user is authenticated
+    if (!auth()->check()) {
+        return redirect('/login')->with('message', 'Please log in to test the timer system.');
+    }
+    
+    return view('test-timer');
+})->middleware('auth');
+
+// Create test timer configuration
+Route::get('/create-test-timer', function () {
+    try {
+        // Create a test timer for chapter 1
+        $timer = \App\Models\CourseTimer::updateOrCreate(
+            [
+                'chapter_id' => 1,
+                'chapter_type' => 'chapters',
+            ],
+            [
+                'required_time_minutes' => 2, // 2 minutes for testing
+                'is_enabled' => true,
+                'allow_pause' => false,
+                'bypass_for_admin' => false,
+            ]
+        );
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Test timer created successfully',
+            'timer' => $timer
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
+    }
+})->middleware('auth');
 
 // File serving route with different pattern
 Route::get('files/{filename}', function ($filename) {
@@ -103,9 +165,10 @@ Route::get('/courses', function () {
     return view('courses');
 })->middleware('auth');
 
-Route::get('/course-details/{table}/{courseId}', [App\Http\Controllers\CourseController::class, 'showDetails'])->middleware('auth');
+Route::get('/course-details/{table}/{courseId}', [App\Http\Controllers\CourseController::class, 'showDetails'])->middleware('auth')->name('course.details');
 
 Route::get('/api/courses/public', [App\Http\Controllers\CourseController::class, 'publicIndex'])->middleware('auth');
+Route::post('/api/check-enrollment', [App\Http\Controllers\EnrollmentController::class, 'checkEnrollment'])->middleware('auth');
 
 Route::get('/certificates', function () {
     return view('certificates');
@@ -138,7 +201,7 @@ Route::get('/generate-certificate/{enrollment_id}', function ($enrollment_id) {
         'student_name' => $user->name,
         'completion_date' => $enrollment->completed_at ? $enrollment->completed_at->format('m/d/Y') : now()->format('m/d/Y'),
         'score' => '95%',
-        'course_name' => $enrollment->course->title,
+        'course_name' => $enrollment->course?->title,
         'enrollment_id' => $enrollment->id,
     ];
 
@@ -206,8 +269,16 @@ Route::get('/course-player/{enrollmentId}', function ($enrollmentId) {
         return redirect('/dashboard')->with('error', 'Access to this course has been revoked after certificate download');
     }
 
+    // Check payment status - redirect to payment if not paid
+    if ($enrollment->payment_status !== 'paid') {
+        return redirect()->route('payment.show', [
+            'course_id' => $enrollment->course_id,
+            'table' => $enrollment->course_table ?? 'florida_courses'
+        ])->with('info', 'Please complete payment to access the course.');
+    }
+
     return view('course-player');
-})->middleware('auth');
+})->middleware('auth')->name('course-player');
 
 Route::get('/course-player', function () {
     $enrollmentId = request()->get('enrollmentId');
@@ -224,6 +295,14 @@ Route::get('/course-player', function () {
         if ($enrollment->access_revoked) {
             return redirect('/dashboard')->with('error', 'Access to this course has been revoked after certificate download');
         }
+
+        // Check payment status - redirect to payment if not paid
+        if ($enrollment->payment_status !== 'paid') {
+            return redirect()->route('payment.show', [
+                'course_id' => $enrollment->course_id,
+                'table' => $enrollment->course_table ?? 'florida_courses'
+            ])->with('info', 'Please complete payment to access the course.');
+        }
     }
 
     return view('course-player');
@@ -231,6 +310,10 @@ Route::get('/course-player', function () {
 
 Route::get('/profile', function () {
     return view('profile');
+})->middleware('auth');
+
+Route::get('/account-security', function () {
+    return view('admin.account-security');
 })->middleware('auth');
 
 Route::get('/my-payments', function () {
@@ -260,6 +343,8 @@ Route::get('/create-course', function () {
 Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::post('/web/courses', [App\Http\Controllers\CourseController::class, 'storeWeb']);
     Route::match(['PUT', 'POST'], '/web/courses/{course}', [App\Http\Controllers\CourseController::class, 'updateWeb']);
+    Route::delete('/web/courses/{course}', [App\Http\Controllers\CourseController::class, 'destroyWeb']);
+    Route::post('/api/courses/copy', [App\Http\Controllers\CourseController::class, 'copy']);
     Route::post('/web/courses/{course}/chapters', [App\Http\Controllers\ChapterController::class, 'storeWeb']);
     Route::match(['PUT', 'POST'], '/web/chapters/{chapter}', [App\Http\Controllers\ChapterController::class, 'updateWeb']);
     Route::delete('/web/chapters/{chapter}', [App\Http\Controllers\ChapterController::class, 'destroyWeb']);
@@ -280,6 +365,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/web/enrollments', [App\Http\Controllers\EnrollmentController::class, 'storeWeb']);
     Route::get('/web/my-enrollments', [App\Http\Controllers\EnrollmentController::class, 'myEnrollmentsWeb']);
+    Route::post('/web/enrollments/{enrollment}/cancel', [App\Http\Controllers\EnrollmentController::class, 'cancelEnrollmentWeb']);
 });
 
 // Web routes for user profile (using session auth)
@@ -291,6 +377,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/web/courses/{course}/chapters', [App\Http\Controllers\ChapterController::class, 'indexWeb']);
     Route::match(['GET', 'POST'], '/web/enrollments/{enrollment}/complete-chapter/{chapter}', [App\Http\Controllers\ProgressController::class, 'completeChapterWeb']);
     Route::get('/web/my-payments', [App\Http\Controllers\PaymentController::class, 'myPaymentsWeb']);
+    Route::post('/web/payments/retry', [App\Http\Controllers\PaymentController::class, 'retryPayment']);
+    Route::post('/web/payments/cancel', [App\Http\Controllers\PaymentController::class, 'cancelPendingPayment']);
 });
 
 // Web routes for admin (using session auth)
@@ -348,6 +436,12 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::get('/web/admin/courts/{state}/{county}', [App\Http\Controllers\CountyController::class, 'getCourts']);
     Route::post('/web/admin/courts', [App\Http\Controllers\CountyController::class, 'storeCourt']);
     Route::put('/web/admin/courts/{id}', [App\Http\Controllers\CountyController::class, 'updateCourt']);
+    
+    // Timer Violation Admin Routes
+    Route::get('/web/admin/timer-violations', [App\Http\Controllers\Admin\TimerViolationController::class, 'index'])->name('admin.timer-violations.index');
+    Route::get('/web/admin/timer-violations/stats', [App\Http\Controllers\Admin\TimerViolationController::class, 'stats'])->name('admin.timer-violations.stats');
+    Route::get('/web/admin/timer-violations/{id}', [App\Http\Controllers\Admin\TimerViolationController::class, 'show'])->name('admin.timer-violations.show');
+    Route::get('/web/admin/timer-violations/session/{sessionId}', [App\Http\Controllers\Admin\TimerViolationController::class, 'sessionViolations'])->name('admin.timer-violations.session');
     Route::delete('/web/admin/courts/{id}', [App\Http\Controllers\CountyController::class, 'deleteCourt']);
 
     Route::get('/web/admin/submission-queue/stats', [App\Http\Controllers\StateSubmissionController::class, 'stats']);
@@ -365,10 +459,20 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
 
     Route::get('/web/admin/email-logs', [App\Http\Controllers\EmailLogController::class, 'index']);
     Route::get('/web/admin/email-logs/stats', [App\Http\Controllers\EmailLogController::class, 'stats']);
+    
+    // Coupon Management Routes
+    Route::get('/admin/coupons', [App\Http\Controllers\CouponController::class, 'index']);
+    Route::post('/admin/coupons', [App\Http\Controllers\CouponController::class, 'store']);
+    Route::put('/admin/coupons/{coupon}', [App\Http\Controllers\CouponController::class, 'update']);
+    Route::delete('/admin/coupons/{coupon}', [App\Http\Controllers\CouponController::class, 'destroy']);
 });
 
 // Public certificate verification
 Route::get('/certificates/{verificationHash}/verify', [App\Http\Controllers\CertificateController::class, 'verify']);
+
+// Coupon API Routes (public for payment page)
+Route::post('/api/coupons/apply', [App\Http\Controllers\CouponController::class, 'apply']);
+Route::post('/api/coupons/use', [App\Http\Controllers\CouponController::class, 'use']);
 
 Route::get('/admin/florida-courses', function () {
     return view('admin.florida-courses');
@@ -433,6 +537,19 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::post('/admin/support/recipients', [App\Http\Controllers\TicketRecipientController::class, 'store'])->name('ticket-recipients.store');
     Route::delete('/admin/support/recipients/{recipient}', [App\Http\Controllers\TicketRecipientController::class, 'destroy'])->name('ticket-recipients.destroy');
     Route::patch('/admin/support/recipients/{recipient}/toggle', [App\Http\Controllers\TicketRecipientController::class, 'toggle'])->name('ticket-recipients.toggle');
+});
+
+// Support Ticket API Routes (for authenticated users)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/support/tickets', [App\Http\Controllers\SupportTicketController::class, 'index']);
+    Route::post('/api/support/tickets', [App\Http\Controllers\SupportTicketController::class, 'store']);
+    Route::get('/api/support/tickets/{id}', [App\Http\Controllers\SupportTicketController::class, 'show']);
+    Route::post('/api/support/tickets/{id}/reply', [App\Http\Controllers\SupportTicketController::class, 'reply']);
+    Route::get('/api/support/tickets/{id}/replies', [App\Http\Controllers\SupportTicketController::class, 'getReplies']);
+    Route::put('/api/support/tickets/{id}/status', [App\Http\Controllers\SupportTicketController::class, 'updateStatus']);
+});
+
+Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::get('/admin/user-access', [App\Http\Controllers\UserAccessController::class, 'index'])->name('user-access.index');
     Route::patch('/admin/user-access/{user}/unlock', [App\Http\Controllers\UserAccessController::class, 'unlock'])->name('user-access.unlock');
     Route::get('/admin/faqs', [App\Http\Controllers\FaqController::class, 'index']);
@@ -450,6 +567,21 @@ Route::get('/admin/florida-email-templates', function () {
 
 Route::get('/admin/dicds-submissions', function () {
     return view('admin.dicds-submissions');
+});
+
+// Security Questions Management
+Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
+    Route::resource('/admin/security-questions', App\Http\Controllers\Admin\SecurityQuestionController::class)->names([
+        'index' => 'admin.security-questions.index',
+        'create' => 'admin.security-questions.create',
+        'store' => 'admin.security-questions.store',
+        'show' => 'admin.security-questions.show',
+        'edit' => 'admin.security-questions.edit',
+        'update' => 'admin.security-questions.update',
+        'destroy' => 'admin.security-questions.destroy',
+    ]);
+    Route::post('/admin/security-questions/{securityQuestion}/toggle', [App\Http\Controllers\Admin\SecurityQuestionController::class, 'toggleActive'])->name('admin.security-questions.toggle');
+    Route::post('/admin/security-questions/reorder', [App\Http\Controllers\Admin\SecurityQuestionController::class, 'reorder'])->name('admin.security-questions.reorder');
 });
 
 Route::get('/admin/certificate-lookup', function () {
@@ -486,7 +618,11 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::get('/web/florida-schools', [App\Http\Controllers\FloridaSchoolController::class, 'indexWeb']);
     Route::get('/web/florida-courses', [App\Http\Controllers\FloridaCourseController::class, 'indexWeb']);
     Route::get('/api/florida-courses', [App\Http\Controllers\FloridaCourseController::class, 'indexWeb']);
+    Route::post('/api/florida-courses', [App\Http\Controllers\FloridaCourseController::class, 'storeWeb']);
     Route::put('/api/florida-courses/{id}', [App\Http\Controllers\FloridaCourseController::class, 'updateWeb']);
+    Route::delete('/api/florida-courses/{id}', [App\Http\Controllers\FloridaCourseController::class, 'destroyWeb']);
+    Route::post('/api/florida-courses/copy', [App\Http\Controllers\FloridaCourseController::class, 'copy']);
+
     Route::get('/api/florida-certificates', function () {
         $certificates = \App\Models\FloridaCertificate::orderBy('created_at', 'desc')->get();
 
@@ -711,6 +847,30 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
 
     // State Stamps API routes
     Route::get('/api/state-stamps/{stateCode}', [App\Http\Controllers\StateStampController::class, 'getByStateCode']);
+    
+    // Security verification routes (authenticated)
+    Route::get('/api/security/questions', [App\Http\Controllers\SecurityVerificationController::class, 'getRandomQuestions']);
+    Route::post('/api/security/questions', [App\Http\Controllers\SecurityVerificationController::class, 'getRandomQuestions']);
+    Route::post('/api/security/verify', [App\Http\Controllers\SecurityVerificationController::class, 'verifyAnswers']);
+    
+    // Debug route to test user loading
+    Route::get('/debug/user', function() {
+        try {
+            $user = auth()->user();
+            if (!$user) {
+                return response()->json(['error' => 'Not authenticated']);
+            }
+            return response()->json([
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'role_id' => $user->role_id,
+                'has_role' => $user->role ? true : false,
+                'role_name' => $user->role ? $user->role->name : null
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+        }
+    })->middleware('auth');
 
     Route::get('/api/florida-courses/{id}/chapters', [App\Http\Controllers\ChapterController::class, 'indexWeb']);
     Route::post('/api/florida-courses/{id}/chapters', [App\Http\Controllers\ChapterController::class, 'storeWeb']);
@@ -719,12 +879,14 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::delete('/api/chapters/{id}', [App\Http\Controllers\ChapterController::class, 'destroyWeb']);
     Route::get('/api/chapters/{id}/questions', [App\Http\Controllers\QuestionController::class, 'index']);
     Route::post('/api/chapters/{id}/questions', [App\Http\Controllers\QuestionController::class, 'store']);
+    Route::post('/api/chapters/{id}/questions/import', [App\Http\Controllers\QuestionController::class, 'import']);
     Route::get('/api/questions/{id}', [App\Http\Controllers\QuestionController::class, 'show']);
     Route::put('/api/questions/{id}', [App\Http\Controllers\QuestionController::class, 'update']);
     Route::delete('/api/questions/{id}', [App\Http\Controllers\QuestionController::class, 'destroy']);
 
     // Chapter Quiz Results
     Route::post('/api/chapter-quiz-results', [App\Http\Controllers\ChapterController::class, 'saveQuizResults']);
+    Route::get('/api/chapters/{chapterId}/quiz-result', [App\Http\Controllers\ChapterController::class, 'getQuizResult']);
 
     // Certificate Lookup
     Route::post('/web/certificate-lookup', [App\Http\Controllers\CertificateLookupController::class, 'search']);
@@ -836,13 +998,6 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
         return view('admin.florida-accessibility');
     });
 
-    // Florida DICDS UI & Workflow Module Routes
-    Route::get('/dicds/welcome', function () {
-        return view('dicds.welcome');
-    });
-    Route::get('/dicds/main-menu', function () {
-        return view('dicds.main-menu');
-    });
     Route::get('/admin/dicds-user-management', function () {
         return view('admin.dicds-user-management');
     });
@@ -854,13 +1009,65 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
         return view('admin.chapter-builder');
     });
     Route::get('/admin/chapters/{chapterId}/questions', function ($chapterId) {
-        return view('admin.question-manager', ['chapterId' => $chapterId]);
+        // Handle special final-exam case
+        if ($chapterId === 'final-exam') {
+            $courseId = request('course_id', 1); // Get course_id from query parameter
+            
+            // Get course state code
+            $course = DB::table('florida_courses')->where('id', $courseId)->first();
+            $courseStateCode = $course ? $course->state_code : '';
+            
+            \Log::info("Final exam - Course ID: {$courseId}, State Code: {$courseStateCode}");
+            
+            return view('admin.question-manager', [
+                'chapterId' => 'final-exam',
+                'courseId' => $courseId,
+                'courseStateCode' => $courseStateCode,
+                'isFinalExam' => true
+            ]);
+        }
+        
+        // Get course state code from chapter - check both tables
+        $chapter = DB::table('chapters')->where('id', $chapterId)->first();
+        $courseStateCode = '';
+        $courseId = null;
+        
+        if ($chapter) {
+            // Found in chapters table
+            $course = DB::table('florida_courses')->where('id', $chapter->course_id)->first();
+            $courseStateCode = $course ? $course->state_code : '';
+            $courseId = $chapter->course_id;
+            
+            \Log::info("Chapter {$chapterId} - Course ID: {$chapter->course_id}, State Code: {$courseStateCode} (from chapters)");
+        } else {
+            // Check legacy chapters table
+            $legacyChapter = DB::table('chapters')->where('id', $chapterId)->first();
+            
+            if ($legacyChapter) {
+                $course = DB::table('florida_courses')->where('id', $legacyChapter->course_id)->first();
+                $courseStateCode = $course ? $course->state_code : '';
+                $courseId = $legacyChapter->course_id;
+                
+                \Log::info("Chapter {$chapterId} - Course ID: {$legacyChapter->course_id}, State Code: {$courseStateCode} (from legacy chapters)");
+            } else {
+                \Log::warning("Chapter {$chapterId} not found in either table");
+            }
+        }
+        
+        return view('admin.question-manager', [
+            'chapterId' => $chapterId,
+            'courseId' => $courseId,
+            'courseStateCode' => $courseStateCode
+        ]);
     });
     Route::get('/admin/courses/{courseId}/final-exam', function () {
         return view('admin.question-manager');
     });
     Route::get('/admin/courses/{courseId}/preview', function () {
         return view('admin.course-preview');
+    });
+    Route::get('/admin/final-exam-attempts', function () {
+        return view('admin.final-exam-attempts');
     });
 
     // Mobile-specific routes
@@ -876,14 +1083,6 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::get('/web/device-info', [App\Http\Controllers\MobileOptimizationController::class, 'getDeviceInfo']);
     Route::get('/web/mobile-optimized/{component}', [App\Http\Controllers\MobileOptimizationController::class, 'getMobileOptimizedComponent']);
 
-    // Web routes for security system
-    Route::get('/web/security/logs', [App\Http\Controllers\SecurityLogController::class, 'index']);
-    Route::get('/web/account/security-settings', [App\Http\Controllers\AccountSecurityController::class, 'getSecuritySettings']);
-    Route::put('/web/account/password', [App\Http\Controllers\AccountSecurityController::class, 'changePassword']);
-    Route::get('/web/account/login-history', [App\Http\Controllers\AccountSecurityController::class, 'getLoginHistory']);
-    Route::post('/web/data-export/request', [App\Http\Controllers\DataExportController::class, 'requestExport']);
-    Route::get('/web/audit/dashboard', [App\Http\Controllers\AuditController::class, 'getDashboard']);
-
     // Web routes for certificates
     Route::get('/web/certificates/{certificate}/download', [App\Http\Controllers\CertificateController::class, 'downloadWeb']);
 
@@ -895,6 +1094,12 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
         Route::post('/send-all', [App\Http\Controllers\Admin\FlTransmissionController::class, 'sendAll'])->name('send-all');
         Route::post('/{id}/retry', [App\Http\Controllers\Admin\FlTransmissionController::class, 'retry'])->name('retry');
         Route::delete('/{id}', [App\Http\Controllers\Admin\FlTransmissionController::class, 'destroy'])->name('destroy');
+        
+        // New enhanced routes
+        Route::get('/test-connection', [App\Http\Controllers\Admin\FlTransmissionController::class, 'testConnection'])->name('test-connection');
+        Route::post('/create-manual', [App\Http\Controllers\Admin\FlTransmissionController::class, 'createManual'])->name('create-manual');
+        Route::get('/error-stats', [App\Http\Controllers\Admin\FlTransmissionController::class, 'errorStats'])->name('error-stats');
+        Route::get('/export', [App\Http\Controllers\Admin\FlTransmissionController::class, 'export'])->name('export');
     });
 
     // All State Transmissions Management (unified view)
@@ -1018,6 +1223,31 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/certificate', [App\Http\Controllers\CertificateController::class, 'generate']);
 Route::get('/certificate/download', [App\Http\Controllers\CertificateController::class, 'downloadPdf'])->middleware('auth');
+
+// Web routes for security system - accessible to all authenticated users
+Route::middleware(['auth'])->group(function () {
+    Route::get('/web/security/logs', [App\Http\Controllers\SecurityLogController::class, 'index']);
+    Route::get('/web/account/security-settings', [App\Http\Controllers\AccountSecurityController::class, 'getSecuritySettings']);
+    Route::put('/web/account/password', [App\Http\Controllers\AccountSecurityController::class, 'changePassword']);
+    Route::get('/web/account/login-history', [App\Http\Controllers\AccountSecurityController::class, 'getLoginHistory']);
+});
+
+Route::post('/web/data-export/request', [App\Http\Controllers\DataExportController::class, 'requestExport'])->middleware('auth');
+Route::get('/web/audit/dashboard', [App\Http\Controllers\AuditController::class, 'getDashboard'])->middleware('auth');
+
+// Two-Factor Authentication routes - accessible to all authenticated users
+Route::middleware(['auth'])->group(function () {
+    Route::post('/two-factor/enable', [App\Http\Controllers\TwoFactorController::class, 'enable']);
+    Route::post('/two-factor/disable', [App\Http\Controllers\TwoFactorController::class, 'disable']);
+});
+
+// 2FA routes that work during login (no auth middleware)
+Route::post('/two-factor/send', [App\Http\Controllers\TwoFactorController::class, 'sendCode']);
+Route::post('/two-factor/verify', [App\Http\Controllers\TwoFactorController::class, 'verifyCode']);
+Route::get('/two-factor/status', [App\Http\Controllers\TwoFactorController::class, 'getStatus']);
+Route::get('/two-factor/verify', function () {
+    return view('auth.two-factor-verify');
+})->name('two-factor.verify');
 
 Route::get('/faq', function () {
     return view('faq');
@@ -1298,4 +1528,39 @@ Route::prefix('api/court-codes')->middleware('auth')->group(function () {
     Route::post('/validate', [App\Http\Controllers\CourtCodeApiController::class, 'validate']);
     Route::get('/for-court/{court}', [App\Http\Controllers\CourtCodeApiController::class, 'forCourt']);
     Route::post('/translate', [App\Http\Controllers\CourtCodeApiController::class, 'translate']);
+});
+
+// Test route for form controls
+Route::get('/test-forms', function () {
+    return view('test-forms');
+});
+// Admin Manual PDF Routes
+Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
+    Route::get('/admin/manual/pdf', [App\Http\Controllers\Admin\ManualController::class, 'generatePdf'])->name('admin.manual.pdf');
+    Route::get('/admin/manual/word', [App\Http\Controllers\Admin\ManualController::class, 'generateWord'])->name('admin.manual.word');
+    Route::get('/admin/manual/preview', [App\Http\Controllers\Admin\ManualController::class, 'preview'])->name('admin.manual.preview');
+    Route::get('/admin/manual/test', function () {
+        return view('admin.manual-test');
+    })->name('admin.manual.test');
+});
+
+// Admin Settings Routes
+Route::middleware(['auth', 'role:super-admin,admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    Route::get('/settings/load', [App\Http\Controllers\SettingsController::class, 'load'])->name('settings.load');
+    Route::post('/settings/save', [App\Http\Controllers\SettingsController::class, 'save'])->name('settings.save');
+    Route::post('/settings/clear-cache/{type}', [App\Http\Controllers\SettingsController::class, 'clearCache'])->name('settings.clear-cache');
+    Route::post('/settings/optimize-database', [App\Http\Controllers\SettingsController::class, 'optimizeDatabase'])->name('settings.optimize-database');
+    Route::get('/settings/backup-database', [App\Http\Controllers\SettingsController::class, 'backupDatabase'])->name('settings.backup-database');
+    
+    // Database Export with Progress Tracking
+    Route::post('/settings/export-database', [App\Http\Controllers\SettingsController::class, 'exportDatabase'])->name('settings.export-database');
+    Route::get('/settings/export-progress/{jobId}', [App\Http\Controllers\SettingsController::class, 'getExportProgress'])->name('settings.export-progress');
+    Route::post('/settings/cancel-export/{jobId}', [App\Http\Controllers\SettingsController::class, 'cancelExport'])->name('settings.cancel-export');
+    Route::get('/settings/download-export/{filename}', [App\Http\Controllers\SettingsController::class, 'downloadExport'])->name('settings.download-export');
+    
+    Route::get('/settings/system-info', [App\Http\Controllers\SettingsController::class, 'systemInfo'])->name('settings.system-info');
+    Route::post('/settings/maintenance/enable', [App\Http\Controllers\SettingsController::class, 'enableMaintenanceMode'])->name('settings.maintenance.enable');
+    Route::post('/settings/maintenance/disable', [App\Http\Controllers\SettingsController::class, 'disableMaintenanceMode'])->name('settings.maintenance.disable');
+    Route::get('/settings/maintenance/status', [App\Http\Controllers\SettingsController::class, 'getMaintenanceStatus'])->name('settings.maintenance.status');
 });

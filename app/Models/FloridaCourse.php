@@ -32,4 +32,17 @@ class FloridaCourse extends Model
     {
         return $this->hasMany(UserCourseEnrollment::class, 'course_id');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($course) {
+            // Delete all related enrollments
+            $course->enrollments()->delete();
+            
+            // Delete related chapters
+            $course->chapters()->delete();
+        });
+    }
 }

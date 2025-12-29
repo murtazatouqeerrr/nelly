@@ -80,6 +80,11 @@
                     <i class="fas fa-question-circle me-2"></i>Question Banks
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="/admin/final-exam-attempts">
+                    <i class="fas fa-clipboard-check me-2"></i>Final Exam Attempts
+                </a>
+            </li>
             
             <li class="nav-item mt-3">
                 <h6 class="text-muted px-3">Support & Help</h6>

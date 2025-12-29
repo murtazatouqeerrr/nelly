@@ -12,14 +12,26 @@ class AccountSecurityController extends Controller
 {
     public function getSecuritySettings(): JsonResponse
     {
+        \Log::info('AccountSecurityController getSecuritySettings called', [
+            'user_authenticated' => auth()->check(),
+            'user_id' => auth()->id(),
+            'user_role' => auth()->user()->role ?? null
+        ]);
+
         if (! auth()->check()) {
+            \Log::error('User not authenticated in getSecuritySettings');
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         $user = auth()->user();
 
+        \Log::info('Returning security settings', [
+            'user_id' => $user->id,
+            'two_factor_enabled' => $user->two_factor_enabled ?? false
+        ]);
+
         return response()->json([
-            'two_factor_enabled' => false, // Placeholder
+            'two_factor_enabled' => $user->two_factor_enabled ?? false,
             'last_password_change' => $user->updated_at,
             'active_sessions' => 1, // Placeholder
         ]);
@@ -66,7 +78,14 @@ class AccountSecurityController extends Controller
 
     public function getLoginHistory(): JsonResponse
     {
+        \Log::info('AccountSecurityController getLoginHistory called', [
+            'user_authenticated' => auth()->check(),
+            'user_id' => auth()->id(),
+            'user_role' => auth()->user()->role ?? null
+        ]);
+
         if (! auth()->check()) {
+            \Log::error('User not authenticated in getLoginHistory');
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -74,6 +93,11 @@ class AccountSecurityController extends Controller
             ->orderBy('attempted_at', 'desc')
             ->limit(50)
             ->get();
+
+        \Log::info('Returning login history', [
+            'user_id' => auth()->id(),
+            'attempts_count' => $attempts->count()
+        ]);
 
         return response()->json($attempts);
     }

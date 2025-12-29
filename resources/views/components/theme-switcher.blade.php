@@ -130,6 +130,6 @@ function setTheme(theme) {
 }
 
 // Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'dark-blue';
+const savedTheme = localStorage.getItem('theme') || 'dark';
 document.documentElement.setAttribute('data-theme', savedTheme);
 </script>

@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Create your Account - Step 3</title>
     <style>
         body { 
@@ -61,6 +62,7 @@
         .btn-back:hover { background: #5c636a; }
         .validation-errors { background: #f8d7da; border: 1px solid #f5c2c7; color: #842029; padding: 15px; border-radius: 0.375rem; margin-bottom: 20px; }
         .validation-errors ul { margin: 10px 0 0 20px; padding: 0; }
+        .loading { text-align: center; padding: 40px; color: #6c757d; }
     </style>
 </head>
 <body>
@@ -70,7 +72,7 @@
             <p>Step 3 of 4 - Security questions for identity verification</p>
         </div>
         
-        <form method="POST" action="{{ route('register.process', 3) }}">
+        <form method="POST" action="{{ route('register.process', 3) }}" id="registrationForm">
             @csrf
             
             @if(session('error'))
@@ -103,64 +105,10 @@
                     YOU MUST ENTER THESE ANSWERS ON THE COURSE EXACTLY AS THEY APPEAR BELOW. IF ANSWER INCORRECTLY YOU WILL BE LOCKED OUT OF YOUR ACCOUNT AND BE REQUIRED TO CONTACT CUSTOMER SUPPORT. PLEASE WRITE THEM DOWN.
                 </div>
                 
-                <div class="question-row">
-                    <div class="question-number">1.</div>
-                    <div class="question-text">When does your driver's license expire? ONLY THE YEAR ( exe. 2018 )</div>
-                    <input type="text" name="q1" class="answer-input" data-type="year" pattern="\d{4}" maxlength="4" title="4 digits only (e.g., 2025)" value="{{ old('q1', session('registration_step_3.q1')) }}" required>
-                </div>
-                
-                <div class="question-row">
-                    <div class="question-number">2.</div>
-                    <div class="question-text">What is the weight listed on your driver's license? (Only in numbers exe. 162)</div>
-                    <input type="text" name="q2" class="answer-input" data-type="number" pattern="\d+" maxlength="10" title="Numbers only" value="{{ old('q2', session('registration_step_3.q2')) }}" required>
-                </div>
-                
-                <div class="question-row">
-                    <div class="question-number">3.</div>
-                    <div class="question-text">How many cars do you own? (Only in Numbers exe. 1)</div>
-                    <input type="text" name="q3" class="answer-input" data-type="number" pattern="\d+" maxlength="5" title="Numbers only" value="{{ old('q3', session('registration_step_3.q3')) }}" required>
-                </div>
-                
-                <div class="question-row">
-                    <div class="question-number">4.</div>
-                    <div class="question-text">What are the last four digits of your Drivers License Number? (6374)</div>
-                    <input type="text" name="q4" class="answer-input" data-type="number" pattern="\d{4}" maxlength="4" title="4 digits only" value="{{ old('q4', session('registration_step_3.q4')) }}" required>
-                </div>
-                
-                <div class="question-row">
-                    <div class="question-number">5.</div>
-                    <div class="question-text">What is your age? (Only in numbers exe. 31 )</div>
-                    <input type="text" name="q5" class="answer-input" data-type="number" pattern="\d+" maxlength="3" title="Numbers only" value="{{ old('q5', session('registration_step_3.q5')) }}" required>
-                </div>
-                
-                <div class="question-row">
-                    <div class="question-number">6.</div>
-                    <div class="question-text">How old were you when you got your Drivers License? (Only in numbers exe. 16 )</div>
-                    <input type="text" name="q6" class="answer-input" data-type="number" pattern="\d+" maxlength="3" title="Numbers only" value="{{ old('q6', session('registration_step_3.q6')) }}" required>
-                </div>
-                
-                <div class="question-row">
-                    <div class="question-number">7.</div>
-                    <div class="question-text">What zip code do you live in? ( exe. 90210 )</div>
-                    <input type="text" name="q7" class="answer-input" data-type="zip" pattern="\d{5}" maxlength="5" title="5 digits only" value="{{ old('q7', session('registration_step_3.q7')) }}" required>
-                </div>
-                
-                <div class="question-row">
-                    <div class="question-number">8.</div>
-                    <div class="question-text">In what year were you born? (exe. 1980 )</div>
-                    <input type="text" name="q8" class="answer-input" data-type="year" pattern="\d{4}" maxlength="4" title="4 digits only (e.g., 1980)" value="{{ old('q8', session('registration_step_3.q8')) }}" required>
-                </div>
-                
-                <div class="question-row">
-                    <div class="question-number">9.</div>
-                    <div class="question-text">What color is your hair?</div>
-                    <input type="text" name="q9" class="answer-input" data-type="text" pattern="[a-zA-Z\s]+" title="Letters and spaces only" value="{{ old('q9', session('registration_step_3.q9')) }}" required>
-                </div>
-                
-                <div class="question-row">
-                    <div class="question-number">10.</div>
-                    <div class="question-text">What city do you live in?</div>
-                    <input type="text" name="q10" class="answer-input" data-type="text" pattern="[a-zA-Z\s\-']+" title="Letters, spaces, hyphens, and apostrophes only" value="{{ old('q10', session('registration_step_3.q10')) }}" required>
+                <div id="questions-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading security questions...
+                    </div>
                 </div>
                 
                 <div class="button-row">
@@ -171,27 +119,285 @@
         </form>
     </div>
     
+    <script src="/js/csrf-handler.js"></script>
     <script>
-        // Real-time validation for all answer inputs
-        document.querySelectorAll('.answer-input').forEach(input => {
-            input.addEventListener('input', function(e) {
-                const type = e.target.dataset.type;
-                let value = e.target.value;
+        let securityQuestions = [];
+        
+        // Load security questions from database
+        async function loadSecurityQuestions() {
+            console.log('Starting to load security questions...');
+            console.log('Current URL:', window.location.href);
+            console.log('Base URL:', window.location.origin);
+            
+            try {
+                // Try multiple URL variations to handle different environments
+                const possibleUrls = [
+                    '/api/security/all-questions',
+                    window.location.origin + '/api/security/all-questions',
+                    'api/security/all-questions'
+                ];
                 
-                switch(type) {
-                    case 'number':
-                    case 'year':
-                    case 'zip':
-                        // Only allow digits
-                        e.target.value = value.replace(/\D/g, '');
-                        break;
-                    case 'text':
-                        // Only allow letters, spaces, hyphens, apostrophes
-                        e.target.value = value.replace(/[^a-zA-Z\s\-']/g, '');
-                        break;
+                let response = null;
+                let workingUrl = null;
+                
+                for (const url of possibleUrls) {
+                    console.log(`Trying URL: ${url}`);
+                    try {
+                        response = await fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        
+                        console.log(`Response for ${url}:`, {
+                            status: response.status,
+                            statusText: response.statusText,
+                            ok: response.ok,
+                            headers: Object.fromEntries([...response.headers.entries()])
+                        });
+                        
+                        if (response.ok) {
+                            workingUrl = url;
+                            break;
+                        }
+                    } catch (fetchError) {
+                        console.error(`Fetch error for ${url}:`, fetchError);
+                        continue;
+                    }
                 }
+                
+                if (!response || !response.ok) {
+                    console.error('All URL attempts failed, using fallback questions');
+                    displayFallbackQuestions();
+                    return;
+                }
+                
+                console.log(`Successfully connected using: ${workingUrl}`);
+                
+                const responseText = await response.text();
+                console.log('Raw response length:', responseText.length);
+                console.log('Raw response preview:', responseText.substring(0, 200));
+                console.log('Response content type:', response.headers.get('content-type'));
+                
+                // Check if response looks like HTML (error page)
+                if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+                    console.error('Received HTML instead of JSON - likely an error page');
+                    console.log('Full HTML response:', responseText);
+                    displayFallbackQuestions();
+                    return;
+                }
+                
+                // Try to parse as JSON
+                let questionsMap;
+                try {
+                    questionsMap = JSON.parse(responseText);
+                    console.log('Successfully parsed JSON:', questionsMap);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    console.log('Failed to parse response as JSON, using fallback');
+                    displayFallbackQuestions();
+                    return;
+                }
+                
+                // Validate the response structure
+                if (!questionsMap || typeof questionsMap !== 'object') {
+                    console.error('Invalid response structure:', typeof questionsMap);
+                    displayFallbackQuestions();
+                    return;
+                }
+                
+                // Check if we got any questions
+                const questionKeys = Object.keys(questionsMap);
+                console.log('Question keys found:', questionKeys);
+                
+                if (questionKeys.length === 0) {
+                    console.warn('No questions found in response, using fallback');
+                    displayFallbackQuestions();
+                    return;
+                }
+                
+                // Convert to array format with proper field names
+                securityQuestions = questionKeys.map((key, index) => {
+                    // Extract the question key (e.g., 'q1' from 'security_q1')
+                    const questionKey = key.replace('security_', '');
+                    return {
+                        key: key,
+                        question: questionsMap[key],
+                        fieldName: questionKey // This will be q1, q2, q3, etc.
+                    };
+                });
+                
+                console.log('Processed security questions:', securityQuestions);
+                displayQuestions();
+                
+            } catch (error) {
+                console.error('Unexpected error loading security questions:', error);
+                console.error('Error stack:', error.stack);
+                displayFallbackQuestions();
+            }
+        }
+        
+        function displayQuestions() {
+            const container = document.getElementById('questions-container');
+            let html = '';
+            
+            securityQuestions.forEach((q, index) => {
+                const oldValue = getOldValue(q.fieldName);
+                const inputType = getInputType(q.question);
+                const pattern = getPattern(inputType);
+                const maxLength = getMaxLength(inputType);
+                const title = getTitle(inputType);
+                
+                html += `
+                    <div class="question-row">
+                        <div class="question-number">${index + 1}.</div>
+                        <div class="question-text">${q.question}</div>
+                        <input type="text" 
+                               name="${q.fieldName}" 
+                               class="answer-input" 
+                               data-type="${inputType}"
+                               pattern="${pattern}"
+                               maxlength="${maxLength}"
+                               title="${title}"
+                               value="${oldValue}"
+                               required>
+                    </div>
+                `;
             });
-        });
+            
+            container.innerHTML = html;
+            setupValidation();
+        }
+        
+        function displayFallbackQuestions() {
+            // Fallback to hardcoded questions if API fails
+            const container = document.getElementById('questions-container');
+            container.innerHTML = `
+                <div class="question-row">
+                    <div class="question-number">1.</div>
+                    <div class="question-text">When does your driver's license expire? (Year only, e.g., 2025)</div>
+                    <input type="text" name="q1" class="answer-input" data-type="year" pattern="\\d{4}" maxlength="4" title="4 digits only" value="{{ old('q1', session('registration_step_3.q1')) }}" required>
+                </div>
+                <div class="question-row">
+                    <div class="question-number">2.</div>
+                    <div class="question-text">What is the weight listed on your driver's license? (Numbers only, e.g., 162)</div>
+                    <input type="text" name="q2" class="answer-input" data-type="number" pattern="\\d+" maxlength="10" title="Numbers only" value="{{ old('q2', session('registration_step_3.q2')) }}" required>
+                </div>
+                <div class="question-row">
+                    <div class="question-number">3.</div>
+                    <div class="question-text">How many cars do you own? (Numbers only, e.g., 1)</div>
+                    <input type="text" name="q3" class="answer-input" data-type="number" pattern="\\d+" maxlength="10" title="Numbers only" value="{{ old('q3', session('registration_step_3.q3')) }}" required>
+                </div>
+                <div class="question-row">
+                    <div class="question-number">4.</div>
+                    <div class="question-text">What are the last four digits of your Driver's License Number? (e.g., 6374)</div>
+                    <input type="text" name="q4" class="answer-input" data-type="number" pattern="\\d{4}" maxlength="4" title="4 digits only" value="{{ old('q4', session('registration_step_3.q4')) }}" required>
+                </div>
+                <div class="question-row">
+                    <div class="question-number">5.</div>
+                    <div class="question-text">What is your age? (Numbers only, e.g., 31)</div>
+                    <input type="text" name="q5" class="answer-input" data-type="number" pattern="\\d+" maxlength="3" title="Numbers only" value="{{ old('q5', session('registration_step_3.q5')) }}" required>
+                </div>
+                <div class="question-row">
+                    <div class="question-number">6.</div>
+                    <div class="question-text">How old were you when you got your Driver's License? (Numbers only, e.g., 16)</div>
+                    <input type="text" name="q6" class="answer-input" data-type="number" pattern="\\d+" maxlength="3" title="Numbers only" value="{{ old('q6', session('registration_step_3.q6')) }}" required>
+                </div>
+                <div class="question-row">
+                    <div class="question-number">7.</div>
+                    <div class="question-text">What zip code do you live in? (e.g., 90210)</div>
+                    <input type="text" name="q7" class="answer-input" data-type="zip" pattern="\\d{5}" maxlength="5" title="5 digits only" value="{{ old('q7', session('registration_step_3.q7')) }}" required>
+                </div>
+                <div class="question-row">
+                    <div class="question-number">8.</div>
+                    <div class="question-text">In what year were you born? (e.g., 1980)</div>
+                    <input type="text" name="q8" class="answer-input" data-type="year" pattern="\\d{4}" maxlength="4" title="4 digits only" value="{{ old('q8', session('registration_step_3.q8')) }}" required>
+                </div>
+                <div class="question-row">
+                    <div class="question-number">9.</div>
+                    <div class="question-text">What color is your hair?</div>
+                    <input type="text" name="q9" class="answer-input" data-type="text" pattern="[a-zA-Z\\s\\-']+" maxlength="50" title="Letters, spaces, hyphens, and apostrophes only" value="{{ old('q9', session('registration_step_3.q9')) }}" required>
+                </div>
+                <div class="question-row">
+                    <div class="question-number">10.</div>
+                    <div class="question-text">What city do you live in?</div>
+                    <input type="text" name="q10" class="answer-input" data-type="text" pattern="[a-zA-Z\\s\\-']+" maxlength="50" title="Letters, spaces, hyphens, and apostrophes only" value="{{ old('q10', session('registration_step_3.q10')) }}" required>
+                </div>
+            `;
+            setupValidation();
+        }
+        
+        function getOldValue(fieldName) {
+            // Get old values from Laravel's old() helper or session
+            const oldValues = @json(old() ?: session('registration_step_3', []));
+            return oldValues[fieldName] || '';
+        }
+        
+        function getInputType(question) {
+            const lowerQuestion = question.toLowerCase();
+            if (lowerQuestion.includes('year') || lowerQuestion.includes('born')) return 'year';
+            if (lowerQuestion.includes('weight') || lowerQuestion.includes('age') || lowerQuestion.includes('cars') || lowerQuestion.includes('digits')) return 'number';
+            if (lowerQuestion.includes('zip')) return 'zip';
+            return 'text';
+        }
+        
+        function getPattern(inputType) {
+            switch(inputType) {
+                case 'year': return '[0-9]{4}';
+                case 'number': return '[0-9]+';
+                case 'zip': return '[0-9]{5}';
+                case 'text': return "[a-zA-Z\\s'-]+";
+                default: return '';
+            }
+        }
+        
+        function getMaxLength(inputType) {
+            switch(inputType) {
+                case 'year': return '4';
+                case 'zip': return '5';
+                case 'number': return '10';
+                default: return '50';
+            }
+        }
+        
+        function getTitle(inputType) {
+            switch(inputType) {
+                case 'year': return '4 digits only (e.g., 2025)';
+                case 'number': return 'Numbers only';
+                case 'zip': return '5 digits only';
+                case 'text': return 'Letters, spaces, hyphens, and apostrophes only';
+                default: return '';
+            }
+        }
+        
+        function setupValidation() {
+            // Real-time validation for all answer inputs
+            document.querySelectorAll('.answer-input').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    const type = e.target.dataset.type;
+                    let value = e.target.value;
+                    
+                    switch(type) {
+                        case 'number':
+                        case 'year':
+                        case 'zip':
+                            // Only allow digits
+                            e.target.value = value.replace(/[^0-9]/g, '');
+                            break;
+                        case 'text':
+                            // Only allow letters, spaces, hyphens, apostrophes
+                            e.target.value = value.replace(/[^a-zA-Z\s'-]/g, '');
+                            break;
+                    }
+                });
+            });
+        }
+        
+        // Load questions when page loads
+        document.addEventListener('DOMContentLoaded', loadSecurityQuestions);
     </script>
 </body>
 </html>

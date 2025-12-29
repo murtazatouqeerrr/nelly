@@ -5,11 +5,11 @@
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #10b981; color: white; padding: 20px; text-align: center; }
+        .header { background: #516425; color: white; padding: 20px; text-align: center; }
         .content { padding: 30px; background: #f9fafb; }
-        .button { display: inline-block; padding: 12px 30px; background: #10b981; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .button { display: inline-block; padding: 12px 30px; background: #516425; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
         .progress-bar { width: 100%; height: 30px; background: #e5e7eb; border-radius: 15px; overflow: hidden; margin: 20px 0; }
-        .progress-fill { height: 100%; background: #10b981; text-align: center; line-height: 30px; color: white; font-weight: bold; }
+        .progress-fill { height: 100%; background: #516425; text-align: center; line-height: 30px; color: white; font-weight: bold; }
         .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
     </style>
 </head>

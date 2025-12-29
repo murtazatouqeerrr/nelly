@@ -76,7 +76,7 @@
             <p><strong>Invoice Number:</strong> {{ $invoice->invoice_number }}</p>
             <p><strong>Invoice Date:</strong> {{ $invoice->invoice_date->format('M d, Y') }}</p>
             <p><strong>Due Date:</strong> {{ $invoice->due_date ? $invoice->due_date->format('M d, Y') : $invoice->invoice_date->format('M d, Y') }}</p>
-            <p><strong>Payment Status:</strong> <span style="color: #28a745;">{{ ucfirst($invoice->payment->status) }}</span></p>
+            <p><strong>Payment Status:</strong> <span style="color: #516425;">{{ ucfirst($invoice->payment->status) }}</span></p>
         </div>
         
         <div class="customer-info">

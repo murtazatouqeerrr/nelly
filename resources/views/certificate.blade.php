@@ -68,7 +68,7 @@
             gap: 5px; 
         }
         .btn-print { background: #007bff; color: white; }
-        .btn-download { background: #28a745; color: white; }
+        .btn-download { background: #516425; color: white; }
         .btn:hover { opacity: 0.8; }
         @media print {
             .action-buttons { display: none; }

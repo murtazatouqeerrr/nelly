@@ -50,6 +50,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->is('account-security') ? 'active' : '' }}" href="/account-security" style="color: {{ request()->is('account-security') ? 'var(--text-primary)' : 'var(--text-secondary)' }} !important; transition: var(--transition); border-radius: 8px; margin: 4px 0; padding: 12px 16px !important; {{ request()->is('account-security') ? 'background: var(--accent) !important;' : '' }}">
+                        <i class="fas fa-shield-alt me-2"></i> Account Security
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->is('my-payments') ? 'active' : '' }}" href="/my-payments" style="color: {{ request()->is('my-payments') ? 'var(--text-primary)' : 'var(--text-secondary)' }} !important; transition: var(--transition); border-radius: 8px; margin: 4px 0; padding: 12px 16px !important; {{ request()->is('my-payments') ? 'background: var(--accent) !important;' : '' }}">
                         <i class="fas fa-receipt me-2"></i> My Payments
                     </a>
@@ -73,6 +78,21 @@
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/enrollments') ? 'bg-primary rounded' : '' }}" href="/admin/enrollments">
                             <i class="fas fa-users me-2"></i> Enrollments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/florida-courses*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-courses">
+                            <i class="fas fa-flag-usa me-2"></i>Courses (Advanced)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/florida-certificates*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-certificates">
+                            <i class="fas fa-certificate me-2"></i> Florida Certificates
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/final-exam-attempts*') ? 'bg-primary rounded' : '' }}" href="/admin/final-exam-attempts">
+                            <i class="fas fa-clipboard-check me-2"></i> Final Exam Attempts
                         </a>
                     </li>
                     <li class="nav-item">
@@ -115,16 +135,7 @@
                             <i class="fas fa-lock me-2"></i> User Access
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/florida-courses*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-courses">
-                            <i class="fas fa-flag-usa me-2"></i> Florida Courses
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/florida-certificates*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-certificates">
-                            <i class="fas fa-certificate me-2"></i> Florida Certificates
-                        </a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/reports') ? 'bg-primary rounded' : '' }}" href="/admin/reports">
                             <i class="fas fa-chart-bar me-2"></i> Reports
@@ -166,6 +177,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/security-questions*') ? 'bg-primary rounded' : '' }}" href="/admin/security-questions">
+                            <i class="fas fa-shield-alt me-2"></i> Security Questions
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/mobile-optimization') ? 'bg-primary rounded' : '' }}" href="/admin/mobile-optimization">
                             <i class="fas fa-mobile-alt me-2"></i> Mobile Optimization
                         </a>
@@ -194,11 +210,6 @@
                     <hr class="text-white">
                     <li class="nav-item">
                         <small class="text-muted px-3">FLORIDA SECURITY & AUDIT</small>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/florida-security') ? 'bg-primary rounded' : '' }}" href="/admin/florida-security">
-                            <i class="fas fa-shield-alt me-2"></i> Security Dashboard
-                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/florida-audit') ? 'bg-primary rounded' : '' }}" href="/admin/florida-audit">

@@ -8,8 +8,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         .success-card { background: white; border-radius: 8px; padding: 40px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 500px; }
-        .success-icon { font-size: 64px; color: #059669; margin-bottom: 20px; }
-        h1 { color: #059669; margin-bottom: 15px; }
+        .success-icon { font-size: 64px; color: #516425; margin-bottom: 20px; }
+        h1 { color: #516425; margin-bottom: 15px; }
         p { color: #666; margin-bottom: 30px; line-height: 1.6; }
         .btn { display: inline-block; padding: 15px 30px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; transition: background 0.3s; }
         .btn:hover { background: #1d4ed8; }

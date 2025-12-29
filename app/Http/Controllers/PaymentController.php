@@ -30,12 +30,141 @@ class PaymentController extends Controller
 
     public function myPaymentsWeb()
     {
-        $payments = Payment::with(['enrollment.course', 'invoice'])
-            ->where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        try {
+            $user = Auth::user();
+            
+            // Get all payments (completed and pending)
+            $payments = Payment::with(['enrollment.course', 'invoice'])
+                ->where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-        return response()->json($payments);
+            // Get pending enrollments without successful payments
+            $pendingEnrollments = \App\Models\UserCourseEnrollment::with(['course'])
+                ->where('user_id', $user->id)
+                ->where('payment_status', 'pending')
+                ->where(function($query) {
+                    $query->whereDoesntHave('payments')
+                          ->orWhereHas('payments', function($q) {
+                              $q->whereIn('status', ['failed', 'cancelled']);
+                          });
+                })
+                ->get();
+
+            // Transform pending enrollments to match payment structure
+            $pendingPayments = $pendingEnrollments->map(function ($enrollment) {
+                try {
+                    $courseData = $enrollment->getCourseData();
+                    return (object) [
+                        'id' => 'pending_' . $enrollment->id,
+                        'enrollment_id' => $enrollment->id,
+                        'amount' => $enrollment->amount_paid ?? ($courseData->price ?? 0),
+                        'status' => 'pending',
+                        'payment_method' => null,
+                        'created_at' => $enrollment->enrolled_at,
+                        'enrollment' => $enrollment,
+                        'invoice' => null,
+                        'is_pending_enrollment' => true,
+                        'gateway_payment_id' => null,
+                        'billing_name' => null,
+                        'billing_email' => null,
+                        'coupon_code' => null,
+                        'discount_amount' => 0,
+                        'original_amount' => $courseData->price ?? 0,
+                    ];
+                } catch (\Exception $e) {
+                    \Log::warning('Error processing pending enrollment: ' . $e->getMessage(), [
+                        'enrollment_id' => $enrollment->id,
+                        'user_id' => $enrollment->user_id
+                    ]);
+                    return null;
+                }
+            })->filter(); // Remove null values
+
+            // Merge and sort all payments
+            $allPayments = $payments->concat($pendingPayments)->sortByDesc('created_at')->values();
+
+            return response()->json($allPayments);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error in myPaymentsWeb: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json(['error' => 'Unable to load payments'], 500);
+        }
+    }
+
+    public function retryPayment(Request $request)
+    {
+        try {
+            $request->validate([
+                'enrollment_id' => 'required|exists:user_course_enrollments,id',
+            ]);
+
+            $user = Auth::user();
+            $enrollment = \App\Models\UserCourseEnrollment::with('course')
+                ->where('id', $request->enrollment_id)
+                ->where('user_id', $user->id)
+                ->where('payment_status', 'pending')
+                ->first();
+
+            if (!$enrollment) {
+                return response()->json(['error' => 'Enrollment not found or not eligible for retry'], 404);
+            }
+
+            // Redirect to checkout page for this enrollment
+            return response()->json([
+                'redirect_url' => route('payment.show', [
+                    'course_id' => $enrollment->course_id,
+                    'table' => $enrollment->course_table ?? 'florida_courses'
+                ])
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error in retryPayment: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'enrollment_id' => $request->enrollment_id ?? null
+            ]);
+            
+            return response()->json(['error' => 'Unable to process retry request'], 500);
+        }
+    }
+
+    public function cancelPendingPayment(Request $request)
+    {
+        try {
+            $request->validate([
+                'enrollment_id' => 'required|exists:user_course_enrollments,id',
+            ]);
+
+            $user = Auth::user();
+            $enrollment = \App\Models\UserCourseEnrollment::where('id', $request->enrollment_id)
+                ->where('user_id', $user->id)
+                ->where('payment_status', 'pending')
+                ->first();
+
+            if (!$enrollment) {
+                return response()->json(['error' => 'Enrollment not found or not eligible for cancellation'], 404);
+            }
+
+            // Update enrollment status to cancelled (don't change payment_status as 'cancelled' is not valid)
+            $enrollment->update([
+                'status' => 'cancelled'
+                // Keep payment_status as 'pending' since 'cancelled' is not a valid enum value
+            ]);
+
+            return response()->json(['message' => 'Payment cancelled successfully']);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error in cancelPendingPayment: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'enrollment_id' => $request->enrollment_id ?? null
+            ]);
+            
+            return response()->json(['error' => 'Unable to cancel payment'], 500);
+        }
     }
 
     public function store(Request $request)
@@ -211,16 +340,33 @@ class PaymentController extends Controller
             return redirect()->back()->with('error', 'Course not found');
         }
 
-        // Create or get enrollment (required for checkout page)
-        $enrollment = \App\Models\UserCourseEnrollment::firstOrCreate([
-            'user_id' => $user->id,
-            'course_id' => $course->id,
-        ], [
-            'amount_paid' => $course->price ?? 0,
-            'payment_status' => 'pending',
-            'enrolled_at' => now(),
-            'status' => 'active', // Valid values: active, completed, expired, cancelled
-        ]);
+        // Check for existing enrollment
+        $existingEnrollment = \App\Models\UserCourseEnrollment::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->where('course_table', $table)
+            ->first();
+
+        if ($existingEnrollment) {
+            // If enrollment exists and is already paid, redirect to course
+            if ($existingEnrollment->payment_status === 'paid') {
+                return redirect()->route('course-player', ['enrollmentId' => $existingEnrollment->id])
+                    ->with('info', 'You are already enrolled and can access this course.');
+            }
+            
+            // If enrollment exists but payment is pending/failed, allow payment
+            $enrollment = $existingEnrollment;
+        } else {
+            // Create new enrollment for checkout
+            $enrollment = \App\Models\UserCourseEnrollment::create([
+                'user_id' => $user->id,
+                'course_id' => $course->id,
+                'course_table' => $table,
+                'amount_paid' => $course->price ?? 0,
+                'payment_status' => 'pending',
+                'enrolled_at' => now(),
+                'status' => 'active',
+            ]);
+        }
 
         return view('payment.checkout', compact('course', 'enrollment'));
     }
@@ -232,6 +378,9 @@ class PaymentController extends Controller
             'table' => 'required|in:courses,florida_courses',
             'payment_method' => 'required|string',
             'amount' => 'required|numeric|min:0',
+            'original_amount' => 'sometimes|numeric|min:0',
+            'coupon_code' => 'sometimes|string|max:6',
+            'discount_amount' => 'sometimes|numeric|min:0',
         ]);
 
         $user = auth()->user();
@@ -244,14 +393,46 @@ class PaymentController extends Controller
             $course = \App\Models\FloridaCourse::findOrFail($request->course_id);
         }
 
+        // Check for existing enrollment first
+        $existingEnrollment = \App\Models\UserCourseEnrollment::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->where('course_table', $table)
+            ->first();
+
+        if ($existingEnrollment) {
+            return redirect()->back()->with('error', 'You are already enrolled in this course.');
+        }
+
         // Create enrollment
-        $enrollment = \App\Models\UserCourseEnrollment::firstOrCreate([
+        $enrollment = \App\Models\UserCourseEnrollment::create([
             'user_id' => $user->id,
             'course_id' => $course->id,
-        ], [
+            'course_table' => $table,
             'enrolled_at' => now(),
             'status' => 'active',
+            'amount_paid' => $course->price ?? 0,
+            'payment_status' => 'pending',
         ]);
+
+        // Handle coupon if provided
+        $couponUsed = null;
+        if ($request->filled('coupon_code')) {
+            $coupon = \App\Models\Coupon::where('code', $request->coupon_code)->first();
+            
+            if ($coupon && $coupon->isValid()) {
+                // Record coupon usage
+                $couponUsed = \App\Models\CouponUsage::create([
+                    'coupon_id' => $coupon->id,
+                    'user_id' => $user->id,
+                    'discount_amount' => $request->discount_amount ?? 0,
+                    'original_amount' => $request->original_amount ?? $course->price,
+                    'final_amount' => $request->amount,
+                ]);
+                
+                // Mark coupon as used
+                $coupon->markAsUsed();
+            }
+        }
 
         // Create payment (invoice will be created automatically by PaymentObserver)
         $payment = Payment::create([
@@ -264,6 +445,9 @@ class PaymentController extends Controller
             'billing_name' => $user->first_name.' '.$user->last_name,
             'billing_email' => $user->email,
             'status' => 'completed',
+            'coupon_code' => $request->coupon_code,
+            'discount_amount' => $request->discount_amount ?? 0,
+            'original_amount' => $request->original_amount ?? $course->price,
         ]);
 
         // Clear pending enrollment session

@@ -134,19 +134,19 @@
                 return;
             }
             
-            container.innerHTML = chapters.map(chapter => `
+            let chaptersHtml = chapters.map(chapter => `
                 <div class="card mb-2">
                     <div class="card-header d-flex justify-content-between align-items-center py-2">
                         <h5>${chapter.title}</h5>
                         <div>
                             <span class="badge bg-info me-2">${chapter.duration} min</span>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editChapter(${chapter.id})">
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editChapter('${chapter.id}')">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-success me-1" onclick="manageQuestions(${chapter.id})">
+                            <button class="btn btn-sm btn-outline-success me-1" onclick="manageQuestions('${chapter.id}')">
                                 <i class="fas fa-question-circle"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteChapter(${chapter.id})">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteChapter('${chapter.id}')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -167,6 +167,30 @@
                     </div>
                 </div>
             `).join('');
+            
+            // Add Final Exam section
+            chaptersHtml += `
+                <div class="card mb-2 border-warning">
+                    <div class="card-header d-flex justify-content-between align-items-center py-2 bg-warning bg-opacity-10">
+                        <h5><i class="fas fa-graduation-cap me-2"></i>Final Exam</h5>
+                        <div>
+                            <span class="badge bg-warning text-dark me-2">60 min</span>
+                            <button class="btn btn-sm btn-outline-success me-1" onclick="manageQuestions('final-exam')" title="Manage Final Exam Questions">
+                                <i class="fas fa-question-circle"></i> Questions
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body py-2">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <small class="text-muted">The final exam is automatically added to all courses. Students must pass this to complete the course.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = chaptersHtml;
         }
         
         function showCreateModal() {
@@ -244,7 +268,18 @@
         }
         
         function manageQuestions(id) {
-            window.location.href = `/admin/chapters/${id}/questions`;
+            let url = `/admin/chapters/${id}/questions`;
+            
+            // For final exam, add course_id parameter
+            if (id === 'final-exam') {
+                // Get course_id from current URL path
+                const pathParts = window.location.pathname.split('/');
+                const courseIdIndex = pathParts.indexOf('florida-courses') + 1;
+                const courseId = pathParts[courseIdIndex] || '1';
+                url += `?course_id=${courseId}`;
+            }
+            
+            window.location.href = url;
         }
         
         async function deleteChapter(id) {

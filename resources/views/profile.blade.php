@@ -6,55 +6,267 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>User Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="/css/themes.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .profile-section {
+            margin-bottom: 2rem;
+        }
+        .security-question {
+            background-color: var(--bg-secondary);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.375rem;
+            color: var(--text-primary);
+        }
+        .field-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .field-value {
+            color: var(--text-primary);
+        }
+        .card {
+            background-color: var(--bg-secondary);
+            border-color: var(--border);
+            color: var(--text-primary);
+        }
+        .card-header {
+            border-bottom-color: var(--border);
+        }
+        .modal-content {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        .modal-header {
+            border-bottom-color: var(--border);
+        }
+        .modal-footer {
+            border-top-color: var(--border);
+        }
+        .form-control {
+            background-color: var(--bg-primary);
+            border-color: var(--border);
+            color: var(--text-primary);
+        }
+        .form-control:focus {
+            background-color: var(--bg-primary);
+            border-color: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.2rem rgba(var(--accent-rgb), 0.25);
+        }
+        .form-label {
+            color: var(--text-secondary);
+        }
+        .alert-info {
+            background-color: var(--bg-primary);
+            border-color: var(--border);
+            color: var(--text-primary);
+        }
+        .edit-mode {
+            display: none;
+        }
+        .edit-mode.active {
+            display: block;
+        }
+        .view-mode.editing {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <x-theme-switcher />
     @include('components.navbar')
 
     <div class="container mt-4" style="margin-left: 300px; max-width: calc(100% - 320px);">
-        <div id="app">
-            <user-profile></user-profile>
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-user-circle me-2"></i>User Profile</h1>
+                    <button class="btn btn-primary" id="editProfileBtn">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
+                    </button>
+                </div>
+            </div>
         </div>
-        
-        <!-- Fallback content -->
-        <div id="fallback-content">
-            <h2>User Profile</h2>
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Profile Information</h5>
-                        </div>
-                        <div class="card-body" id="profile-info">
-                            <p>Loading profile...</p>
-                        </div>
+
+        <!-- Basic Information -->
+        <div class="profile-section">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Basic Information</h5>
+                </div>
+                <div class="card-body" id="basic-info">
+                    <p>Loading profile...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- License Information -->
+        <div class="profile-section">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>License Information</h5>
+                </div>
+                <div class="card-body" id="license-info">
+                    <p>Loading license information...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Court & Citation Information -->
+        <div class="profile-section">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Court & Citation Information</h5>
+                </div>
+                <div class="card-body" id="court-info">
+                    <p>Loading court information...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Questions -->
+        <div class="profile-section">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Security Questions</h5>
+                </div>
+                <div class="card-body" id="security-questions">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        These security questions are used for identity verification during your course.
                     </div>
-                    
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h5>Update Profile</h5>
-                        </div>
-                        <div class="card-body">
-                            <form id="profile-form">
-                                <div class="mb-3">
+                    <div id="security-questions-content">
+                        <p>Loading security questions...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Information -->
+        <div class="profile-section">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Account Information</h5>
+                </div>
+                <div class="card-body" id="account-info">
+                    <p>Loading account information...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editProfileModalLabel">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="profile-form">
+                            <!-- Basic Information -->
+                            <h6 class="text-primary mb-3"><i class="fas fa-user me-2"></i>Basic Information</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
                                     <label for="first_name" class="form-label">First Name</label>
                                     <input type="text" class="form-control" id="first_name" name="first_name" required>
                                 </div>
-                                <div class="mb-3">
+                                <div class="col-md-6">
                                     <label for="last_name" class="form-label">Last Name</label>
                                     <input type="text" class="form-control" id="last_name" name="last_name" required>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+
+                            <!-- License Information -->
+                            <h6 class="text-success mb-3 mt-4"><i class="fas fa-id-card me-2"></i>License Information</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="license_state" class="form-label">License State</label>
+                                    <input type="text" class="form-control" id="license_state" name="license_state">
                                 </div>
-                                <button type="submit" class="btn btn-primary">Update Profile</button>
-                            </form>
-                        </div>
+                                <div class="col-md-6">
+                                    <label for="license_class" class="form-label">License Class</label>
+                                    <input type="text" class="form-control" id="license_class" name="license_class">
+                                </div>
+                            </div>
+
+                            <!-- Court Information -->
+                            <h6 class="text-warning mb-3 mt-4"><i class="fas fa-gavel me-2"></i>Court & Citation</h6>
+                            <div class="mb-3">
+                                <label for="court_selected" class="form-label">Court Selected</label>
+                                <input type="text" class="form-control" id="court_selected" name="court_selected">
+                            </div>
+                            <div class="mb-3">
+                                <label for="citation_number" class="form-label">Citation Number</label>
+                                <input type="text" class="form-control" id="citation_number" name="citation_number">
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="due_month" class="form-label">Due Month</label>
+                                    <input type="number" class="form-control" id="due_month" name="due_month" min="1" max="12">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="due_day" class="form-label">Due Day</label>
+                                    <input type="number" class="form-control" id="due_day" name="due_day" min="1" max="31">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="due_year" class="form-label">Due Year</label>
+                                    <input type="number" class="form-control" id="due_year" name="due_year" min="2020" max="2030">
+                                </div>
+                            </div>
+
+                            <!-- Security Questions -->
+                            <h6 class="text-danger mb-3 mt-4"><i class="fas fa-shield-alt me-2"></i>Security Questions</h6>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Important:</strong> These answers are used for identity verification during your course. Make sure they match exactly what you entered during registration.
+                            </div>
+                            
+                            <div id="edit-security-questions">
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading security questions...
+                                </div>
+                            </div>
+
+                            <!-- Agreement Information -->
+                            <h6 class="text-info mb-3 mt-4"><i class="fas fa-file-contract me-2"></i>Agreement Information</h6>
+                            <div class="mb-3">
+                                <label for="agreement_name" class="form-label">Agreement Name</label>
+                                <input type="text" class="form-control" id="agreement_name" name="agreement_name">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms_agreement" name="terms_agreement" value="1">
+                                    <label class="form-check-label" for="terms_agreement">
+                                        I agree to the terms and conditions
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveProfileBtn">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
                     </div>
                 </div>
             </div>
@@ -62,7 +274,159 @@
     </div>
     
     <script>
+        let currentUser = null;
+        let securityQuestions = {};
+
+        // Load security questions from database
+        async function loadSecurityQuestions() {
+            try {
+                const response = await fetch('/api/security/all-questions');
+                if (response.ok) {
+                    securityQuestions = await response.json();
+                }
+            } catch (error) {
+                console.error('Error loading security questions:', error);
+                // Fallback to empty object
+                securityQuestions = {};
+            }
+        }
+
+        // Load and populate security questions for edit modal
+        async function loadEditSecurityQuestions() {
+            try {
+                const response = await fetch('/api/security/all-questions');
+                if (response.ok) {
+                    const questionsMap = await response.json();
+                    populateEditSecurityQuestions(questionsMap);
+                }
+            } catch (error) {
+                console.error('Error loading security questions for edit:', error);
+                populateEditSecurityQuestionsFallback();
+            }
+        }
+
+        function populateEditSecurityQuestions(questionsMap) {
+            const container = document.getElementById('edit-security-questions');
+            let html = '';
+            
+            Object.keys(questionsMap).forEach((key, index) => {
+                const questionText = questionsMap[key];
+                const fieldName = key; // security_q1, security_q2, etc.
+                const inputType = getInputTypeFromQuestion(questionText);
+                const pattern = getPatternFromType(inputType);
+                const maxLength = getMaxLengthFromType(inputType);
+                const title = getTitleFromType(inputType);
+                
+                html += `
+                    <div class="mb-3">
+                        <label for="${fieldName}" class="form-label">${index + 1}. ${questionText}</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="${fieldName}" 
+                               name="${fieldName}" 
+                               pattern="${pattern}"
+                               maxlength="${maxLength}"
+                               title="${title}"
+                               data-input-type="${inputType}">
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Add input validation
+            setupEditSecurityValidation();
+            
+            // Populate with current user data if available
+            if (currentUser) {
+                Object.keys(questionsMap).forEach(key => {
+                    const input = document.getElementById(key);
+                    if (input && currentUser[key]) {
+                        input.value = currentUser[key];
+                    }
+                });
+            }
+        }
+
+        function populateEditSecurityQuestionsFallback() {
+            const container = document.getElementById('edit-security-questions');
+            container.innerHTML = `
+                <div class="mb-3">
+                    <label for="security_q1" class="form-label">1. When does your driver's license expire? (Year only, e.g., 2025)</label>
+                    <input type="text" class="form-control" id="security_q1" name="security_q1" pattern="\\d{4}" maxlength="4" title="4 digits only">
+                </div>
+                <div class="mb-3">
+                    <label for="security_q2" class="form-label">2. What is the weight listed on your driver's license? (Numbers only, e.g., 162)</label>
+                    <input type="text" class="form-control" id="security_q2" name="security_q2" pattern="\\d+" title="Numbers only">
+                </div>
+            `;
+            setupEditSecurityValidation();
+        }
+
+        function getInputTypeFromQuestion(question) {
+            const lowerQuestion = question.toLowerCase();
+            if (lowerQuestion.includes('year') || lowerQuestion.includes('born')) return 'year';
+            if (lowerQuestion.includes('weight') || lowerQuestion.includes('age') || lowerQuestion.includes('cars') || lowerQuestion.includes('digits')) return 'number';
+            if (lowerQuestion.includes('zip')) return 'zip';
+            return 'text';
+        }
+
+        function getPatternFromType(inputType) {
+            switch(inputType) {
+                case 'year': return '\\d{4}';
+                case 'number': return '\\d+';
+                case 'zip': return '\\d{5}';
+                case 'text': return '[a-zA-Z\\s\'-]+';
+                default: return '';
+            }
+        }
+
+        function getMaxLengthFromType(inputType) {
+            switch(inputType) {
+                case 'year': return '4';
+                case 'zip': return '5';
+                case 'number': return '10';
+                default: return '50';
+            }
+        }
+
+        function getTitleFromType(inputType) {
+            switch(inputType) {
+                case 'year': return '4 digits only (e.g., 2025)';
+                case 'number': return 'Numbers only';
+                case 'zip': return '5 digits only';
+                case 'text': return 'Letters, spaces, hyphens, and apostrophes only';
+                default: return '';
+            }
+        }
+
+        function setupEditSecurityValidation() {
+            // Add real-time validation for security question inputs
+            document.querySelectorAll('#edit-security-questions input').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    const inputType = e.target.dataset.inputType;
+                    let value = e.target.value;
+                    
+                    switch(inputType) {
+                        case 'number':
+                        case 'year':
+                        case 'zip':
+                            // Only allow digits
+                            e.target.value = value.replace(/\D/g, '');
+                            break;
+                        case 'text':
+                            // Only allow letters, spaces, hyphens, apostrophes
+                            e.target.value = value.replace(/[^a-zA-Z\s\-']/g, '');
+                            break;
+                    }
+                });
+            });
+        }
+
         async function loadProfile() {
+            // Load security questions first
+            await loadSecurityQuestions();
+            
             try {
                 const response = await fetch('/web/user', {
                     headers: {
@@ -80,34 +444,155 @@
                     throw new Error('Failed to load profile');
                 }
                 
-                const user = await response.json();
-                
-                // Display profile info
-                document.getElementById('profile-info').innerHTML = `
-                    <p><strong>Name:</strong> ${user.first_name} ${user.last_name}</p>
-                    <p><strong>Email:</strong> ${user.email}</p>
-                    <p><strong>Role:</strong> ${user.role?.name || 'N/A'}</p>
-                    <p><strong>Status:</strong> ${user.status}</p>
-                    <p><strong>Member Since:</strong> ${new Date(user.created_at).toLocaleDateString()}</p>
-                `;
-                
-                // Fill form
-                document.getElementById('first_name').value = user.first_name;
-                document.getElementById('last_name').value = user.last_name;
-                document.getElementById('email').value = user.email;
+                currentUser = await response.json();
+                displayProfile(currentUser);
                 
             } catch (error) {
                 console.error('Error loading profile:', error);
-                document.getElementById('profile-info').innerHTML = '<p class="text-danger">Error loading profile.</p>';
+                showError('Error loading profile.');
             }
         }
-        
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+
+        function displayProfile(user) {
+            // Basic Information
+            document.getElementById('basic-info').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><span class="field-label">First Name:</span> <span class="field-value">${user.first_name || 'Not provided'}</span></p>
+                        <p><span class="field-label">Last Name:</span> <span class="field-value">${user.last_name || 'Not provided'}</span></p>
+                        <p><span class="field-label">Email:</span> <span class="field-value">${user.email || 'Not provided'}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span class="field-label">Role:</span> <span class="field-value">${user.role?.name || 'Student'}</span></p>
+                        <p><span class="field-label">Status:</span> <span class="field-value badge ${user.status === 'active' ? 'bg-success' : 'bg-secondary'}">${user.status || 'Unknown'}</span></p>
+                        <p><span class="field-label">Member Since:</span> <span class="field-value">${user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown'}</span></p>
+                    </div>
+                </div>
+            `;
+
+            // License Information
+            document.getElementById('license-info').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><span class="field-label">License State:</span> <span class="field-value">${user.license_state || 'Not provided'}</span></p>
+                        <p><span class="field-label">License Class:</span> <span class="field-value">${user.license_class || 'Not provided'}</span></p>
+                    </div>
+                </div>
+            `;
+
+            // Court & Citation Information
+            const dueDate = (user.due_month && user.due_day && user.due_year) 
+                ? `${user.due_month}/${user.due_day}/${user.due_year}` 
+                : 'Not provided';
+
+            document.getElementById('court-info').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><span class="field-label">Court Selected:</span> <span class="field-value">${user.court_selected || 'Not provided'}</span></p>
+                        <p><span class="field-label">Citation Number:</span> <span class="field-value">${user.citation_number || 'Not provided'}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span class="field-label">Due Date:</span> <span class="field-value">${dueDate}</span></p>
+                    </div>
+                </div>
+            `;
+
+            // Security Questions
+            let securityHtml = '';
+            Object.keys(securityQuestions).forEach((key, index) => {
+                const answer = user[key] || 'Not answered';
+                securityHtml += `
+                    <div class="security-question">
+                        <strong>Question ${index + 1}:</strong> ${securityQuestions[key]}<br>
+                        <span class="field-label">Answer:</span> <span class="field-value">${answer}</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('security-questions-content').innerHTML = securityHtml;
+
+            // Account Information
+            document.getElementById('account-info').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><span class="field-label">Agreement Name:</span> <span class="field-value">${user.agreement_name || 'Not provided'}</span></p>
+                        <p><span class="field-label">Terms Agreement:</span> <span class="field-value badge ${user.terms_agreement ? 'bg-success' : 'bg-danger'}">${user.terms_agreement ? 'Accepted' : 'Not Accepted'}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span class="field-label">Registration Completed:</span> <span class="field-value">${user.registration_completed_at ? new Date(user.registration_completed_at).toLocaleDateString() : 'Not completed'}</span></p>
+                        <p><span class="field-label">Last Updated:</span> <span class="field-value">${user.updated_at ? new Date(user.updated_at).toLocaleDateString() : 'Unknown'}</span></p>
+                    </div>
+                </div>
+            `;
+
+            // Fill edit form
+            fillEditForm(user);
+        }
+
+        function fillEditForm(user) {
+            const fields = [
+                'first_name', 'last_name', 'email', 'license_state', 'license_class',
+                'court_selected', 'citation_number', 'due_month', 'due_day', 'due_year',
+                'security_q1', 'security_q2', 'security_q3', 'security_q4', 'security_q5',
+                'security_q6', 'security_q7', 'security_q8', 'security_q9', 'security_q10',
+                'agreement_name'
+            ];
+
+            fields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element && user[field] !== undefined) {
+                    element.value = user[field] || '';
+                }
+            });
+
+            // Handle checkbox for terms agreement
+            const termsCheckbox = document.getElementById('terms_agreement');
+            if (termsCheckbox) {
+                termsCheckbox.checked = user.terms_agreement || false;
+            }
+        }
+
+        function showError(message) {
+            const errorHtml = `<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>${message}</div>`;
+            document.getElementById('basic-info').innerHTML = errorHtml;
+            document.getElementById('license-info').innerHTML = errorHtml;
+            document.getElementById('court-info').innerHTML = errorHtml;
+            document.getElementById('security-questions-content').innerHTML = errorHtml;
+            document.getElementById('account-info').innerHTML = errorHtml;
+        }
+
+        // Event Listeners
+        document.getElementById('editProfileBtn').addEventListener('click', async function() {
+            // Load security questions for the edit modal
+            await loadEditSecurityQuestions();
             
-            const formData = new FormData(e.target);
+            const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+            modal.show();
+        });
+
+        document.getElementById('saveProfileBtn').addEventListener('click', async function() {
+            const form = document.getElementById('profile-form');
+            const formData = new FormData(form);
             const data = Object.fromEntries(formData);
-            
+
+            // Convert numeric fields
+            if (data.due_month) data.due_month = parseInt(data.due_month);
+            if (data.due_day) data.due_day = parseInt(data.due_day);
+            if (data.due_year) data.due_year = parseInt(data.due_year);
+
+            // Handle checkbox for terms agreement
+            data.terms_agreement = document.getElementById('terms_agreement').checked;
+
+            // Filter out empty string values to avoid validation errors
+            Object.keys(data).forEach(key => {
+                if (data[key] === '' || data[key] === null || data[key] === undefined) {
+                    delete data[key];
+                }
+            });
+
+            // Debug: Log the data being sent
+            console.log('Sending profile data:', data);
+
             try {
                 const response = await fetch('/web/user', {
                     method: 'PUT',
@@ -120,31 +605,93 @@
                     body: JSON.stringify(data)
                 });
                 
+                const responseData = await response.json();
+                
                 if (!response.ok) {
                     if (response.status === 401) {
                         window.location.href = '/login';
                         return;
                     }
-                    throw new Error('Failed to update profile');
+                    
+                    console.error('Server error response:', responseData);
+                    let errorMessage = 'Failed to update profile';
+                    
+                    if (responseData.error) {
+                        errorMessage += ': ' + responseData.error;
+                    }
+                    if (responseData.errors) {
+                        errorMessage += ': ' + Object.values(responseData.errors).flat().join(', ');
+                    }
+                    
+                    window.alert(errorMessage);
+                    return;
                 }
                 
-                alert('Profile updated successfully!');
-                loadProfile(); // Reload profile data
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+                modal.hide();
+                
+                // Show success message
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success alert-dismissible fade show';
+                alert.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>Profile updated successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.container').insertBefore(alert, document.querySelector('.row'));
+                
+                // Reload profile data
+                loadProfile();
                 
             } catch (error) {
-                console.error('Error updating profile:', error);
-                alert('Failed to update profile');
+                console.error('Network error updating profile:', error);
+                window.alert('Network error: Failed to update profile. Please check your connection and try again.');
             }
         });
-        
-        // Show fallback and load profile if Vue doesn't load
-        setTimeout(() => {
-            const vueApp = document.querySelector('#app user-profile');
-            if (!vueApp || vueApp.children.length === 0) {
-                document.getElementById('fallback-content').style.display = 'block';
-                loadProfile();
-            }
-        }, 1000);
+
+        // Input validation for security questions
+        function setupInputValidation() {
+            const securityInputs = [
+                { id: 'security_q1', type: 'number' },
+                { id: 'security_q2', type: 'number' },
+                { id: 'security_q3', type: 'number' },
+                { id: 'security_q4', type: 'number' },
+                { id: 'security_q5', type: 'number' },
+                { id: 'security_q6', type: 'number' },
+                { id: 'security_q7', type: 'zip' },
+                { id: 'security_q8', type: 'year' },
+                { id: 'security_q9', type: 'text' },
+                { id: 'security_q10', type: 'text' }
+            ];
+
+            securityInputs.forEach(input => {
+                const element = document.getElementById(input.id);
+                if (element) {
+                    element.addEventListener('input', function(e) {
+                        let value = e.target.value;
+                        
+                        switch(input.type) {
+                            case 'number':
+                            case 'year':
+                            case 'zip':
+                                // Only allow digits
+                                e.target.value = value.replace(/\D/g, '');
+                                break;
+                            case 'text':
+                                // Only allow letters, spaces, hyphens, apostrophes
+                                e.target.value = value.replace(/[^a-zA-Z\s\-']/g, '');
+                                break;
+                        }
+                    });
+                }
+            });
+        }
+
+        // Load profile when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
+            setupInputValidation();
+        });
     </script>
     
     @vite(['resources/js/app.js'])

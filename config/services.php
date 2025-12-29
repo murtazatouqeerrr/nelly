@@ -60,6 +60,7 @@ return [
         'password' => env('FLHSMV_PASSWORD', 'LoveFL2025!'),
         'school_id' => env('FLHSMV_DEFAULT_SCHOOL_ID', '30981'),
         'instructor_id' => env('FLHSMV_DEFAULT_INSTRUCTOR_ID', '76397'),
+        'course_id' => env('FLHSMV_DEFAULT_COURSE_ID', '40585'),
         'timeout' => env('FLHSMV_TIMEOUT', 30),
         'environment' => env('FLHSMV_ENVIRONMENT', 'production'),
     ],

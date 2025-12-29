@@ -86,8 +86,8 @@ export default {
 }
 
 .message-welcome {
-  background: #d4edda;
-  border: 1px solid #c3e6cb;
+  background: #f4f6f0;
+  border: 1px solid #516425;
 }
 
 .message-alert {

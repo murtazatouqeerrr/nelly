@@ -93,7 +93,7 @@ export default {
     },
     getRiskClass(level) {
       const classes = {
-        low: 'bg-green-100 text-green-800',
+        low: 'bg-green-100 text-green-800' + ' ' + 'custom-green-bg custom-green-text',
         medium: 'bg-yellow-100 text-yellow-800',
         high: 'bg-orange-100 text-orange-800',
         critical: 'bg-red-100 text-red-800'

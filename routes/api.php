@@ -7,9 +7,20 @@ use App\Http\Controllers\FloridaAuditController;
 use App\Http\Controllers\FloridaComplianceController;
 use App\Http\Controllers\FloridaDataExportController;
 use App\Http\Controllers\FloridaSecurityLogController;
+use App\Http\Controllers\SecurityVerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+// Public API routes (no CSRF required)
+Route::get('/security/all-questions', [SecurityVerificationController::class, 'getAllQuestions']);
+Route::get('/test', function () {
+    return response()->json([
+        'status' => 'success',
+        'message' => 'API is working',
+        'timestamp' => now()->toISOString()
+    ]);
+});
 
 Route::middleware('web')->group(function () {
     // Order Amendment Routes
@@ -300,22 +311,239 @@ Route::get('/chapters/{chapterId}/questions', function ($chapterId) {
     \Log::info("API: Fetching questions for chapter {$chapterId}");
 
     try {
-        $questions = \App\Models\Question::where('chapter_id', $chapterId)
-            ->orderBy('order_index')
-            ->get();
+        // Handle special "final-exam" chapter
+        if ($chapterId === 'final-exam') {
+            // Get course_id from request (for admin) or enrollment (for students)
+            $courseId = request('course_id');
+            
+            if (!$courseId && request('enrollment_id')) {
+                $enrollment = \DB::table('user_course_enrollments')->where('id', request('enrollment_id'))->first();
+                $courseId = $enrollment ? $enrollment->course_id : 1;
+            }
+            
+            $courseId = $courseId ?: 1; // Default to 1 if still not found
+            
+            $questions = \DB::table('final_exam_questions')
+                ->where('course_id', $courseId)
+                ->orderBy('order_index')
+                ->get();
+                
+            \Log::info("API: Found {$questions->count()} final exam questions");
+            
+            $processedQuestions = $questions->map(function ($question) {
+                $options = json_decode($question->options, true) ?: [];
+                
+                return [
+                    'id' => $question->id,
+                    'chapter_id' => 'final-exam',
+                    'question_text' => $question->question_text,
+                    'question_type' => $question->question_type,
+                    'correct_answer' => $question->correct_answer,
+                    'explanation' => $question->explanation,
+                    'points' => $question->points,
+                    'order_index' => $question->order_index,
+                    'options' => $options,
+                ];
+            });
+            
+            \Log::info("API: Response created successfully");
+            return response()->json($processedQuestions);
+        }
 
-        \Log::info("API: Found {$questions->count()} questions for chapter {$chapterId}");
+        // First try to get questions directly for this chapter ID
+        $questionsQuery = \App\Models\ChapterQuestion::where('chapter_id', $chapterId);
+        
+        // Add quiz_set filtering for Delaware courses
+        if (request('quiz_set')) {
+            $questionsQuery->where('quiz_set', request('quiz_set'));
+        }
+        
+        $questions = $questionsQuery->orderBy('order_index')->get();
+
+        \Log::info("API: Direct lookup found {$questions->count()} questions for chapter {$chapterId}");
+
+        // If no questions found in chapter_questions, try the old questions table
+        if ($questions->isEmpty()) {
+            \Log::info("API: No questions in chapter_questions, checking old questions table");
+            
+            $oldQuestionsQuery = \DB::table('questions')->where('chapter_id', $chapterId);
+            
+            // For Delaware courses, if quiz_set is specified, we need to simulate it
+            // Since old questions don't have quiz_set, we'll treat them as quiz_set 1
+            if (request('quiz_set') && request('quiz_set') == 2) {
+                \Log::info("API: Quiz set 2 requested for old questions - returning empty for rotation");
+                $oldQuestions = collect(); // Return empty for quiz set 2 to trigger rotation
+            } else {
+                $oldQuestions = $oldQuestionsQuery->get();
+            }
+            
+            if ($oldQuestions->count() > 0) {
+                \Log::info("API: Found {$oldQuestions->count()} questions in old questions table");
+                
+                // Convert old questions to the expected format
+                $questions = $oldQuestions->map(function ($question) {
+                    return (object) [
+                        'id' => $question->id,
+                        'chapter_id' => $question->chapter_id,
+                        'question_text' => $question->question_text ?? $question->question ?? '',
+                        'question_type' => $question->question_type ?? 'multiple_choice',
+                        'correct_answer' => $question->correct_answer ?? '',
+                        'explanation' => $question->explanation ?? '',
+                        'points' => $question->points ?? 1,
+                        'order_index' => $question->order_index ?? 1,
+                        'options' => $question->options ?? '[]',
+                        'quiz_set' => 1, // Default to quiz set 1 for old questions
+                    ];
+                });
+            }
+        }
+
+        // Always check old questions table as well and merge results
+        if (!request('quiz_set') || request('quiz_set') == 1) {
+            $oldQuestions = \DB::table('questions')->where('chapter_id', $chapterId)->get();
+            
+            if ($oldQuestions->count() > 0) {
+                \Log::info("API: Also found {$oldQuestions->count()} questions in old questions table to merge");
+                
+                // Convert old questions to the expected format
+                $oldQuestionsFormatted = $oldQuestions->map(function ($question) {
+                    return (object) [
+                        'id' => 'old_' . $question->id, // Prefix to avoid ID conflicts
+                        'chapter_id' => $question->chapter_id,
+                        'question_text' => $question->question_text ?? $question->question ?? '',
+                        'question_type' => $question->question_type ?? 'multiple_choice',
+                        'correct_answer' => $question->correct_answer ?? '',
+                        'explanation' => $question->explanation ?? '',
+                        'points' => $question->points ?? 1,
+                        'order_index' => $question->order_index ?? 1,
+                        'options' => $question->options ?? '[]',
+                        'quiz_set' => 1, // Default to quiz set 1 for old questions
+                    ];
+                });
+                
+                // Convert to array and merge
+                $questionsArray = $questions->toArray();
+                $oldQuestionsArray = $oldQuestionsFormatted->toArray();
+                $questions = collect(array_merge($questionsArray, $oldQuestionsArray));
+            }
+        }
+
+        // If no questions found, try to find matching chapter in the other table
+        if ($questions->isEmpty()) {
+            \Log::info("API: No direct questions found, searching for matching chapter");
+            
+            // Check if this is a chapter, find matching legacy chapter
+            $courseChapter = \DB::table('chapters')->where('id', $chapterId)->first();
+            $legacyChapter = null;
+            $matchingChapterId = null;
+            
+            if ($courseChapter) {
+                \Log::info("API: Found course_chapter {$chapterId}: {$courseChapter->title} (Course: {$courseChapter->course_id})");
+                
+                // Find matching legacy chapter
+                $legacyChapter = \DB::table('chapters')
+                    ->where('course_id', $courseChapter->course_id)
+                    ->where(function($query) use ($courseChapter) {
+                        // Try exact title match first
+                        $query->where('title', $courseChapter->title)
+                              // Or try matching common patterns
+                              ->orWhere('title', 'LIKE', '%' . str_replace(' ', '%', $courseChapter->title) . '%')
+                              // Or match by order_index if titles are different
+                              ->orWhere('order_index', $courseChapter->order_index);
+                    })
+                    ->first();
+                    
+                if ($legacyChapter) {
+                    $matchingChapterId = $legacyChapter->id;
+                    \Log::info("API: Found matching legacy chapter {$legacyChapter->id}: {$legacyChapter->title}");
+                }
+            } else {
+                // Check if this is a legacy chapter, find matching course_chapter
+                $legacyChapter = \DB::table('chapters')->where('id', $chapterId)->first();
+                
+                if ($legacyChapter) {
+                    \Log::info("API: Found legacy chapter {$chapterId}: {$legacyChapter->title} (Course: {$legacyChapter->course_id})");
+                    
+                    // Find matching chapter
+                    $courseChapter = \DB::table('chapters')
+                        ->where('course_id', $legacyChapter->course_id)
+                        ->where(function($query) use ($legacyChapter) {
+                            // Try exact title match first
+                            $query->where('title', $legacyChapter->title)
+                                  // Or try matching common patterns (legacy chapters often have ALL CAPS)
+                                  ->orWhere('title', 'LIKE', '%' . str_replace(' ', '%', strtolower($legacyChapter->title)) . '%')
+                                  // Or match by order_index
+                                  ->orWhere('order_index', $legacyChapter->order_index);
+                        })
+                        ->first();
+                        
+                    if ($courseChapter) {
+                        $matchingChapterId = $courseChapter->id;
+                        \Log::info("API: Found matching course_chapter {$courseChapter->id}: {$courseChapter->title}");
+                    }
+                }
+            }
+            
+            // If we found a matching chapter, get questions from it
+            if ($matchingChapterId) {
+                $questionsQuery = \App\Models\ChapterQuestion::where('chapter_id', $matchingChapterId);
+                
+                // Add quiz_set filtering for Delaware courses
+                if (request('quiz_set')) {
+                    $questionsQuery->where('quiz_set', request('quiz_set'));
+                }
+                
+                $questions = $questionsQuery->orderBy('order_index')->get();
+                    
+                \Log::info("API: Found {$questions->count()} questions from matching chapter {$matchingChapterId}");
+            }
+            
+            // If still no questions and this is a Texas course, try to find questions from equivalent chapter in other Texas courses
+            if ($questions->isEmpty() && $legacyChapter && in_array($legacyChapter->course_id, [5, 21, 22])) {
+                \Log::info("API: Searching for equivalent questions in other Texas courses");
+                
+                // Find equivalent chapters in other Texas courses by order_index
+                $equivalentChapters = \DB::table('chapters')
+                    ->whereIn('course_id', [5, 21, 22])
+                    ->where('course_id', '!=', $legacyChapter->course_id)
+                    ->where('order_index', $legacyChapter->order_index)
+                    ->get();
+                    
+                foreach ($equivalentChapters as $equivChapter) {
+                    $questionsQuery = \App\Models\ChapterQuestion::where('chapter_id', $equivChapter->id);
+                    
+                    // Add quiz_set filtering for Delaware courses
+                    if (request('quiz_set')) {
+                        $questionsQuery->where('quiz_set', request('quiz_set'));
+                    }
+                    
+                    $questions = $questionsQuery->orderBy('order_index')->get();
+                        
+                    if ($questions->isNotEmpty()) {
+                        \Log::info("API: Found {$questions->count()} questions from equivalent chapter {$equivChapter->id} in course {$equivChapter->course_id}");
+                        break;
+                    }
+                }
+            }
+        }
+
+        \Log::info("API: Final result: {$questions->count()} questions for chapter {$chapterId}");
 
         $processedQuestions = $questions->map(function ($question) {
-            $data = $question->toArray();
-
-            \Log::info("API: Processing question {$question->id}, options raw: ".json_encode($data['options'] ?? null));
+            // Handle different object types
+            if (is_array($question)) {
+                $data = $question;
+            } elseif ($question instanceof \Illuminate\Database\Eloquent\Model) {
+                $data = $question->toArray();
+            } else {
+                // Handle stdClass objects from DB queries
+                $data = (array) $question;
+            }
 
             // Handle options field safely
             if (isset($data['options'])) {
                 if (is_string($data['options'])) {
                     $cleaned = trim($data['options']);
-                    \Log::info("API: Cleaned options string: '{$cleaned}'");
 
                     if (empty($cleaned) || $cleaned === 'null') {
                         $data['options'] = [];
@@ -338,13 +566,38 @@ Route::get('/chapters/{chapterId}/questions', function ($chapterId) {
             return $data;
         });
 
-        \Log::info('API: Response created successfully');
-
         return response()->json($processedQuestions);
     } catch (\Exception $e) {
         \Log::error('API: Chapter questions error: '.$e->getMessage());
+        \Log::error('API: Stack trace: '.$e->getTraceAsString());
 
         return response()->json([]);
+    }
+});
+
+// Get quiz progress for Delaware courses
+Route::get('/chapters/{chapterId}/quiz-progress', function ($chapterId) {
+    try {
+        $enrollmentId = request('enrollment_id');
+        
+        if (!$enrollmentId) {
+            return response()->json(['current_quiz_set' => 1]);
+        }
+        
+        $progress = \DB::table('user_course_progress')
+            ->where('enrollment_id', $enrollmentId)
+            ->where('chapter_id', $chapterId)
+            ->first();
+            
+        return response()->json([
+            'current_quiz_set' => $progress->current_quiz_set ?? 1,
+            'quiz_set_1_attempts' => $progress->quiz_set_1_attempts ?? 0,
+            'quiz_set_2_attempts' => $progress->quiz_set_2_attempts ?? 0,
+        ]);
+        
+    } catch (\Exception $e) {
+        \Log::error('API: Quiz progress error: ' . $e->getMessage());
+        return response()->json(['current_quiz_set' => 1]);
     }
 });
 
@@ -399,166 +652,803 @@ Route::get('/chapters/{chapterId}/questions/export-sample', function ($chapterId
 // Import DOCX
 Route::post('/chapters/{chapterId}/questions/import', function ($chapterId) {
     try {
-        \Log::info('=== IMPORT START ===');
-        \Log::info("Chapter ID: {$chapterId}");
-
         if (! request()->hasFile('file')) {
-            \Log::error('No file uploaded');
-
             return response()->json(['message' => 'No file uploaded'], 400);
         }
 
         $file = request()->file('file');
-        \Log::info('File received: '.$file->getClientOriginalName());
 
-        $phpWord = \PhpOffice\PhpWord\IOFactory::load($file->path());
-        \Log::info('DOCX loaded successfully');
+        // Extract text from DOCX using ZipArchive
+        $zip = new \ZipArchive();
+        $text = '';
+        
+        if ($zip->open($file->getPathname()) === true) {
+            $xml = $zip->getFromName('word/document.xml');
+            if ($xml) {
+                $text = strip_tags(str_replace('>', ">\n", $xml));
+            }
+            $zip->close();
+        }
 
-        $count = 0;
-        $sectionCount = 0;
-        $tableCount = 0;
-        $rowCount = 0;
-
-        foreach ($phpWord->getSections() as $section) {
-            $sectionCount++;
-            \Log::info("Processing section {$sectionCount}");
-
-            foreach ($section->getElements() as $element) {
-                \Log::info('Element type: '.get_class($element));
-
-                if ($element instanceof \PhpOffice\PhpWord\Element\Table) {
-                    $tableCount++;
-                    \Log::info("Found table {$tableCount}");
-
-                    $rows = $element->getRows();
-                    \Log::info('Total rows in table: '.count($rows));
-
-                    foreach ($rows as $index => $row) {
-                        $rowCount++;
-                        \Log::info("Processing row {$index}");
-
-                        if ($index === 0) {
-                            \Log::info('Skipping header row');
-
-                            continue;
-                        }
-
-                        $cells = $row->getCells();
-                        \Log::info("Row {$index} has ".count($cells).' cells');
-
-                        if (count($cells) < 7) {
-                            \Log::warning("Row {$index} has less than 7 cells, skipping");
-
-                            continue;
-                        }
-
-                        $questionText = '';
-                        $type = '';
-                        $optionsStr = '';
-                        $correctAnswer = '';
-                        $explanation = '';
-                        $points = 1;
-                        $order = 1;
-
-                        // Extract from each cell
-                        for ($i = 0; $i < 7; $i++) {
-                            $cellText = '';
-                            foreach ($cells[$i]->getElements() as $elem) {
-                                if ($elem instanceof \PhpOffice\PhpWord\Element\Paragraph) {
-                                    foreach ($elem->getElements() as $paraElem) {
-                                        if ($paraElem instanceof \PhpOffice\PhpWord\Element\TextRun) {
-                                            foreach ($paraElem->getElements() as $textElem) {
-                                                if ($textElem instanceof \PhpOffice\PhpWord\Element\Text) {
-                                                    $cellText .= $textElem->getText();
-                                                }
-                                            }
-                                        } elseif ($paraElem instanceof \PhpOffice\PhpWord\Element\Text) {
-                                            $cellText .= $paraElem->getText();
-                                        }
-                                    }
-                                } elseif ($elem instanceof \PhpOffice\PhpWord\Element\TextRun) {
-                                    foreach ($elem->getElements() as $textElem) {
-                                        if ($textElem instanceof \PhpOffice\PhpWord\Element\Text) {
-                                            $cellText .= $textElem->getText();
-                                        }
-                                    }
-                                } elseif ($elem instanceof \PhpOffice\PhpWord\Element\Text) {
-                                    $cellText .= $elem->getText();
-                                }
-                            }
-                            \Log::info("Cell {$i}: '".$cellText."'");
-
-                            if ($i === 0) {
-                                $questionText = $cellText;
-                            } elseif ($i === 1) {
-                                $type = $cellText;
-                            } elseif ($i === 2) {
-                                $optionsStr = $cellText;
-                            } elseif ($i === 3) {
-                                $correctAnswer = $cellText;
-                            } elseif ($i === 4) {
-                                $explanation = $cellText;
-                            } elseif ($i === 5) {
-                                $points = (int) $cellText ?: 1;
-                            } elseif ($i === 6) {
-                                $order = (int) $cellText ?: 1;
-                            }
-                        }
-
-                        $questionText = trim($questionText);
-                        \Log::info("Trimmed question text: '{$questionText}'");
-
-                        if (empty($questionText)) {
-                            \Log::warning('Question text is empty, skipping row');
-
-                            continue;
-                        }
-
-                        $options = array_map('trim', array_filter(explode('|', $optionsStr)));
-                        \Log::info('Options: '.json_encode($options));
-
-                        // Get course_id from chapter
-                        $chapter = \App\Models\Chapter::find($chapterId);
-                        $courseId = $chapter ? $chapter->course_id : null;
-
-                        if (! $courseId) {
-                            \Log::error("Could not find course_id for chapter {$chapterId}");
-
-                            continue;
-                        }
-
-                        $question = \App\Models\Question::create([
-                            'chapter_id' => $chapterId,
-                            'course_id' => $courseId,
-                            'question_text' => $questionText,
-                            'question_type' => trim($type) ?: 'multiple_choice',
-                            'options' => json_encode($options),
-                            'correct_answer' => trim($correctAnswer),
-                            'explanation' => trim($explanation),
-                            'points' => $points,
-                            'order_index' => $order,
-                        ]);
-
-                        \Log::info('Question created with ID: '.$question->id);
-                        $count++;
-                    }
-                }
+        // Log lines that start with numbers
+        $lines = explode("\n", $text);
+        foreach ($lines as $i => $line) {
+            if (preg_match('/^\d+\./', trim($line))) {
+                \Log::info("Line {$i} matches number pattern: " . trim($line));
             }
         }
 
-        \Log::info('=== IMPORT END ===');
-        \Log::info("Total questions imported: {$count}");
+        // Parse questions with *** format
+        $questions = [];
+        $lines = explode("\n", $text);
+        $currentQuestion = null;
+        $currentOptions = [];
+        $correctAnswer = null;
 
-        return response()->json(['count' => $count, 'message' => 'Import successful', 'debug' => [
-            'sections' => $sectionCount,
-            'tables' => $tableCount,
-            'rows' => $rowCount,
-        ]]);
+        \Log::info('Starting to parse lines, total: ' . count($lines));
+
+        foreach ($lines as $lineNum => $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+
+            // Debug all lines between questions 1-3 to see what's there
+            if ($lineNum >= 66 && $lineNum <= 210) {
+                \Log::info("DEBUG Q1 area Line {$lineNum}: '{$line}'");
+            }
+            if ($lineNum >= 212 && $lineNum <= 356) {
+                \Log::info("DEBUG Q2 area Line {$lineNum}: '{$line}'");
+            }
+            if ($lineNum >= 358 && $lineNum <= 524) {
+                \Log::info("DEBUG Q3 area Line {$lineNum}: '{$line}'");
+            }
+
+            // Debug specific lines
+            if ($lineNum == 137 || $lineNum == 255 || $lineNum == 426) {
+                \Log::info("DEBUG Line {$lineNum}: '" . $line . "' (hex: " . bin2hex($line) . ")");
+                if (preg_match('/^(\d+)\s*\.\s+(.+)$/', $line, $matches)) {
+                    \Log::info("DEBUG Line {$lineNum}: MATCHES regex");
+                } else {
+                    \Log::info("DEBUG Line {$lineNum}: DOES NOT match regex");
+                }
+            }
+
+            // Question line (starts with number, optional space/nbsp before period, then space and text)
+            if (preg_match('/^(\d+)[\s\x{00A0}]*\.[\s\x{00A0}]+(.+)$/u', $line, $matches)) {
+                \Log::info("Line {$lineNum}: Found question - " . $matches[2]);
+                if ($currentQuestion && !empty($currentOptions)) {
+                    \Log::info("Saving previous question with " . count($currentOptions) . " options");
+                    $questions[] = [
+                        'question' => $currentQuestion,
+                        'options' => $currentOptions,
+                        'correct_answer' => $correctAnswer
+                    ];
+                }
+                $currentQuestion = $matches[2];
+                $currentOptions = [];
+                $correctAnswer = null;
+            }
+            // Option line (starts with letter, may have ***) - only if we have a question
+            elseif ($currentQuestion && preg_match('/^([A-E])\.[\s\t]+(.+)$/u', $line, $matches)) {
+                $letter = $matches[1];
+                $optionText = trim($matches[2]);
+                
+                // Check if *** is at the end of the option text
+                $isCorrect = false;
+                if (str_ends_with($optionText, '***')) {
+                    $isCorrect = true;
+                    $optionText = trim(str_replace('***', '', $optionText));
+                }
+                
+                \Log::info("Line {$lineNum}: Found option {$letter} - {$optionText}" . ($isCorrect ? ' (CORRECT)' : ''));
+                
+                $currentOptions[$letter] = $optionText;
+                if ($isCorrect) {
+                    $correctAnswer = $letter;
+                }
+            }
+            // If we have a question but line doesn't match option pattern, append to question text
+            elseif ($currentQuestion && empty($currentOptions)) {
+                \Log::info("Line {$lineNum}: Appending to question - {$line}");
+                $currentQuestion .= ' ' . $line;
+            }
+        }
+
+        // Save last question
+        if ($currentQuestion && !empty($currentOptions)) {
+            \Log::info("Saving last question with " . count($currentOptions) . " options");
+            $questions[] = [
+                'question' => $currentQuestion,
+                'options' => $currentOptions,
+                'correct_answer' => $correctAnswer
+            ];
+        }
+
+        \Log::info('Total questions parsed: ' . count($questions));
+
+        // Get course_id from chapter
+        $chapter = \App\Models\Chapter::find($chapterId);
+        $courseId = $chapter ? $chapter->course_id : null;
+
+        if (!$courseId) {
+            return response()->json(['message' => 'Chapter not found'], 404);
+        }
+
+        // Import questions
+        $count = 0;
+        foreach ($questions as $index => $questionData) {
+            \App\Models\Question::create([
+                'chapter_id' => $chapterId,
+                'course_id' => $courseId,
+                'question_text' => $questionData['question'],
+                'question_type' => 'multiple_choice',
+                'options' => json_encode($questionData['options']),
+                'correct_answer' => $questionData['correct_answer'],
+                'order_index' => $index + 1,
+            ]);
+            $count++;
+        }
+
+        return response()->json([
+            'count' => $count,
+            'message' => 'Import successful',
+            'debug' => [
+                'text_length' => strlen($text),
+                'questions_parsed' => count($questions)
+            ]
+        ]);
     } catch (\Exception $e) {
         \Log::error('Import error: '.$e->getMessage());
-        \Log::error('Stack trace: '.$e->getTraceAsString());
+        return response()->json(['message' => 'Import failed: '.$e->getMessage()], 500);
+    }
+});
 
-        return response()->json(['message' => 'Import failed: '.$e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
+// Final Exam TXT Import (specific route - must come before generic route)
+Route::middleware('web')->post('/chapters/final-exam/questions/import-txt', function () {
+    \Log::info('Final Exam TXT Import: Route accessed');
+    
+    try {
+        \Log::info('Final Exam TXT Import: Checking for file upload');
+        
+        if (!request()->hasFile('file')) {
+            \Log::error('Final Exam TXT Import: No file uploaded');
+            return response()->json(['message' => 'No file uploaded'], 400);
+        }
+
+        $file = request()->file('file');
+        $courseId = request('course_id', 1);
+        
+        \Log::info('Final Exam TXT Import: Processing file', [
+            'filename' => $file->getClientOriginalName(),
+            'course_id' => $courseId,
+            'file_size' => $file->getSize()
+        ]);
+        
+        $text = file_get_contents($file->getPathname());
+        
+        \Log::info('Final Exam TXT Import: File content loaded', [
+            'content_length' => strlen($text),
+            'first_100_chars' => substr($text, 0, 100)
+        ]);
+        
+        // Parse questions from txt format
+        $questions = [];
+        $lines = explode("\n", $text);
+        $currentQuestion = null;
+        $currentOptions = [];
+        $correctAnswer = null;
+
+        \Log::info('Final Exam TXT Import: Starting to parse lines', ['total_lines' => count($lines)]);
+
+        foreach ($lines as $lineNum => $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+
+            // Check if it's a question (starts with number and parenthesis)
+            if (preg_match('/^(\d+)\)\s*(.+)/', $line, $matches)) {
+                // Save previous question if exists
+                if ($currentQuestion && !empty($currentOptions)) {
+                    $questions[] = [
+                        'question' => $currentQuestion,
+                        'options' => $currentOptions,
+                        'correct_answer' => $correctAnswer
+                    ];
+                    \Log::info('Final Exam TXT Import: Saved question', ['question_count' => count($questions)]);
+                }
+                
+                // Start new question
+                $currentQuestion = $matches[2];
+                $currentOptions = [];
+                $correctAnswer = null;
+                \Log::info('Final Exam TXT Import: Found new question', ['line' => $lineNum, 'question' => substr($currentQuestion, 0, 50)]);
+            }
+            // Check if it's an option (starts with A), B), C), D))
+            elseif (preg_match('/^([A-Z])\)\s*(.+?)(\s*\*\*\*)?$/', $line, $matches)) {
+                $optionLetter = $matches[1];
+                $optionText = trim($matches[2]);
+                $isCorrect = isset($matches[3]) && !empty($matches[3]);
+                
+                $currentOptions[$optionLetter] = $optionText;
+                
+                if ($isCorrect) {
+                    $correctAnswer = $optionLetter;
+                    \Log::info('Final Exam TXT Import: Found correct answer', ['option' => $optionLetter, 'text' => substr($optionText, 0, 30)]);
+                }
+            }
+        }
+        
+        // Save last question
+        if ($currentQuestion && !empty($currentOptions)) {
+            $questions[] = [
+                'question' => $currentQuestion,
+                'options' => $currentOptions,
+                'correct_answer' => $correctAnswer
+            ];
+        }
+
+        \Log::info('Final Exam TXT Import: Parsing complete', ['total_questions' => count($questions)]);
+
+        // Check if course exists in either table (foreign key constraint removed)
+        $floridaCourse = \DB::table('florida_courses')->where('id', $courseId)->first();
+        $regularCourse = \DB::table('courses')->where('id', $courseId)->first();
+        
+        if (!$floridaCourse && !$regularCourse) {
+            return response()->json([
+                'success' => false, 
+                'message' => "Course ID {$courseId} not found in either courses or florida_courses tables."
+            ], 404);
+        }
+        
+        $courseTitle = $floridaCourse ? $floridaCourse->title : ($regularCourse->course_type . ' - ' . $regularCourse->description);
+        $courseTable = $floridaCourse ? 'florida_courses' : 'courses';
+        
+        \Log::info('Final Exam TXT Import: Course validated', [
+            'course_title' => $courseTitle,
+            'course_table' => $courseTable
+        ]);
+
+        // Import to final_exam_questions table
+        $count = 0;
+        foreach ($questions as $index => $questionData) {
+            \DB::table('final_exam_questions')->insert([
+                'course_id' => $courseId,
+                'question_text' => $questionData['question'],
+                'question_type' => 'multiple_choice',
+                'options' => json_encode($questionData['options']),
+                'correct_answer' => $questionData['correct_answer'],
+                'order_index' => $index + 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            $count++;
+        }
+
+        \Log::info('Final Exam TXT Import: Import complete', ['imported_count' => $count]);
+
+        return response()->json([
+            'success' => true,
+            'count' => $count,
+            'message' => 'Final exam questions imported successfully'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Final Exam TXT Import error: '.$e->getMessage(), [
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        return response()->json(['success' => false, 'message' => 'Import failed: '.$e->getMessage()], 500);
+    }
+});
+
+// Import TXT (generic route for regular chapters)
+Route::post('/chapters/{chapterId}/questions/import-txt', function ($chapterId) {
+    try {
+        if (!request()->hasFile('file')) {
+            return response()->json(['message' => 'No file uploaded'], 400);
+        }
+
+        $file = request()->file('file');
+        $text = file_get_contents($file->getPathname());
+        
+        // Parse questions from txt format like readme.txt
+        $questions = [];
+        $lines = explode("\n", $text);
+        $currentQuestion = null;
+        $currentOptions = [];
+        $correctAnswer = null;
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+
+            // Check if it's a question (starts with number and parenthesis)
+            if (preg_match('/^(\d+)\)\s*(.+)/', $line, $matches)) {
+                // Save previous question if exists
+                if ($currentQuestion && !empty($currentOptions)) {
+                    $questions[] = [
+                        'question' => $currentQuestion,
+                        'options' => $currentOptions,
+                        'correct_answer' => $correctAnswer
+                    ];
+                }
+                
+                // Start new question
+                $currentQuestion = $matches[2];
+                $currentOptions = [];
+                $correctAnswer = null;
+            }
+            // Check if it's an option (starts with A), B), C), D))
+            elseif (preg_match('/^([A-Z])\)\s*(.+?)(\s*\*\*\*)?$/', $line, $matches)) {
+                $optionLetter = $matches[1];
+                $optionText = trim($matches[2]);
+                $isCorrect = isset($matches[3]) && !empty($matches[3]);
+                
+                $currentOptions[$optionLetter] = $optionText;
+                
+                if ($isCorrect) {
+                    $correctAnswer = $optionLetter;
+                }
+            }
+        }
+        
+        // Save last question
+        if ($currentQuestion && !empty($currentOptions)) {
+            $questions[] = [
+                'question' => $currentQuestion,
+                'options' => $currentOptions,
+                'correct_answer' => $correctAnswer
+            ];
+        }
+
+        // Get course_id from chapter
+        $chapter = \App\Models\Chapter::find($chapterId);
+        $courseId = $chapter ? $chapter->course_id : null;
+
+        if (!$courseId) {
+            return response()->json(['message' => 'Chapter not found'], 404);
+        }
+
+        // Import questions
+        $count = 0;
+        foreach ($questions as $index => $questionData) {
+            \App\Models\Question::create([
+                'chapter_id' => $chapterId,
+                'course_id' => $courseId,
+                'question_text' => $questionData['question'],
+                'question_type' => 'multiple_choice',
+                'options' => json_encode($questionData['options']),
+                'correct_answer' => $questionData['correct_answer'],
+                'order_index' => $index + 1,
+            ]);
+            $count++;
+        }
+
+        return response()->json([
+            'success' => true,
+            'count' => $count,
+            'message' => 'Import successful'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('TXT Import error: '.$e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Import failed: '.$e->getMessage()], 500);
+    }
+});
+
+
+
+Route::delete('/questions/{id}', function ($id) {
+    try {
+        // First try regular questions table
+        $question = \App\Models\Question::find($id);
+        if ($question) {
+            $question->delete();
+            return response()->json(['message' => 'Question deleted successfully']);
+        }
+        
+        // If not found, try final exam questions table
+        $deleted = \DB::table('final_exam_questions')->where('id', $id)->delete();
+        if ($deleted) {
+            return response()->json(['message' => 'Final exam question deleted successfully']);
+        }
+        
+        return response()->json(['message' => 'Question not found'], 404);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Delete failed: '.$e->getMessage()], 500);
+    }
+});
+
+Route::post('/final-exam/import', function () {
+    try {
+        if (!request()->hasFile('file')) {
+            return response()->json(['message' => 'No file uploaded'], 400);
+        }
+
+        $file = request()->file('file');
+        $courseId = request('course_id', 1); // Get course_id from request, default to 1
+        $content = file_get_contents($file->getPathname());
+        
+        // Parse final exam questions
+        $questions = [];
+        $lines = explode("\n", $content);
+        $currentQuestion = null;
+        $currentQuestionText = '';
+        $currentOptions = [];
+        $correctAnswer = null;
+        $questionNumber = null;
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+
+            // Question number line (e.g., "1.)", "2.)")
+            if (preg_match('/^(\d+)\.\)/', $line, $matches)) {
+                // Save previous question
+                if ($currentQuestion && !empty($currentOptions)) {
+                    $questions[] = [
+                        'question_number' => $questionNumber,
+                        'question' => trim($currentQuestionText),
+                        'options' => $currentOptions,
+                        'correct_answer' => $correctAnswer
+                    ];
+                }
+                
+                // Start new question
+                $questionNumber = $matches[1];
+                $currentQuestionText = trim(str_replace($matches[0], '', $line));
+                $currentOptions = [];
+                $correctAnswer = null;
+                $currentQuestion = true;
+            }
+            // Option line (e.g., "A)", "*B)", "C)" OR "TRUE", "*FALSE")
+            elseif (preg_match('/^(\*?)([A-E])\)\s*(.*)$/', $line, $matches)) {
+                $isCorrect = !empty($matches[1]);
+                $letter = $matches[2];
+                $optionText = trim($matches[3]);
+                
+                // Also check if * is at the beginning of option text
+                if (!$isCorrect && str_starts_with($optionText, '*')) {
+                    $isCorrect = true;
+                    $optionText = trim(substr($optionText, 1)); // Remove the *
+                }
+                
+                $currentOptions[$letter] = $optionText;
+                if ($isCorrect) {
+                    $correctAnswer = $letter;
+                }
+            }
+            // Handle TRUE/FALSE format
+            elseif (preg_match('/^(\*?)(TRUE|FALSE|True|False)$/i', $line, $matches)) {
+                $isCorrect = !empty($matches[1]);
+                $option = strtoupper($matches[2]); // Convert to uppercase
+                
+                // Use proper labels for true/false
+                $currentOptions[$option] = $option === 'TRUE' ? 'True' : 'False';
+                if ($isCorrect) {
+                    $correctAnswer = $option;
+                }
+            }
+            // Continue question text
+            elseif ($currentQuestion && empty($currentOptions)) {
+                $currentQuestionText .= ' ' . $line;
+            }
+        }
+
+        // Save last question
+        if ($currentQuestion && !empty($currentOptions)) {
+            $questions[] = [
+                'question_number' => $questionNumber,
+                'question' => trim($currentQuestionText),
+                'options' => $currentOptions,
+                'correct_answer' => $correctAnswer
+            ];
+        }
+
+        // Import to final_exam_questions table
+        $count = 0;
+        foreach ($questions as $questionData) {
+            \DB::table('final_exam_questions')->insert([
+                'course_id' => $courseId, // Use dynamic course ID
+                'question_text' => $questionData['question'],
+                'question_type' => count($questionData['options']) == 2 ? 'true_false' : 'multiple_choice',
+                'options' => json_encode($questionData['options']),
+                'correct_answer' => $questionData['correct_answer'],
+                'explanation' => null,
+                'points' => 1,
+                'order_index' => $questionData['question_number'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            $count++;
+        }
+
+        return response()->json([
+            'success' => true,
+            'count' => $count,
+            'message' => "Imported {$count} final exam questions"
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Final exam import error: ' . $e->getMessage());
+        return response()->json(['message' => 'Import failed: ' . $e->getMessage()], 500);
+    }
+});
+
+// Final Exam API Routes
+Route::get('/final-exam/count', function () {
+    try {
+        // Get course_id from enrollment
+        $enrollmentId = request('enrollment_id');
+        $enrollment = \DB::table('user_course_enrollments')->where('id', $enrollmentId)->first();
+        $courseId = $enrollment ? $enrollment->course_id : 1;
+        
+        $count = \DB::table('final_exam_questions')
+            ->where('course_id', $courseId)
+            ->count();
+            
+        return response()->json(['count' => $count, 'course_id' => $courseId]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+Route::get('/final-exam/random/{count}', function ($count) {
+    try {
+        // Get course_id from enrollment
+        $enrollmentId = request('enrollment_id');
+        $enrollment = \DB::table('user_course_enrollments')->where('id', $enrollmentId)->first();
+        $courseId = $enrollment ? $enrollment->course_id : 1;
+        
+        $questions = \DB::table('final_exam_questions')
+            ->where('course_id', $courseId)
+            ->inRandomOrder()
+            ->limit($count)
+            ->get();
+            
+        $processedQuestions = $questions->map(function ($question) {
+            return [
+                'id' => $question->id,
+                'question_text' => $question->question_text,
+                'question_type' => $question->question_type,
+                'options' => json_decode($question->options, true),
+                'correct_answer' => $question->correct_answer,
+            ];
+        });
+        
+        return response()->json($processedQuestions);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+Route::get('/final-exam/attempts/{enrollmentId}', function ($enrollmentId) {
+    try {
+        $attempts = \DB::table('final_exam_results')
+            ->where('enrollment_id', $enrollmentId)
+            ->count();
+            
+        // Get custom max attempts if set
+        $maxAttempts = \DB::table('final_exam_attempt_limits')
+            ->where('enrollment_id', $enrollmentId)
+            ->value('max_attempts') ?: 2;
+            
+        return response()->json([
+            'attempts' => $attempts,
+            'max_attempts' => $maxAttempts
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['attempts' => 0, 'max_attempts' => 2]);
+    }
+});
+
+Route::post('/final-exam/submit', function () {
+    try {
+        $data = request()->all();
+        
+        // Create final exam results table if not exists
+        \DB::statement('CREATE TABLE IF NOT EXISTS final_exam_results (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            enrollment_id BIGINT UNSIGNED NOT NULL,
+            score INT NOT NULL,
+            passed BOOLEAN NOT NULL,
+            attempt INT NOT NULL,
+            answers JSON NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )');
+        
+        // Save result
+        \DB::table('final_exam_results')->insert([
+            'enrollment_id' => $data['enrollment_id'],
+            'score' => $data['score'],
+            'passed' => $data['passed'],
+            'attempt' => $data['attempt'],
+            'answers' => json_encode($data['answers']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        
+        // Update course completion status
+        if ($data['passed']) {
+            // Mark course as completed
+            \DB::table('user_course_enrollments')
+                ->where('id', $data['enrollment_id'])
+                ->update([
+                    'completion_date' => now(),
+                    'is_completed' => true,
+                    'final_score' => $data['score'],
+                    'updated_at' => now()
+                ]);
+        } else {
+            // Ensure course remains incomplete if final exam failed
+            \DB::table('user_course_enrollments')
+                ->where('id', $data['enrollment_id'])
+                ->update([
+                    'is_completed' => false,
+                    'completion_date' => null,
+                    'updated_at' => now()
+                ]);
+        }
+        
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+// Admin Final Exam Attempts Management
+Route::get('/admin/final-exam-attempts', function () {
+    try {
+        $search = request('search', '');
+        $status = request('status', '');
+        
+        // Get enrollments with their course table info first
+        $enrollments = \DB::table('user_course_enrollments as uce')
+            ->join('users as u', 'uce.user_id', '=', 'u.id')
+            ->leftJoin('final_exam_results as fer', 'uce.id', '=', 'fer.enrollment_id')
+            ->leftJoin('final_exam_attempt_limits as feal', 'uce.id', '=', 'feal.enrollment_id')
+            ->select([
+                'uce.id as enrollment_id',
+                'uce.course_id',
+                'uce.course_table',
+                \DB::raw('CONCAT(COALESCE(u.first_name, ""), " ", COALESCE(u.last_name, "")) as user_name'),
+                'u.email as user_email',
+                \DB::raw('COALESCE(COUNT(fer.id), 0) as attempts_used'),
+                \DB::raw('COALESCE(feal.max_attempts, 2) as max_attempts'),
+                \DB::raw('MAX(fer.score) as best_score'),
+                \DB::raw('MAX(fer.passed) as passed'),
+                \DB::raw('MAX(fer.created_at) as last_attempt')
+            ])
+            ->groupBy('uce.id', 'uce.course_id', 'uce.course_table', 'u.first_name', 'u.last_name', 'u.email', 'feal.max_attempts');
+            
+        if ($search) {
+            $enrollments->where(function($q) use ($search) {
+                $q->where('u.first_name', 'LIKE', "%{$search}%")
+                  ->orWhere('u.last_name', 'LIKE', "%{$search}%")
+                  ->orWhere('u.email', 'LIKE', "%{$search}%");
+            });
+        }
+        
+        $results = $enrollments->get();
+        
+        // Now get course titles from appropriate tables
+        $finalResults = $results->map(function($item) {
+            $courseTable = $item->course_table ?: 'courses';
+            $course = \DB::table($courseTable)->where('id', $item->course_id)->first();
+            $item->course_title = $course ? $course->title : 'Unknown Course';
+            return $item;
+        });
+        
+        // Filter by status if specified
+        if ($status) {
+            $finalResults = $finalResults->filter(function($item) use ($status) {
+                switch ($status) {
+                    case 'passed':
+                        return $item->passed;
+                    case 'failed':
+                        return $item->attempts_used > 0 && !$item->passed;
+                    case 'exhausted':
+                        return $item->attempts_used >= $item->max_attempts && !$item->passed;
+                    default:
+                        return true;
+                }
+            });
+        }
+        
+        return response()->json($finalResults->values());
+    } catch (\Exception $e) {
+        \Log::error('Final Exam Attempts API Error: ' . $e->getMessage(), [
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+Route::post('/admin/final-exam-attempts/increase', function () {
+    try {
+        $data = request()->all();
+        
+        // Create attempt limits table if not exists
+        \DB::statement('CREATE TABLE IF NOT EXISTS final_exam_attempt_limits (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            enrollment_id BIGINT UNSIGNED NOT NULL UNIQUE,
+            max_attempts INT NOT NULL DEFAULT 2,
+            reason TEXT,
+            granted_by BIGINT UNSIGNED,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (enrollment_id) REFERENCES user_course_enrollments(id) ON DELETE CASCADE
+        )');
+        
+        // Get current max attempts
+        $current = \DB::table('final_exam_attempt_limits')
+            ->where('enrollment_id', $data['enrollment_id'])
+            ->first();
+            
+        $newMaxAttempts = ($current ? $current->max_attempts : 2) + $data['additional_attempts'];
+        
+        // Insert or update
+        \DB::table('final_exam_attempt_limits')->updateOrInsert(
+            ['enrollment_id' => $data['enrollment_id']],
+            [
+                'max_attempts' => $newMaxAttempts,
+                'reason' => $data['reason'],
+                'granted_by' => auth()->id(),
+                'updated_at' => now()
+            ]
+        );
+        
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+Route::get('/admin/final-exam-attempts/{enrollmentId}/details', function ($enrollmentId) {
+    try {
+        // Get user and course info with dynamic course table
+        $enrollment = \DB::table('user_course_enrollments as uce')
+            ->join('users as u', 'uce.user_id', '=', 'u.id')
+            ->where('uce.id', $enrollmentId)
+            ->select([
+                'uce.course_id',
+                'uce.course_table',
+                \DB::raw('CONCAT(COALESCE(u.first_name, ""), " ", COALESCE(u.last_name, "")) as name'),
+                'u.email'
+            ])
+            ->first();
+            
+        if (!$enrollment) {
+            return response()->json(['error' => 'Enrollment not found'], 404);
+        }
+        
+        // Get course title from appropriate table
+        $courseTable = $enrollment->course_table ?: 'courses';
+        $course = \DB::table($courseTable)->where('id', $enrollment->course_id)->first();
+        $courseTitle = $course ? $course->title : 'Unknown Course';
+            
+        // Get max attempts
+        $maxAttempts = \DB::table('final_exam_attempt_limits')
+            ->where('enrollment_id', $enrollmentId)
+            ->value('max_attempts') ?: 2;
+            
+        // Get all attempts
+        $attempts = \DB::table('final_exam_results')
+            ->where('enrollment_id', $enrollmentId)
+            ->orderBy('attempt')
+            ->get();
+            
+        $bestScore = $attempts->max('score');
+        
+        return response()->json([
+            'user' => ['name' => $enrollment->name, 'email' => $enrollment->email],
+            'course' => ['title' => $courseTitle],
+            'max_attempts' => $maxAttempts,
+            'attempts' => $attempts,
+            'best_score' => $bestScore
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
     }
 });
 
@@ -568,7 +1458,7 @@ Route::get('/enrollments/{enrollmentId}/progress', function ($enrollmentId) {
         \Log::info("Enrollment ID: {$enrollmentId}");
 
         $enrollment = \App\Models\UserCourseEnrollment::with('course')->findOrFail($enrollmentId);
-        \Log::info("Enrollment found - User ID: {$enrollment->user_id}, Course ID: {$enrollment->course_id}");
+        \Log::info("Enrollment found - User ID: {$enrollment->user_id}, Course ID: {$enrollment->course_id}, Course Table: {$enrollment->course_table}");
 
         if (! $enrollment->course) {
             \Log::error("❌ Course relationship returned NULL for course_id: {$enrollment->course_id}");
@@ -582,11 +1472,14 @@ Route::get('/enrollments/{enrollmentId}/progress', function ($enrollmentId) {
 
         \Log::info("✓ Course loaded: {$enrollment->course->title}");
 
-        // Check total chapters in database
-        $totalChapters = \App\Models\Chapter::where('course_id', $enrollment->course_id)->count();
-        \Log::info("Total chapters in DB for course_id {$enrollment->course_id}: {$totalChapters}");
+        // Check total chapters in database with course_table filter
+        $totalChapters = \App\Models\Chapter::where('course_id', $enrollment->course_id)
+            ->where('course_table', $enrollment->course_table)
+            ->count();
+        \Log::info("Total chapters in DB for course_id {$enrollment->course_id} and course_table {$enrollment->course_table}: {$totalChapters}");
 
         $chapters = \App\Models\Chapter::where('course_id', $enrollment->course_id)
+            ->where('course_table', $enrollment->course_table)
             ->where('is_active', true)
             ->orderBy('order_index', 'asc')
             ->get();
@@ -595,7 +1488,10 @@ Route::get('/enrollments/{enrollmentId}/progress', function ($enrollmentId) {
 
         if ($chapters->isEmpty()) {
             \Log::error('❌ NO CHAPTERS FOUND - Checking database...');
-            $allChapters = DB::table('chapters')->where('course_id', $enrollment->course_id)->get();
+            $allChapters = DB::table('chapters')
+                ->where('course_id', $enrollment->course_id)
+                ->where('course_table', $enrollment->course_table)
+                ->get();
             \Log::info('Raw DB query result: '.json_encode($allChapters));
         } else {
             \Log::info('Chapter IDs: '.$chapters->pluck('id')->implode(', '));
@@ -828,6 +1724,8 @@ Route::get('/courts/by-county/{state}/{county}', function ($state, $county) {
 
 // Include new modules API routes
 require __DIR__.'/new-modules-api.php';
+
+
 
 
 // State Integration Callbacks (no auth - external systems)

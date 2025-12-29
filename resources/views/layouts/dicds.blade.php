@@ -10,14 +10,33 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="/css/themes.css" rel="stylesheet">
+    <style>
+        /* DICDS layout adjustments for navbar */
+        .dicds-content {
+            margin-left: 300px;
+            max-width: calc(100% - 320px);
+            padding: 20px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .dicds-content {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <x-theme-switcher />
     <x-navbar />
     
-    @yield('content')
+    <div class="dicds-content">
+        @yield('content')
+    </div>
     
-    <div style="position: fixed; bottom: 20px; left: 20px; font-size: 12px; color: var(--text-secondary);">
+    <div style="position: fixed; bottom: 20px; left: 320px; font-size: 12px; color: var(--text-secondary);">
         DICDS Version 1.1 &nbsp;&nbsp; User Manual Update 2.0 &nbsp;&nbsp;&nbsp;&nbsp; September 2007
     </div>
 </body>

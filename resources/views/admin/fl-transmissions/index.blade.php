@@ -111,6 +111,24 @@
                                     <td>
                                         @if($transmission->response_code)
                                             <code class="text-danger">{{ $transmission->response_code }}</code>
+                                            @if(preg_match('/^[A-Z]{2}\d{3}$/', $transmission->response_code))
+                                                @php
+                                                    $errorMappings = [
+                                                        'CF033' => 'Invalid driver license number',
+                                                        'CF032' => 'Not in Florida DL format',
+                                                        'CF034' => 'Multiple records found for DL',
+                                                        'DV100' => 'Citation number incorrect length',
+                                                        'DV030' => 'First name missing',
+                                                        'DV040' => 'Last name missing',
+                                                        'VL000' => 'Login failed - invalid credentials',
+                                                        'VS000' => 'School validation failed',
+                                                        'VI000' => 'Could not verify instructor',
+                                                        'VC000' => 'Could not verify class',
+                                                    ];
+                                                    $errorMessage = $errorMappings[$transmission->response_code] ?? 'Unknown error';
+                                                @endphp
+                                                <br><small class="text-muted">{{ $errorMessage }}</small>
+                                            @endif
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif

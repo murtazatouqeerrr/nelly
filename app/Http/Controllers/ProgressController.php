@@ -63,34 +63,40 @@ class ProgressController extends Controller
 
     private function updateEnrollmentProgress(UserCourseEnrollment $enrollment)
     {
-        // Get total chapters from the primary source (chapters table first, then course_chapters)
+        // Get total chapters from chapters table (primary source)
         $totalChapters = \App\Models\Chapter::where('course_id', $enrollment->course_id)
             ->where('is_active', true)
             ->count();
 
-        // If no chapters in chapters table, check course_chapters table
+        // If no chapters found, this might be an issue with the course setup
         if ($totalChapters == 0) {
-            $totalChapters = \App\Models\CourseChapter::where('course_id', $enrollment->course_id)
-                ->where('is_active', true)
-                ->count();
+            \Log::warning("No chapters found for course_id: {$enrollment->course_id}");
         }
 
-        $completedChapters = $enrollment->progress()->where('is_completed', true)->count();
+        // Count unique completed chapters (avoid duplicates)
+        $completedChapters = \DB::table('user_course_progress')
+            ->where('enrollment_id', $enrollment->id)
+            ->where('is_completed', true)
+            ->distinct()
+            ->count('chapter_id');
 
-        $progressPercentage = $totalChapters > 0 ? ($completedChapters / $totalChapters) * 100 : 0;
+        // Cap progress at 100%
+        $progressPercentage = $totalChapters > 0 ? min(($completedChapters / $totalChapters) * 100, 100) : 0;
         $totalTimeSpent = $enrollment->progress()->sum('time_spent');
 
         $wasCompleted = $enrollment->status === 'completed';
 
+        \Log::info("Progress update - Total: {$totalChapters}, Completed: {$completedChapters}, Percentage: {$progressPercentage}");
+
         $enrollment->update([
             'progress_percentage' => $progressPercentage,
             'total_time_spent' => $totalTimeSpent,
-            'completed_at' => $progressPercentage == 100 ? now() : null,
-            'status' => $progressPercentage == 100 ? 'completed' : 'active',
+            'completed_at' => $progressPercentage >= 100 ? now() : null,
+            'status' => $progressPercentage >= 100 ? 'completed' : 'active',
         ]);
 
         // Generate certificate and fire event if course just completed
-        if ($progressPercentage == 100 && ! $wasCompleted) {
+        if ($progressPercentage >= 100 && ! $wasCompleted) {
             $this->generateCertificate($enrollment);
 
             // Fire CourseCompleted event for state transmissions and notifications
@@ -143,45 +149,21 @@ class ProgressController extends Controller
         }
 
         try {
-            // First check if chapter exists in course_chapters table (required by foreign key)
-            $courseChapter = \App\Models\CourseChapter::find($chapter);
-
-            if (! $courseChapter) {
-                // If not in course_chapters, check chapters table
-                $regularChapter = \App\Models\Chapter::find($chapter);
-                if (! $regularChapter) {
-                    return response()->json(['error' => 'Chapter not found'], 404);
-                }
-
-                // Use firstOrCreate to avoid duplicates - this is atomic
-                $chapterModel = \App\Models\CourseChapter::firstOrCreate(
-                    [
-                        'course_id' => $enrollment->course_id,
-                        'title' => $regularChapter->title,
-                        'order_index' => $regularChapter->order_index ?? 1,
-                    ],
-                    [
-                        'content' => $regularChapter->content ?? '',
-                        'video_url' => $regularChapter->video_url,
-                        'duration' => $regularChapter->duration ?? 60,
-                        'required_min_time' => 60,
-                        'is_active' => true,
-                    ]
-                );
-            } else {
-                $chapterModel = $courseChapter;
+            // Get chapter from chapters table
+            $chapterModel = \App\Models\Chapter::find($chapter);
+            
+            if (!$chapterModel) {
+                return response()->json(['error' => 'Chapter not found'], 404);
             }
 
-            // Check if already completed to avoid duplicate processing
+            // Check if already completed
             $existingProgress = UserCourseProgress::where('enrollment_id', $enrollment->id)
                 ->where('chapter_id', $chapterModel->id)
                 ->where('is_completed', true)
                 ->first();
 
             if ($existingProgress) {
-                // Already completed, just return current status
                 $enrollment->refresh();
-
                 return response()->json([
                     'success' => true,
                     'progress' => $existingProgress,
@@ -221,6 +203,7 @@ class ProgressController extends Controller
 
         } catch (\Exception $e) {
             \Log::error('Chapter completion error: '.$e->getMessage());
+            \Log::error('Stack trace: '.$e->getTraceAsString());
 
             return response()->json([
                 'error' => 'Failed to complete chapter',

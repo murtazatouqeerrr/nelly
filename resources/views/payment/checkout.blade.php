@@ -26,8 +26,8 @@
         .btn { padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
         .btn-primary { background: #2563eb; color: white; }
         .btn-primary:hover { background: #1d4ed8; }
-        .btn-success { background: #059669; color: white; }
-        .btn-success:hover { background: #047857; }
+        .btn-success { background: #516425; color: white; }
+        .btn-success:hover { background: #3d4b1c; }
         .loading { display: none; }
         .error { color: #dc2626; margin-top: 10px; }
         .order-summary { background: #f9fafb; padding: 20px; border-radius: 6px; margin-bottom: 20px; }
@@ -42,15 +42,31 @@
                 <div class="course-price">${{ number_format($course->price, 2) }}</div>
             </div>
 
+            <!-- Coupon Section -->
+            <div style="background: #f4f6f0; border: 2px dashed #516425; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="margin: 0 0 15px 0; color: #516425;">🎟️ Have a Coupon Code?</h3>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="couponCode" placeholder="Enter coupon code" maxlength="6" style="flex: 1; padding: 12px; border: 1px solid #516425; border-radius: 4px; text-transform: uppercase; font-weight: bold;">
+                    <button type="button" class="btn btn-success" onclick="applyCoupon()" style="padding: 12px 24px;">
+                        Apply
+                    </button>
+                </div>
+                <div id="couponMessage" style="margin-top: 10px;"></div>
+            </div>
+
             <div class="order-summary">
                 <h3>Order Summary</h3>
                 <div style="display: flex; justify-content: space-between; margin-top: 10px;">
                     <span>Course Fee:</span>
-                    <span>${{ number_format($course->price, 2) }}</span>
+                    <span id="originalPriceDisplay">${{ number_format($course->price, 2) }}</span>
+                </div>
+                <div id="discountRow" style="display: none; justify-content: space-between; margin-top: 10px; color: #516425;">
+                    <span>Discount:</span>
+                    <span>-$<span id="discountAmount">0.00</span></span>
                 </div>
                 <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
                     <span>Total:</span>
-                    <span>${{ number_format($course->price, 2) }}</span>
+                    <span id="finalPriceDisplay">${{ number_format($course->price, 2) }}</span>
                 </div>
             </div>
 
@@ -117,16 +133,28 @@
         let selectedMethod = null;
         let stripe = null;
         let cardElement = null;
+        const originalPrice = {{ $course->price }};
+        let appliedCoupon = null;
 
         function selectPaymentMethod(method) {
             selectedMethod = method;
             
-            // Update UI
+            // Update UI safely
             document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('active'));
-            event.target.closest('.payment-method').classList.add('active');
             
+            const clickedElement = event.target?.closest('.payment-method');
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            }
+            
+            // Hide all forms first
             document.querySelectorAll('.stripe-form, .paypal-form').forEach(el => el.classList.remove('active'));
-            document.getElementById(method + '-form').classList.add('active');
+            
+            // Show selected form
+            const targetForm = document.getElementById(method + '-form');
+            if (targetForm) {
+                targetForm.classList.add('active');
+            }
 
             if (method === 'stripe' && !stripe) {
                 initializeStripe();
@@ -135,28 +163,40 @@
 
         async function processAuthorizenetPayment() {
             const button = event.target;
+            if (!button) return;
+            
             button.disabled = true;
-            button.querySelector('.loading').style.display = 'inline';
-            button.querySelector('.btn-text').style.display = 'none';
+            
+            // Safely handle loading state
+            const loadingSpan = button.querySelector('.loading');
+            const btnTextSpan = button.querySelector('.btn-text');
+            
+            if (loadingSpan) loadingSpan.style.display = 'inline';
+            if (btnTextSpan) btnTextSpan.style.display = 'none';
 
             // Validate inputs
-            const cardNumber = document.getElementById('authnet-card-number').value.replace(/\s/g, '');
-            const expiryMonth = document.getElementById('authnet-expiry-month').value;
-            const expiryYear = document.getElementById('authnet-expiry-year').value;
-            const cvv = document.getElementById('authnet-cvv').value;
-            const address = document.getElementById('authnet-billing-address').value;
-            const city = document.getElementById('authnet-billing-city').value;
-            const state = document.getElementById('authnet-billing-state').value;
-            const zipcode = document.getElementById('authnet-billing-zipcode').value;
-            const country = document.getElementById('authnet-billing-country').value;
+            const cardNumber = document.getElementById('authnet-card-number')?.value?.replace(/\s/g, '') || '';
+            const expiryMonth = document.getElementById('authnet-expiry-month')?.value || '';
+            const expiryYear = document.getElementById('authnet-expiry-year')?.value || '';
+            const cvv = document.getElementById('authnet-cvv')?.value || '';
+            const address = document.getElementById('authnet-billing-address')?.value || '';
+            const city = document.getElementById('authnet-billing-city')?.value || '';
+            const state = document.getElementById('authnet-billing-state')?.value || '';
+            const zipcode = document.getElementById('authnet-billing-zipcode')?.value || '';
+            const country = document.getElementById('authnet-billing-country')?.value || '';
 
             if (!cardNumber || !expiryMonth || !expiryYear || !cvv || !address || !city || !state || !zipcode) {
-                document.getElementById('authnet-errors').textContent = 'Please fill in all required fields';
-                button.disabled = false;
-                button.querySelector('.loading').style.display = 'none';
-                button.querySelector('.btn-text').style.display = 'inline';
+                const errorDiv = document.getElementById('authnet-errors');
+                if (errorDiv) errorDiv.textContent = 'Please fill in all required fields';
+                resetButton();
                 return;
             }
+
+            const finalAmount = appliedCoupon ? 
+                (originalPrice - (appliedCoupon.type === 'percentage' ? 
+                    (originalPrice * appliedCoupon.amount / 100) : 
+                    Math.min(appliedCoupon.amount, originalPrice))) : 
+                originalPrice;
 
             try {
                 const response = await fetch('/payment/authorizenet', {
@@ -175,7 +215,11 @@
                         city: city,
                         state: state,
                         country: country,
-                        zipcode: zipcode
+                        zipcode: zipcode,
+                        amount: finalAmount,
+                        original_amount: originalPrice,
+                        coupon_code: appliedCoupon ? appliedCoupon.code : null,
+                        discount_amount: appliedCoupon ? (originalPrice - finalAmount) : 0
                     })
                 });
 
@@ -184,24 +228,154 @@
                 if (data.success) {
                     window.location.href = data.redirect;
                 } else {
-                    document.getElementById('authnet-errors').textContent = data.error || 'Payment failed';
-                    button.disabled = false;
-                    button.querySelector('.loading').style.display = 'none';
-                    button.querySelector('.btn-text').style.display = 'inline';
+                    const errorDiv = document.getElementById('authnet-errors');
+                    if (errorDiv) errorDiv.textContent = data.error || 'Payment failed';
+                    resetButton();
                 }
             } catch (error) {
-                document.getElementById('authnet-errors').textContent = 'Error: ' + error.message;
-                button.disabled = false;
-                button.querySelector('.loading').style.display = 'none';
-                button.querySelector('.btn-text').style.display = 'inline';
+                console.error('Payment error:', error);
+                const errorDiv = document.getElementById('authnet-errors');
+                if (errorDiv) errorDiv.textContent = 'Error: ' + error.message;
+                resetButton();
+            }
+            
+            function resetButton() {
+                if (button) {
+                    button.disabled = false;
+                    if (loadingSpan) loadingSpan.style.display = 'none';
+                    if (btnTextSpan) btnTextSpan.style.display = 'inline';
+                }
+            }
+        }
+
+        async function applyCoupon() {
+            const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
+            const messageDiv = document.getElementById('couponMessage');
+            
+            if (!couponCode) {
+                showCouponMessage('Please enter a coupon code', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const applyBtn = event.target;
+            const originalText = applyBtn.innerHTML;
+            applyBtn.innerHTML = 'Applying...';
+            applyBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/coupons/apply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        code: couponCode,
+                        amount: originalPrice
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.valid) {
+                    appliedCoupon = data.coupon;
+                    updatePriceDisplay(data.discount, data.final_amount);
+                    showCouponMessage(`Coupon applied! You saved $${data.discount.toFixed(2)}`, 'success');
+                    
+                    // Change button to "Remove"
+                    applyBtn.innerHTML = 'Remove';
+                    applyBtn.onclick = removeCoupon;
+                    applyBtn.style.background = '#dc2626';
+                } else {
+                    showCouponMessage(data.error || 'Invalid coupon code', 'error');
+                }
+            } catch (error) {
+                console.error('Coupon error:', error);
+                showCouponMessage('Error applying coupon. Please try again.', 'error');
+            } finally {
+                if (!appliedCoupon) {
+                    applyBtn.innerHTML = originalText;
+                }
+                applyBtn.disabled = false;
+            }
+        }
+        
+        function removeCoupon() {
+            appliedCoupon = null;
+            updatePriceDisplay(0, originalPrice);
+            showCouponMessage('', '');
+            
+            // Reset button
+            const applyBtn = event.target;
+            applyBtn.innerHTML = 'Apply';
+            applyBtn.onclick = applyCoupon;
+            applyBtn.style.background = '#516425';
+            
+            // Clear coupon code
+            document.getElementById('couponCode').value = '';
+        }
+        
+        function updatePriceDisplay(discount, finalAmount) {
+            const discountRow = document.getElementById('discountRow');
+            const discountAmountSpan = document.getElementById('discountAmount');
+            const finalPriceDisplay = document.getElementById('finalPriceDisplay');
+            
+            if (discount > 0) {
+                if (discountRow) discountRow.style.display = 'flex';
+                if (discountAmountSpan) discountAmountSpan.textContent = discount.toFixed(2);
+                if (finalPriceDisplay) finalPriceDisplay.textContent = '$' + finalAmount.toFixed(2);
+                
+                // Update button text safely
+                document.querySelectorAll('.btn-text').forEach(btn => {
+                    if (btn && (btn.textContent.includes('Pay $') || btn.textContent.includes('Complete Test Payment'))) {
+                        btn.textContent = btn.textContent.replace(/\$[\d,]+\.?\d*/, '$' + finalAmount.toFixed(2));
+                    }
+                });
+            } else {
+                if (discountRow) discountRow.style.display = 'none';
+                if (finalPriceDisplay) finalPriceDisplay.textContent = '$' + originalPrice.toFixed(2);
+                
+                // Reset button text safely
+                document.querySelectorAll('.btn-text').forEach(btn => {
+                    if (btn && (btn.textContent.includes('Pay $') || btn.textContent.includes('Complete Test Payment'))) {
+                        btn.textContent = btn.textContent.replace(/\$[\d,]+\.?\d*/, '$' + originalPrice.toFixed(2));
+                    }
+                });
+            }
+        }
+        
+        function showCouponMessage(message, type) {
+            const messageDiv = document.getElementById('couponMessage');
+            if (message) {
+                const color = type === 'success' ? '#516425' : '#dc2626';
+                const bgColor = type === 'success' ? '#f4f6f0' : '#fef2f2';
+                messageDiv.innerHTML = `<div style="padding: 10px; background: ${bgColor}; color: ${color}; border-radius: 4px; font-size: 14px;">${message}</div>`;
+            } else {
+                messageDiv.innerHTML = '';
             }
         }
 
         async function processDummyPayment() {
             const button = event.target;
+            if (!button) return;
+            
             button.disabled = true;
-            button.querySelector('.loading').style.display = 'inline';
-            button.querySelector('.btn-text').style.display = 'none';
+            
+            // Safely handle loading state
+            const loadingSpan = button.querySelector('.loading');
+            const btnTextSpan = button.querySelector('.btn-text');
+            
+            if (loadingSpan) loadingSpan.style.display = 'inline';
+            if (btnTextSpan) btnTextSpan.style.display = 'none';
+
+            const finalAmount = appliedCoupon ? 
+                (originalPrice - (appliedCoupon.calculateDiscount ? appliedCoupon.calculateDiscount(originalPrice) : 
+                    (appliedCoupon.type === 'percentage' ? 
+                        (originalPrice * appliedCoupon.amount / 100) : 
+                        Math.min(appliedCoupon.amount, originalPrice)))) : 
+                originalPrice;
 
             try {
                 const response = await fetch('/payment/dummy', {
@@ -212,7 +386,10 @@
                     },
                     body: JSON.stringify({
                         enrollment_id: {{ $enrollment->id }},
-                        amount: {{ $course->price }}
+                        amount: finalAmount,
+                        original_amount: originalPrice,
+                        coupon_code: appliedCoupon ? appliedCoupon.code : null,
+                        discount_amount: appliedCoupon ? (originalPrice - finalAmount) : 0
                     })
                 });
 
@@ -221,18 +398,36 @@
                 if (data.success) {
                     window.location.href = '/payment/success?enrollment_id={{ $enrollment->id }}';
                 } else {
-                    alert('Payment failed: ' + data.error);
-                    button.disabled = false;
-                    button.querySelector('.loading').style.display = 'none';
-                    button.querySelector('.btn-text').style.display = 'inline';
+                    alert('Payment failed: ' + (data.error || 'Unknown error'));
+                    resetButton();
                 }
             } catch (error) {
+                console.error('Payment error:', error);
                 alert('Error: ' + error.message);
-                button.disabled = false;
-                button.querySelector('.loading').style.display = 'none';
-                button.querySelector('.btn-text').style.display = 'inline';
+                resetButton();
+            }
+            
+            function resetButton() {
+                if (button) {
+                    button.disabled = false;
+                    if (loadingSpan) loadingSpan.style.display = 'none';
+                    if (btnTextSpan) btnTextSpan.style.display = 'inline';
+                }
             }
         }
+
+        // Auto-uppercase coupon code input
+        document.getElementById('couponCode').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+        
+        // Allow Enter key to apply coupon
+        document.getElementById('couponCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyCoupon();
+            }
+        });
     </script>
 </body>
 </html>

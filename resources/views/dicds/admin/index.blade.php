@@ -28,7 +28,7 @@
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" style="background-color: #f4f6f0; border-color: #516425; color: #516425;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -82,7 +82,7 @@
                 <div class="bg-white overflow-hidden shadow rounded-lg">
                     <div class="p-5">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
+                            <div class="flex-shrink-0 bg-green-500 rounded-md p-3" style="background-color: #516425;">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>

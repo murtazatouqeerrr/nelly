@@ -15,9 +15,10 @@ Route::post('/access-request', [DicdsAuthController::class, 'accessRequest']);
 Route::post('/logout', [DicdsAuthController::class, 'logout'])->name('dicds.logout');
 
 // Protected Routes
-Route::get('/main-menu', [DicdsController::class, 'mainMenu'])->name('dicds.main-menu');
-Route::get('/welcome', [DicdsController::class, 'welcome'])->name('dicds.welcome');
-Route::get('/provider-menu', [DicdsController::class, 'providerMenu'])->name('dicds.provider-menu');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/main-menu', [DicdsController::class, 'mainMenu'])->name('dicds.main-menu');
+    Route::get('/welcome', [DicdsController::class, 'welcome'])->name('dicds.welcome');
+    Route::get('/provider-menu', [DicdsController::class, 'providerMenu'])->name('dicds.provider-menu');
 
 // School Management
 Route::get('/schools/add', [DicdsController::class, 'addSchool'])->name('dicds.schools.add');
@@ -67,3 +68,4 @@ Route::get('/admin/users/{id}', [WebAdminController::class, 'showUser'])->name('
 Route::put('/admin/users/{id}/status', [WebAdminController::class, 'updateUserStatus'])->name('dicds.admin.update-status');
 Route::put('/admin/users/{id}/password', [WebAdminController::class, 'resetPassword'])->name('dicds.admin.reset-password');
 Route::put('/admin/users/{id}/role', [WebAdminController::class, 'updateUserRole'])->name('dicds.admin.update-role');
+});

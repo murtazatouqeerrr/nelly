@@ -11,6 +11,7 @@ class UserCourseEnrollment extends Model
     protected $fillable = [
         'user_id',
         'course_id',
+        'course_table',
         'payment_status',
         'amount_paid',
         'payment_method',
@@ -25,6 +26,7 @@ class UserCourseEnrollment extends Model
         'started_at',
         'completed_at',
         'progress_percentage',
+        'quiz_average',
         'total_time_spent',
         'status',
         'access_revoked',
@@ -46,14 +48,39 @@ class UserCourseEnrollment extends Model
         'reminder_sent_at' => 'datetime',
     ];
 
+    // Performance optimization: Always eager load these relationships
+    protected $with = ['user'];
+
+    // Cache frequently accessed data
+    public function getCourseAttribute()
+    {
+        return cache()->remember(
+            "enrollment_course_{$this->id}_{$this->course_table}_{$this->course_id}",
+            300, // 5 minutes
+            function () {
+                if ($this->course_table === 'florida_courses') {
+                    return \App\Models\FloridaCourse::find($this->course_id);
+                }
+                return \App\Models\Course::find($this->course_id);
+            }
+        );
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function course(): BelongsTo
+    public function course()
     {
-        return $this->belongsTo(FloridaCourse::class, 'course_id');
+        // Dynamic relationship based on course_table field
+        $table = $this->course_table ?? 'florida_courses';
+        
+        if ($table === 'courses') {
+            return $this->belongsTo(Course::class, 'course_id');
+        } else {
+            return $this->belongsTo(FloridaCourse::class, 'course_id');
+        }
     }
 
     public function floridaCourse(): BelongsTo
@@ -64,6 +91,18 @@ class UserCourseEnrollment extends Model
     public function legacyCourse(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    // Get course data regardless of table
+    public function getCourseData()
+    {
+        $table = $this->course_table ?? 'florida_courses';
+        
+        if ($table === 'courses') {
+            return \Illuminate\Support\Facades\DB::table('courses')->where('id', $this->course_id)->first();
+        } else {
+            return \Illuminate\Support\Facades\DB::table('florida_courses')->where('id', $this->course_id)->first();
+        }
     }
 
     public function progress(): HasMany
@@ -99,6 +138,11 @@ class UserCourseEnrollment extends Model
     public function stateTransmissions(): HasMany
     {
         return $this->hasMany(StateTransmission::class, 'enrollment_id');
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'enrollment_id');
     }
 
     // Status-based scopes

@@ -11,8 +11,16 @@ class StateStampController extends Controller
     public function index()
     {
         $stamps = StateStamp::orderBy('state_name')->get();
+        
+        // Static list of states that have courses
+        $states = collect([
+            (object)['code' => 'DE', 'name' => 'Delaware'],
+            (object)['code' => 'FL', 'name' => 'Florida'],
+            (object)['code' => 'MO', 'name' => 'Missouri'],
+            (object)['code' => 'TX', 'name' => 'Texas'],
+        ]);
 
-        return view('admin.state-stamps.index', compact('stamps'));
+        return view('admin.state-stamps.index', compact('stamps', 'states'));
     }
 
     public function store(Request $request)

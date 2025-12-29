@@ -17,14 +17,35 @@ class CourseTimerController extends Controller
 
     public function startTimer(Request $request)
     {
+        \Log::info('=== Timer Start Request ===');
+        \Log::info('User authenticated: ' . (auth()->check() ? 'YES' : 'NO'));
+        \Log::info('User ID: ' . (auth()->id() ?? 'NULL'));
+        \Log::info('User email: ' . (auth()->user()->email ?? 'NULL'));
+        \Log::info('Auth guard: ' . auth()->getDefaultDriver());
+        \Log::info('Request data: ', $request->all());
+        \Log::info('Request headers: ', $request->headers->all());
+        \Log::info('Session ID: ' . session()->getId());
+        \Log::info('CSRF Token: ' . csrf_token());
+
+        if (!auth()->check()) {
+            \Log::error('Authentication failed - user not logged in');
+            return response()->json(['error' => 'Authentication required'], 401);
+        }
+
         $request->validate([
             'chapter_id' => 'required|integer',
             'chapter_type' => 'nullable|string|in:chapters,course_chapters',
+            'browser_fingerprint' => 'required|string'
         ]);
 
         $chapterType = $request->chapter_type ?? 'chapters';
-        $result = $this->timerService->startTimer(auth()->id(), $request->chapter_id, $chapterType);
+        $result = $this->timerService->startTimer(
+            auth()->id(), 
+            $request->chapter_id, 
+            $chapterType
+        );
 
+        \Log::info('Timer start result: ', $result);
         return response()->json($result);
     }
 
@@ -33,11 +54,72 @@ class CourseTimerController extends Controller
         $request->validate([
             'session_id' => 'required|exists:timer_sessions,id',
             'time_spent' => 'required|integer|min:0',
+            'session_token' => 'nullable|string',
+            'browser_fingerprint' => 'required|string',
+            'violations' => 'nullable|array'
         ]);
 
-        $result = $this->timerService->updateTimer($request->session_id, $request->time_spent);
+        $result = $this->timerService->updateTimer(
+            $request->session_id, 
+            $request->time_spent,
+            $request->session_token,
+            $request->violations ?? []
+        );
 
         return response()->json($result);
+    }
+
+    public function heartbeat(Request $request)
+    {
+        $request->validate([
+            'session_id' => 'required|exists:timer_sessions,id',
+            'session_token' => 'required|string',
+            'timestamp' => 'required|integer'
+        ]);
+
+        $session = \App\Models\TimerSession::find($request->session_id);
+        
+        if (!$session || $session->session_token !== $request->session_token) {
+            return response()->json(['error' => 'Invalid session'], 403);
+        }
+
+        $session->update(['last_heartbeat' => now()]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function validateSession(Request $request)
+    {
+        $request->validate([
+            'session_id' => 'required|exists:timer_sessions,id',
+            'session_token' => 'required|string',
+            'browser_fingerprint' => 'required|string'
+        ]);
+
+        $result = $this->timerService->validateSession(
+            $request->session_id,
+            $request->session_token,
+            $request->browser_fingerprint
+        );
+
+        return response()->json($result);
+    }
+
+    public function recordViolation(Request $request)
+    {
+        $request->validate([
+            'session_id' => 'required|exists:timer_sessions,id',
+            'violation_type' => 'required|string',
+            'details' => 'nullable|array'
+        ]);
+
+        $this->timerService->recordViolation(
+            $request->session_id,
+            $request->violation_type,
+            $request->details ?? []
+        );
+
+        return response()->json(['success' => true]);
     }
 
     public function bypassTimer(Request $request)

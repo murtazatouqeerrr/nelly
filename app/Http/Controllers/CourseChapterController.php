@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CourseChapter;
+use App\Models\Chapter;
 use Illuminate\Http\Request;
 
 class CourseChapterController extends Controller
 {
     public function index($courseId)
     {
-        $chapters = CourseChapter::where('course_id', $courseId)
+        $chapters = Chapter::where('course_id', $courseId)
             ->orderBy('order_index')
             ->get();
 
@@ -29,7 +29,8 @@ class CourseChapterController extends Controller
         ]);
 
         $validated['course_id'] = $courseId;
-        $chapter = CourseChapter::create($validated);
+        $validated['course_table'] = 'courses'; // Set default course table
+        $chapter = Chapter::create($validated);
 
         return response()->json([
             'message' => 'Chapter created successfully',
@@ -49,7 +50,7 @@ class CourseChapterController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $chapter = CourseChapter::findOrFail($id);
+        $chapter = Chapter::findOrFail($id);
         $chapter->update($validated);
 
         return response()->json([
@@ -60,7 +61,7 @@ class CourseChapterController extends Controller
 
     public function destroy($id)
     {
-        $chapter = CourseChapter::findOrFail($id);
+        $chapter = Chapter::findOrFail($id);
         $chapter->delete();
 
         return response()->json([

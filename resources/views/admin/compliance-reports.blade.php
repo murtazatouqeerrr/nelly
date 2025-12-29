@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Florida Compliance Reports')
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" style="margin-left: 300px; max-width: calc(100% - 320px); padding: 20px;">
     <h1 class="mb-4">Florida Compliance Reports</h1>
     
     <div class="card mb-4">

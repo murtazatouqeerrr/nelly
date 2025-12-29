@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 */
 
 // FLHSMV Integration Routes
-Route::prefix('flhsmv')->middleware('auth:sanctum')->group(function () {
+Route::prefix('flhsmv')->middleware('auth')->group(function () {
     Route::post('/submit-completion', [FlhsmvController::class, 'submitCompletion']);
     Route::get('/submission/{id}', [FlhsmvController::class, 'getSubmissionStatus']);
     Route::get('/submissions', [FlhsmvController::class, 'listSubmissions']);
@@ -27,93 +27,28 @@ Route::prefix('flhsmv')->middleware('auth:sanctum')->group(function () {
 // Payment Gateway Routes
 Route::prefix('payment')->group(function () {
     // Stripe
-    Route::post('/stripe/create-intent', [PaymentGatewayController::class, 'createStripePayment'])->middleware('auth:sanctum');
-    Route::post('/stripe/process', [PaymentGatewayController::class, 'processStripePayment'])->middleware('auth:sanctum');
+    Route::post('/stripe/create-intent', [PaymentGatewayController::class, 'createStripePayment'])->middleware('auth');
+    Route::post('/stripe/process', [PaymentGatewayController::class, 'processStripePayment'])->middleware('auth');
     Route::post('/stripe/webhook', [PaymentGatewayController::class, 'stripeWebhook']);
 
     // PayPal
-    Route::post('/paypal/create-order', [PaymentGatewayController::class, 'createPayPalOrder'])->middleware('auth:sanctum');
-    Route::post('/paypal/capture', [PaymentGatewayController::class, 'capturePayPalOrder'])->middleware('auth:sanctum');
+    Route::post('/paypal/create-order', [PaymentGatewayController::class, 'createPayPalOrder'])->middleware('auth');
+    Route::post('/paypal/capture', [PaymentGatewayController::class, 'capturePayPalOrder'])->middleware('auth');
     Route::post('/paypal/webhook', [PaymentGatewayController::class, 'paypalWebhook']);
 
     // Dummy Payment (for testing)
-    Route::post('/dummy/process', [PaymentGatewayController::class, 'processDummyPayment'])->middleware('auth:sanctum');
+    Route::post('/dummy/process', [PaymentGatewayController::class, 'processDummyPayment'])->middleware('auth');
 });
 
 // Course Timer Routes
-Route::prefix('timer')->group(function () {
-    Route::post('/start', function (Request $request) {
-        try {
-            $chapterId = $request->chapter_id;
-            \Log::info('Timer start requested for chapter: '.$chapterId);
-
-            // Check which table the chapter belongs to
-            $chapterType = 'chapters';
-            $chapterExists = \App\Models\Chapter::where('id', $chapterId)->exists();
-            \Log::info('Chapter exists in chapters table: '.($chapterExists ? 'yes' : 'no'));
-
-            if (! $chapterExists) {
-                $courseChapterExists = \App\Models\CourseChapter::where('id', $chapterId)->exists();
-                \Log::info('Chapter exists in course_chapters table: '.($courseChapterExists ? 'yes' : 'no'));
-                if ($courseChapterExists) {
-                    $chapterType = 'course_chapters';
-                }
-            }
-
-            \Log::info('Using chapter type: '.$chapterType);
-
-            // Find timer for this chapter
-            $timer = \App\Models\CourseTimer::where('chapter_id', $chapterId)
-                ->where('chapter_type', $chapterType)
-                ->first();
-
-            \Log::info('Timer found: '.($timer ? 'yes (ID: '.$timer->id.', enabled: '.($timer->is_enabled ? 'yes' : 'no').')' : 'no'));
-
-            if (! $timer || ! $timer->is_enabled) {
-                \Log::info('No timer required - returning false');
-
-                return response()->json(['success' => true, 'timer_required' => false]);
-            }
-
-            // Check for existing session
-            $session = \App\Models\TimerSession::where('course_timer_id', $timer->id)
-                ->where('is_active', true)
-                ->first();
-
-            if (! $session) {
-                \Log::info('Creating new timer session');
-                $session = \App\Models\TimerSession::create([
-                    'course_timer_id' => $timer->id,
-                    'started_at' => now(),
-                    'session_token' => Str::random(32),
-                    'is_active' => true,
-                    'duration_minutes' => 0,
-                ]);
-                \Log::info('Session created with ID: '.$session->id);
-            } else {
-                \Log::info('Using existing session ID: '.$session->id);
-            }
-
-            $response = [
-                'success' => true,
-                'timer_required' => true,
-                'session' => $session,
-                'required_time' => $timer->required_time_minutes * 60,
-            ];
-            \Log::info('Returning timer data: '.json_encode($response));
-
-            return response()->json($response);
-        } catch (\Exception $e) {
-            \Log::error('Timer start error: '.$e->getMessage());
-            \Log::error('Stack trace: '.$e->getTraceAsString());
-
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
-        }
-    });
-
-    Route::post('/update', [CourseTimerController::class, 'updateTimer'])->middleware('auth:sanctum');
-    Route::post('/bypass', [CourseTimerController::class, 'bypassTimer'])->middleware('auth:sanctum');
-    Route::post('/check-status', [CourseTimerController::class, 'checkTimerStatus'])->middleware('auth:sanctum');
+Route::prefix('timer')->middleware('web')->group(function () {
+    Route::post('/start', [CourseTimerController::class, 'startTimer'])->middleware('auth');
+    Route::post('/update', [CourseTimerController::class, 'updateTimer'])->middleware('auth');
+    Route::post('/heartbeat', [CourseTimerController::class, 'heartbeat'])->middleware('auth');
+    Route::post('/validate', [CourseTimerController::class, 'validateSession'])->middleware('auth');
+    Route::post('/violation', [CourseTimerController::class, 'recordViolation'])->middleware('auth');
+    Route::post('/bypass', [CourseTimerController::class, 'bypassTimer'])->middleware('auth');
+    Route::post('/check-status', [CourseTimerController::class, 'checkTimerStatus'])->middleware('auth');
     Route::post('/configure', [CourseTimerController::class, 'configureTimer']);
     Route::post('/toggle/{id}', function ($id) {
         $timer = \App\Models\CourseTimer::findOrFail($id);
@@ -134,8 +69,8 @@ Route::prefix('timer')->group(function () {
 
             // Load chapter info based on chapter_type
             $timers->each(function ($timer) {
-                if ($timer->chapter_type === 'course_chapters') {
-                    $chapter = \App\Models\CourseChapter::find($timer->chapter_id);
+                if ($timer->chapter_type === 'chapters') {
+                    $chapter = \App\Models\Chapter::find($timer->chapter_id);
                     if ($chapter) {
                         $course = \App\Models\FloridaCourse::find($chapter->course_id);
                         $timer->chapter = (object) [
@@ -256,7 +191,7 @@ Route::prefix('counties')->middleware('web')->group(function () {
 });
 
 // Support Ticket Routes
-Route::prefix('support/tickets')->middleware('auth:sanctum')->group(function () {
+Route::prefix('support/tickets')->middleware('auth')->group(function () {
     Route::get('/', [SupportTicketController::class, 'index']);
     Route::post('/', [SupportTicketController::class, 'store']);
     Route::get('/{id}', [SupportTicketController::class, 'show']);
@@ -290,10 +225,11 @@ Route::get('/chapters', function () {
                 return $ch;
             });
 
-        $courseChapters = \App\Models\CourseChapter::select('id', 'title', 'course_id')
+        $courseChapters = \App\Models\Chapter::select('id', 'title', 'course_id')
+            ->where('course_table', 'florida_courses')
             ->get()
             ->map(function ($ch) {
-                $ch->type = 'course_chapters';
+                $ch->type = 'chapters';
                 $courseName = \App\Models\FloridaCourse::find($ch->course_id)?->title ?? 'Unknown';
                 $ch->display_title = $ch->title.' - '.$courseName.' (Florida)';
 

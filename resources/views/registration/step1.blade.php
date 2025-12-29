@@ -2,7 +2,9 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Create your Account - Step 1</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
@@ -37,6 +39,32 @@
             outline: none;
             border-color: #0d6efd;
             box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        .password-wrapper {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+            font-size: 16px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .password-toggle:hover {
+            color: #0d6efd;
+        }
+        .password-wrapper input {
+            padding-right: 45px;
         }
         .note-section { 
             background: #fff3cd; 
@@ -140,11 +168,21 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                <i class="fas fa-eye" id="password-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="password_confirmation">Retype Password</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation" required>
+                        <div class="password-wrapper">
+                            <input type="password" id="password_confirmation" name="password_confirmation" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation')">
+                                <i class="fas fa-eye" id="password_confirmation-eye"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
@@ -186,7 +224,24 @@
         </div>
     </div>
     
+    <script src="/js/csrf-handler.js"></script>
     <script>
+        // Password toggle functionality
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const eyeIcon = document.getElementById(fieldId + '-eye');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+        
         // Real-time validation for name fields
         document.getElementById('first_name').addEventListener('input', function(e) {
             const value = e.target.value;
@@ -232,7 +287,7 @@
             if (!hasLower || !hasUpper || !hasNumber || !hasSpecial || !isLongEnough) {
                 e.target.style.borderColor = '#ffc107';
             } else {
-                e.target.style.borderColor = '#28a745';
+                e.target.style.borderColor = '#516425';
             }
         });
     </script>

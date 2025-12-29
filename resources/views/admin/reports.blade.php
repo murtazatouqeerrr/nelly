@@ -3,17 +3,17 @@
 @section('title', 'Reports')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" style="margin-left: 300px; max-width: calc(100% - 320px); padding: 20px;">
         <h2>Reports & Analytics</h2>
         
         <div class="row mt-4">
             <div class="col-md-4">
-                <div class="card">
+                <div class="card h-100">
                     <div class="card-header">
                         <h5>Generate Report</h5>
                     </div>
-                    <div class="card-body">
-                        <form id="report-form">
+                    <div class="card-body d-flex flex-column">
+                        <form id="report-form" class="flex-grow-1">
                             <div class="mb-3">
                                 <label>Report Type</label>
                                 <select name="report_type" class="form-select" required>
@@ -46,7 +46,7 @@
                                 </select>
                             </div>
                             
-                            <button type="submit" class="btn btn-primary">Generate Report</button>
+                            <button type="submit" class="btn btn-primary mt-auto">Generate Report</button>
                         </form>
                     </div>
                 </div>

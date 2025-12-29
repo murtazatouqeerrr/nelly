@@ -16,7 +16,7 @@
         </div>
 
         @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" style="background-color: #f4f6f0; border-color: #516425; color: #516425;">
                 {{ session('success') }}
             </div>
         @endif
@@ -69,7 +69,7 @@
                             <td class="px-6 py-4">{{ $mapping->external_name }}</td>
                             <td class="px-6 py-4">
                                 @if($mapping->is_verified)
-                                    <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Verified</span>
+                                    <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800" style="background-color: #f4f6f0; color: #516425;">Verified</span>
                                 @else
                                     <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">Unverified</span>
                                 @endif
@@ -86,7 +86,7 @@
                                 @if(!$mapping->is_verified)
                                     <form method="POST" action="{{ route('admin.court-codes.mappings.verify', $mapping) }}" class="inline">
                                         @csrf
-                                        <button type="submit" class="text-green-600 hover:text-green-900 mr-3">Verify</button>
+                                        <button type="submit" class="text-green-600 hover:text-green-900 mr-3" style="color: #516425;" onmouseover="this.style.color='#3d4b1c'" onmouseout="this.style.color='#516425'">Verify</button>
                                     </form>
                                 @endif
                                 <form method="POST" action="{{ route('admin.court-codes.mappings.destroy', $mapping) }}" class="inline"

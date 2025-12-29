@@ -59,18 +59,25 @@ class CouponController extends Controller
     public function update(Request $request, Coupon $coupon)
     {
         $request->validate([
-            'code' => 'required|string|unique:coupons,code,'.$coupon->id,
             'amount' => 'required|numeric|min:0',
             'type' => 'required|in:fixed,percentage',
-            'usage_limit' => 'nullable|integer|min:1',
             'expires_at' => 'nullable|date',
-            'is_active' => 'boolean',
+            'is_active' => 'required|boolean',
         ]);
 
-        $coupon->update($request->all());
+        $coupon->update([
+            'amount' => $request->amount,
+            'type' => $request->type,
+            'expires_at' => $request->expires_at,
+            'is_active' => $request->is_active,
+        ]);
 
         if ($request->expectsJson()) {
-            return response()->json($coupon);
+            return response()->json([
+                'success' => true,
+                'message' => 'Coupon updated successfully!',
+                'coupon' => $coupon->fresh()
+            ]);
         }
 
         return redirect()->back()->with('success', 'Coupon updated successfully!');

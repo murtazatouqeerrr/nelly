@@ -189,7 +189,7 @@ export default {
 
 .progress-fill {
   height: 100%;
-  background: #28a745;
+  background: #516425;
   transition: width 0.3s ease;
 }
 

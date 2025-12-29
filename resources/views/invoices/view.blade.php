@@ -139,8 +139,8 @@
             font-weight: 600;
         }
         .status-completed {
-            background: #d4edda;
-            color: #155724;
+            background: #f4f6f0;
+            color: #516425;
         }
         .footer {
             text-align: center;

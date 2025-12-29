@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\StateTransmission;
 use App\Services\FlhsmvSoapService;
+use App\Services\FlhsmvHttpService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -121,11 +122,14 @@ class SendFloridaTransmissionJob implements ShouldQueue
     }
 
     /**
-     * Build the payload for Florida API.
+     * Build the payload for Florida API with user and enrollment objects.
      */
     protected function buildPayload($user, $enrollment): array
     {
         return [
+            'user' => $user,
+            'enrollment' => $enrollment,
+            // Legacy format for backward compatibility
             'driver_license_number' => $user->driver_license,
             'citation_number' => $enrollment->citation_number,
             'court_case_number' => $user->citation_number,
@@ -143,19 +147,30 @@ class SendFloridaTransmissionJob implements ShouldQueue
     }
 
     /**
-     * Send payload to Florida DICDS via SOAP service.
+     * Send payload to Florida DICDS via HTTP service (SOAP-compatible).
      */
     protected function sendToFloridaApi(array $payload, $enrollment)
     {
-        Log::info('Sending Florida transmission via DICDS SOAP', [
+        Log::info('Sending Florida transmission via HTTP SOAP', [
             'transmission_id' => $this->transmissionId,
             'enrollment_id' => $enrollment->id,
             'payload' => $payload,
         ]);
 
         try {
-            $soapService = new FlhsmvSoapService();
-            $response = $soapService->submitCertificate($payload);
+            // Try HTTP service first (works without SOAP extension)
+            $httpService = new FlhsmvHttpService();
+            $response = $httpService->submitCertificate($payload);
+            
+            // If HTTP service fails and SOAP extension is available, try SOAP as fallback
+            if (!$response['success'] && extension_loaded('soap')) {
+                Log::info('HTTP service failed, trying SOAP fallback', [
+                    'transmission_id' => $this->transmissionId,
+                ]);
+                
+                $soapService = new FlhsmvSoapService();
+                $response = $soapService->submitCertificate($payload);
+            }
             
             if ($response['success']) {
                 $certificateNumber = $response['certificate_number'] ?? 'FL' . date('Y') . str_pad($enrollment->id, 6, '0', STR_PAD_LEFT);
@@ -236,16 +251,23 @@ class SendFloridaTransmissionJob implements ShouldQueue
         if ($response->successful) {
             $transmission->update([
                 'status' => 'success',
-                'response_code' => (string) $statusCode,
+                'response_code' => $body['response_code'] ?? 'SUCCESS',
                 'response_message' => $body['message'] ?? 'Successfully transmitted to Florida DICDS',
                 'sent_at' => now(),
             ]);
         } else {
-            $this->markAsError(
-                $transmission,
-                $body['code'] ?? (string) $statusCode,
-                $body['error'] ?? $body['message'] ?? 'Unknown SOAP error'
-            );
+            // Get human-readable error message from SOAP service
+            $errorCode = $body['code'] ?? (string) $statusCode;
+            $errorMessage = $body['error'] ?? $body['message'] ?? 'Unknown SOAP error';
+            
+            // If we have a Florida error code, get the detailed message
+            if (preg_match('/^[A-Z]{2}\d{3}$/', $errorCode)) {
+                $soapService = new FlhsmvSoapService();
+                $errorInfo = $soapService->mapFloridaErrorCode($errorCode);
+                $errorMessage = $errorInfo['message'] . ' (Code: ' . $errorCode . ')';
+            }
+            
+            $this->markAsError($transmission, $errorCode, $errorMessage);
         }
     }
 

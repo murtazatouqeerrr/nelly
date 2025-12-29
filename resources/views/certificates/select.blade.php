@@ -37,7 +37,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="flex-grow-1">
                                         <h6 class="mb-2">
-                                            {{ $enrollment->course->title }}
+                                            {{ $enrollment->course?->title }}
                                             @if($enrollment->access_revoked)
                                                 <span class="badge bg-danger ms-2">Access Revoked</span>
                                             @endif

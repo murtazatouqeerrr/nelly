@@ -56,21 +56,45 @@ class RegistrationController extends Controller
     public function processStep(Request $request, $step)
     {
         $step = (int) $step;
+        
+        \Log::info('=== processStep START ===', ['step' => $step]);
+        \Log::info('Request data: ' . json_encode($request->all()));
 
-        // Validate based on step
-        $validatedData = $this->validateStep($request, $step);
+        try {
+            // Validate based on step
+            $validatedData = $this->validateStep($request, $step);
+            \Log::info('Validation passed for step ' . $step);
+            \Log::info('Validated data: ' . json_encode($validatedData));
 
-        // Store step data in session
-        $sessionKey = 'registration_step_'.$step;
-        session([$sessionKey => $validatedData]);
+            // Store step data in session
+            $sessionKey = 'registration_step_'.$step;
+            session([$sessionKey => $validatedData]);
+            \Log::info('Session data stored: ' . $sessionKey);
 
-        // Move to next step or complete registration
-        if ($step < 4) {
-            return redirect()->route('register.step', $step + 1);
+            // Move to next step or complete registration
+            if ($step < 4) {
+                \Log::info('Redirecting to step ' . ($step + 1));
+                return redirect()->route('register.step', $step + 1);
+            }
+
+            // Complete registration (step 4)
+            \Log::info('Completing registration');
+            return $this->completeRegistration();
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('=== Validation Error ===', [
+                'step' => $step,
+                'errors' => $e->errors()
+            ]);
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('=== processStep ERROR ===', [
+                'step' => $step,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
-
-        // Complete registration (step 4)
-        return $this->completeRegistration();
     }
 
     private function validateStep(Request $request, $step)
@@ -139,16 +163,16 @@ class RegistrationController extends Controller
 
             case 3:
                 return $request->validate([
-                    'q1' => ['required', 'string', 'regex:/^\d{4}$/', 'size:4'],
-                    'q2' => ['required', 'string', 'regex:/^\d+$/', 'max:10'],
-                    'q3' => ['required', 'string', 'regex:/^\d+$/', 'max:5'],
-                    'q4' => ['required', 'string', 'regex:/^\d{4}$/', 'size:4'],
-                    'q5' => ['required', 'string', 'regex:/^\d+$/', 'max:3'],
-                    'q6' => ['required', 'string', 'regex:/^\d+$/', 'max:3'],
-                    'q7' => ['required', 'string', 'regex:/^\d{5}$/', 'size:5'],
-                    'q8' => ['required', 'string', 'regex:/^\d{4}$/', 'size:4'],
-                    'q9' => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z\s]+$/'],
-                    'q10' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s\-\']+$/'],
+                    'q1' => ['required', 'string', 'regex:/^[0-9]{4}$/', 'size:4'],
+                    'q2' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:10'],
+                    'q3' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:5'],
+                    'q4' => ['required', 'string', 'regex:/^[0-9]{4}$/', 'size:4'],
+                    'q5' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:3'],
+                    'q6' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:3'],
+                    'q7' => ['required', 'string', 'regex:/^[0-9]{5}$/', 'size:5'],
+                    'q8' => ['required', 'string', 'regex:/^[0-9]{4}$/', 'size:4'],
+                    'q9' => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z\s\'-]+$/'],
+                    'q10' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s\'-]+$/'],
                 ], [
                     'q1.regex' => 'License expiration year must be exactly 4 digits (e.g., 2025).',
                     'q2.regex' => 'Weight must be numbers only (e.g., 162).',
@@ -158,7 +182,7 @@ class RegistrationController extends Controller
                     'q6.regex' => 'Age when got license must be numbers only (e.g., 16).',
                     'q7.regex' => 'Zip code must be exactly 5 digits (e.g., 90210).',
                     'q8.regex' => 'Birth year must be exactly 4 digits (e.g., 1980).',
-                    'q9.regex' => 'Hair color can only contain letters and spaces.',
+                    'q9.regex' => 'Hair color can only contain letters, spaces, hyphens, and apostrophes.',
                     'q10.regex' => 'City name can only contain letters, spaces, hyphens, and apostrophes.',
                 ]);
 
@@ -243,6 +267,17 @@ class RegistrationController extends Controller
 
         // Send welcome email
         Mail::to($user->email)->send(new WelcomeMail($user));
+
+        // Record user consent if terms were agreed
+        if (isset($step4['terms_agreement']) && $step4['terms_agreement']) {
+            \App\Models\UserLegalConsent::create([
+                'user_id' => $user->id,
+                'document_id' => 1, // Terms & Conditions document ID
+                'agreed_at' => now(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
+        }
 
         // Check if there's a pending course enrollment
         $pendingEnrollment = session('pending_course_enrollment');

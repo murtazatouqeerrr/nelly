@@ -69,7 +69,15 @@
                     </div>
                     <div>
                         <p class="text-sm opacity-75">Duration</p>
-                        <p class="text-xl font-semibold">{{ $course->total_duration }} min</p>
+                        <p class="text-xl font-semibold">
+                            @if ($course->total_duration && $course->total_duration > 0)
+                                {{ $course->total_duration }} min
+                            @elseif ($course->duration && $course->duration > 0)
+                                {{ $course->duration }} min
+                            @else
+                                N/A
+                            @endif
+                        </p>
                     </div>
                     <div>
                         <p class="text-sm opacity-75">Price</p>
@@ -81,7 +89,7 @@
                     </div>
                 </div>
 
-                <button onclick="window.location.href='/payment?course_id={{ $course->id }}&table=courses'" class="btn-enroll px-8 py-3 rounded-lg font-semibold text-lg">
+                <button onclick="window.location.href='/payment?course_id={{ $course->id }}&table={{ $course->table }}'" class="btn-enroll px-8 py-3 rounded-lg font-semibold text-lg">
                     Enroll Now
                 </button>
             </div>

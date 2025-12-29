@@ -49,7 +49,10 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <button v-if="exportRequest.status === 'completed'" 
                         @click="downloadExport(exportRequest.id)"
-                        class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+                        class="text-white px-3 py-1 rounded text-sm" 
+                        style="background-color: #516425;"
+                        @mouseover="$event.target.style.backgroundColor='#3d4b1c'"
+                        @mouseout="$event.target.style.backgroundColor='#516425'">
                   Download
                 </button>
                 <button v-else @click="checkStatus(exportRequest.id)"
@@ -127,7 +130,7 @@ export default {
       const classes = {
         pending: 'bg-yellow-100 text-yellow-800',
         processing: 'bg-blue-100 text-blue-800',
-        completed: 'bg-green-100 text-green-800',
+        completed: 'text-white' + ' ' + 'custom-green-bg',
         failed: 'bg-red-100 text-red-800'
       }
       return classes[status] || classes.pending

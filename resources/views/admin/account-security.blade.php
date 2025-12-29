@@ -14,9 +14,13 @@
 </head>
 <body>
     <x-theme-switcher />
-    <x-navbar />
+    @include('components.navbar')
+
     <div class="container mt-4" style="margin-left: 300px; max-width: calc(100% - 320px);">
-        <h2>Account Security</h2>
+        <h2>
+            <i class="fas fa-shield-alt me-2"></i>
+            Account Security
+        </h2>
             
             <div class="row">
                 <div class="col-md-6">
@@ -53,7 +57,60 @@
                             <h5>Security Settings</h5>
                         </div>
                         <div class="card-body" id="securitySettings">
-                            <p>Loading security settings...</p>
+                            <div class="mb-4">
+                                <h6 class="fw-bold">Two-Factor Authentication</h6>
+                                <p class="text-muted small">Add an extra layer of security to your account by requiring a verification code sent to your email.</p>
+                                
+                                <div id="twoFactorStatus">
+                                    <p>Loading 2FA status...</p>
+                                </div>
+                                
+                                <div id="twoFactorControls" style="display: none;">
+                                    <!-- Enable 2FA Form -->
+                                    <div id="enable2FA" style="display: none;">
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            <strong>Enable Two-Factor Authentication</strong><br>
+                                            Enter your password to enable 2FA. You'll receive verification codes via email when logging in.
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="enable2FAPassword" class="form-label">Current Password</label>
+                                            <input type="password" class="form-control" id="enable2FAPassword" required>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-success" onclick="enable2FA()">
+                                                <i class="fas fa-shield-alt me-1"></i>Enable 2FA
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" onclick="cancel2FAAction()">Cancel</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Disable 2FA Form -->
+                                    <div id="disable2FA" style="display: none;">
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            <strong>Disable Two-Factor Authentication</strong><br>
+                                            This will remove the extra security layer from your account. Enter your password to confirm.
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="disable2FAPassword" class="form-label">Current Password</label>
+                                            <input type="password" class="form-control" id="disable2FAPassword" required>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-danger" onclick="disable2FA()">
+                                                <i class="fas fa-shield-alt me-1"></i>Disable 2FA
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" onclick="cancel2FAAction()">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div id="otherSecuritySettings">
+                                <p>Loading other security settings...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -93,28 +150,154 @@
 
                 const settings = await response.json();
                 
-                document.getElementById('securitySettings').innerHTML = `
-                    <div class="mb-3">
-                        <label class="form-label">Two-Factor Authentication</label>
+                // Update 2FA status
+                const twoFactorEnabled = settings.two_factor_enabled || false;
+                document.getElementById('twoFactorStatus').innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <span class="badge ${settings.two_factor_enabled ? 'bg-success' : 'bg-secondary'}">
-                                ${settings.two_factor_enabled ? 'Enabled' : 'Disabled'}
+                            <span class="badge ${twoFactorEnabled ? 'bg-success' : 'bg-secondary'} me-2">
+                                ${twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                            </span>
+                            <span class="text-muted">
+                                ${twoFactorEnabled ? 'Your account is protected with 2FA' : 'Add extra security to your account'}
                             </span>
                         </div>
+                        <button class="btn btn-${twoFactorEnabled ? 'outline-danger' : 'outline-success'} btn-sm" 
+                                onclick="${twoFactorEnabled ? 'showDisable2FA' : 'showEnable2FA'}()">
+                            <i class="fas fa-${twoFactorEnabled ? 'times' : 'plus'} me-1"></i>
+                            ${twoFactorEnabled ? 'Disable' : 'Enable'} 2FA
+                        </button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Last Password Change</label>
-                        <div>${formatDate(settings.last_password_change)}</div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Active Sessions</label>
-                        <div>${settings.active_sessions}</div>
+                `;
+                
+                // Show controls
+                document.getElementById('twoFactorControls').style.display = 'block';
+                
+                // Update other settings
+                document.getElementById('otherSecuritySettings').innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Last Password Change</label>
+                                <div class="text-muted">${formatDate(settings.last_password_change)}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Active Sessions</label>
+                                <div class="text-muted">${settings.active_sessions || 1}</div>
+                            </div>
+                        </div>
                     </div>
                 `;
                 
             } catch (error) {
                 console.error('Failed to load security settings:', error);
-                document.getElementById('securitySettings').innerHTML = '<p class="text-danger">Error loading settings</p>';
+                document.getElementById('twoFactorStatus').innerHTML = '<p class="text-danger">Error loading 2FA status</p>';
+                document.getElementById('otherSecuritySettings').innerHTML = '<p class="text-danger">Error loading settings</p>';
+            }
+        }
+
+        function showEnable2FA() {
+            document.getElementById('enable2FA').style.display = 'block';
+            document.getElementById('disable2FA').style.display = 'none';
+        }
+
+        function showDisable2FA() {
+            document.getElementById('disable2FA').style.display = 'block';
+            document.getElementById('enable2FA').style.display = 'none';
+        }
+
+        function cancel2FAAction() {
+            document.getElementById('enable2FA').style.display = 'none';
+            document.getElementById('disable2FA').style.display = 'none';
+            document.getElementById('enable2FAPassword').value = '';
+            document.getElementById('disable2FAPassword').value = '';
+        }
+
+        async function enable2FA() {
+            const password = document.getElementById('enable2FAPassword').value;
+            
+            if (!password) {
+                alert('Please enter your password');
+                return;
+            }
+
+            console.log('Attempting to enable 2FA...');
+            
+            // Get fresh CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            console.log('CSRF Token:', csrfToken);
+
+            try {
+                const response = await fetch('/two-factor/enable', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ password })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.log('Error response text:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const result = await response.json();
+                console.log('Response data:', result);
+
+                alert('Two-factor authentication enabled successfully!');
+                cancel2FAAction();
+                loadSecuritySettings();
+                
+            } catch (error) {
+                console.error('Enable 2FA error:', error);
+                alert('Error enabling 2FA: ' + error.message);
+            }
+        }
+
+        async function disable2FA() {
+            const password = document.getElementById('disable2FAPassword').value;
+            
+            if (!password) {
+                alert('Please enter your password');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to disable two-factor authentication? This will make your account less secure.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/two-factor/disable', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Two-factor authentication disabled successfully.');
+                    cancel2FAAction();
+                    loadSecuritySettings();
+                } else {
+                    alert(result.error || 'Failed to disable 2FA');
+                }
+            } catch (error) {
+                console.error('Disable 2FA error:', error);
+                alert('Error disabling 2FA');
             }
         }
 

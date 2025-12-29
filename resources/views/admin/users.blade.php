@@ -15,7 +15,7 @@
             <button onclick="showAddForm()" class="btn btn-primary">Add User</button>
         </div>
         
-        <div class="card">
+        <div class="card h-100">
             <div class="card-body">
                 <div id="users-table">
                     <p>Loading users...</p>

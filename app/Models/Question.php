@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Question extends Model
 {
+    protected $table = 'questions';
+    
     protected $fillable = [
         'chapter_id',
         'course_id',
@@ -17,6 +19,7 @@ class Question extends Model
         'explanation',
         'points',
         'order_index',
+        'quiz_set',
     ];
 
     protected $casts = [

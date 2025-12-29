@@ -113,8 +113,35 @@
             }
         }
         
-        function enrollCourse(courseId, table) {
-            window.location.href = `/payment?course_id=${courseId}&table=${table}`;
+        async function enrollCourse(courseId, table) {
+            try {
+                // Check if already enrolled
+                const checkResponse = await fetch('/api/check-enrollment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        course_id: courseId,
+                        table: table
+                    })
+                });
+                
+                const checkResult = await checkResponse.json();
+                
+                if (checkResult.already_enrolled) {
+                    alert('You are already enrolled in this course. Please check your enrollments.');
+                    return;
+                }
+                
+                // Proceed to payment if not enrolled
+                window.location.href = `/payment?course_id=${courseId}&table=${table}`;
+            } catch (error) {
+                console.error('Error checking enrollment:', error);
+                // Fallback to payment page
+                window.location.href = `/payment?course_id=${courseId}&table=${table}`;
+            }
         }
         
       function viewDetails(table, courseId) {

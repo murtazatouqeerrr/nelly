@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SupportTicket extends Model
 {
-    protected $table = 'dicds_help_tickets';
+    protected $table = 'support_tickets';
 
     protected $fillable = [
         'user_id',
@@ -15,13 +15,14 @@ class SupportTicket extends Model
         'email',
         'status',
         'priority',
-        'response',
-        'responded_by',
-        'responded_at',
+        'category',
+        'resolved_at',
     ];
 
     protected $casts = [
-        'responded_at' => 'datetime',
+        'resolved_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function user()
@@ -29,13 +30,8 @@ class SupportTicket extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function respondedBy()
-    {
-        return $this->belongsTo(User::class, 'responded_by');
-    }
-
     public function replies()
     {
-        return $this->hasMany(SupportTicketReply::class);
+        return $this->hasMany(SupportTicketReply::class, 'support_ticket_id');
     }
 }

@@ -54,7 +54,42 @@
                         </tr>
                         <tr>
                             <th>Response Code:</th>
-                            <td><code>{{ $transmission->response_code ?? 'N/A' }}</code></td>
+                            <td>
+                                <code>{{ $transmission->response_code ?? 'N/A' }}</code>
+                                @if($transmission->response_code && preg_match('/^[A-Z]{2}\d{3}$/', $transmission->response_code))
+                                    @php
+                                        $errorMappings = [
+                                            'CF033' => 'Invalid driver license number',
+                                            'CF032' => 'Submitted as Florida DL number, but not in Florida DL format A999999999999',
+                                            'CF034' => 'Multiple records found for driver license',
+                                            'CF030' => 'Driver License and state of record are required together for non-Florida DLs',
+                                            'CF031' => 'Invalid state of record code',
+                                            'CF035' => 'Error updating driver data',
+                                            'DV100' => 'Citation number is required or incorrect length (must be seven characters)',
+                                            'DV030' => 'Student first name not sent',
+                                            'DV040' => 'Student last name is missing',
+                                            'DV050' => 'Student sex is required',
+                                            'DV060' => 'Court case number is required for this student\'s reason for attending',
+                                            'DV070' => 'Driver license number of student is required',
+                                            'DV080' => 'Citation date of student is required',
+                                            'DV090' => 'Citation county of student is required',
+                                            'DV110' => 'Reason attending of student is required',
+                                            'VL000' => 'Login failed - invalid credentials',
+                                            'VS000' => 'School validation failed',
+                                            'VI000' => 'Could not verify instructor',
+                                            'VC000' => 'Could not verify class. Check class dates and times for correct format',
+                                            'VC001' => 'Invalid reason code',
+                                            'VC003' => 'Invalid completion date',
+                                            'SI000' => 'School instructor is required',
+                                            'SI001' => 'School instructor could not be validated',
+                                            'CO000' => 'County name is invalid',
+                                            'CL000' => 'County name is required for this reason attending code',
+                                        ];
+                                        $errorMessage = $errorMappings[$transmission->response_code] ?? 'Unknown Florida API error';
+                                    @endphp
+                                    <br><small class="text-muted">{{ $errorMessage }}</small>
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <th>Response Message:</th>
@@ -121,7 +156,7 @@
                 <h5 class="mb-0">Payload Data</h5>
             </div>
             <div class="card-body">
-                <pre class="bg-light p-3 rounded"><code>{{ json_encode($transmission->payload_json, JSON_PRETTY_PRINT) }}</code></pre>
+                <pre class="p-3 rounded border" style="background-color: var(--bs-gray-100); color: var(--bs-body-color); max-height: 400px; overflow-y: auto;"><code>{{ json_encode($transmission->payload_json, JSON_PRETTY_PRINT) }}</code></pre>
             </div>
         </div>
     @endif

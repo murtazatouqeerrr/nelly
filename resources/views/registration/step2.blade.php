@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Create your Account - Step 2</title>
     <style>
         body { 
@@ -151,7 +152,7 @@
                 
                 <div class="form-row">
                     <div class="form-group full-width">
-                        <label for="mailing_address">Address</label>
+                        <label for="mailing_address">Mailing Address</label>
                         <input type="text" id="mailing_address" name="mailing_address" value="{{ old('mailing_address', session('registration_step_2.mailing_address')) }}" required>
                     </div>
                 </div>
@@ -231,6 +232,7 @@
                             <option value="AL">Alabama</option>
                             <option value="FL">Florida</option>
                             <option value="TX">Texas</option>
+                            <option value="MO">Missouri</option>
                             <option value="CA">California</option>
                             <option value="NY">New York</option>
                         </select>
@@ -308,6 +310,7 @@
         </div>
     </div>
 
+    <script src="/js/csrf-handler.js"></script>
     <script>
         let statesData = [];
         let countiesData = [];

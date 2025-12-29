@@ -127,7 +127,7 @@ function testColorContrast() {
 .score-number {
     font-size: 2rem;
     font-weight: bold;
-    color: #28a745;
+    color: #516425;
 }
 
 .score-label {

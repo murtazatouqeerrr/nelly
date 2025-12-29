@@ -4,69 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All State Transmissions - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/themes.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-        :root {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --accent: #4a90e2;
-            --border: #404040;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --transition: all 0.3s ease;
-        }
-
-        body {
-            background: var(--bg-primary) !important;
-            color: var(--text-primary) !important;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .card {
-            background: var(--bg-secondary) !important;
-            border: 1px solid var(--border) !important;
-            border-radius: 12px !important;
-        }
-
-        .table-dark {
-            --bs-table-bg: var(--bg-secondary);
-            --bs-table-border-color: var(--border);
-        }
-
-        .btn-primary {
-            background: var(--accent) !important;
-            border-color: var(--accent) !important;
-        }
-
-        .btn-success {
-            background: var(--success) !important;
-            border-color: var(--success) !important;
-        }
-
-        .btn-warning {
-            background: var(--warning) !important;
-            border-color: var(--warning) !important;
-            color: #000 !important;
-        }
-
-        .btn-danger {
-            background: var(--danger) !important;
-            border-color: var(--danger) !important;
-        }
-
         .badge {
             font-size: 0.75em;
             padding: 0.5em 0.75em;
         }
 
-        .status-pending { background-color: var(--warning) !important; color: #000 !important; }
-        .status-success { background-color: var(--success) !important; }
-        .status-error { background-color: var(--danger) !important; }
+        .status-pending { background-color: #ffc107 !important; color: #000 !important; }
+        .status-success { background-color: #516425 !important; }
+        .status-error { background-color: #dc3545 !important; }
 
         .system-flhsmv { background-color: #ff6b35 !important; }
         .system-tvcc { background-color: #4ecdc4 !important; }
@@ -75,46 +25,21 @@
         .system-ctsi { background-color: #feca57 !important; color: #000 !important; }
 
         .stats-card {
-            background: linear-gradient(135deg, var(--accent), #357abd);
+            background: linear-gradient(135deg, #4a90e2, #357abd);
             border: none !important;
             color: white !important;
         }
 
         .filter-form {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
             padding: 1rem;
             margin-bottom: 1rem;
+            border-radius: 8px;
         }
 
-        .form-control, .form-select {
-            background: var(--bg-primary) !important;
-            border: 1px solid var(--border) !important;
-            color: var(--text-primary) !important;
-        }
-
-        .form-control:focus, .form-select:focus {
-            background: var(--bg-primary) !important;
-            border-color: var(--accent) !important;
-            color: var(--text-primary) !important;
-            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25) !important;
-        }
-
-        .pagination .page-link {
-            background: var(--bg-secondary) !important;
-            border-color: var(--border) !important;
-            color: var(--text-primary) !important;
-        }
-
-        .pagination .page-link:hover {
-            background: var(--accent) !important;
-            border-color: var(--accent) !important;
-        }
-
-        .pagination .page-item.active .page-link {
-            background: var(--accent) !important;
-            border-color: var(--accent) !important;
+        .hover-shadow:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
         }
     </style>
 </head>
@@ -142,36 +67,64 @@
         @endif
 
         <!-- Statistics Cards -->
-        <div class="row mb-4">
+        <div class="row g-4 mb-4">
             <div class="col-md-3">
-                <div class="card stats-card">
+                <div class="card stats-card shadow-sm hover-shadow">
                     <div class="card-body text-center">
-                        <h3 class="mb-0">{{ $stats['total'] }}</h3>
-                        <small>Total Transmissions</small>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-white small mb-1">Total Transmissions</p>
+                                <h3 class="text-white mb-0">{{ $stats['total'] }}</h3>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-3 rounded-circle">
+                                <i class="fas fa-globe-americas fa-2x text-white"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card" style="background: var(--warning) !important; color: #000 !important;">
-                    <div class="card-body text-center">
-                        <h3 class="mb-0">{{ $stats['pending'] }}</h3>
-                        <small>Pending</small>
+                <div class="card shadow-sm hover-shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-muted small mb-1">Pending</p>
+                                <h3 class="text-warning mb-0">{{ $stats['pending'] }}</h3>
+                            </div>
+                            <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
+                                <i class="fas fa-clock fa-2x text-warning"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card" style="background: var(--success) !important;">
-                    <div class="card-body text-center">
-                        <h3 class="mb-0">{{ $stats['success'] }}</h3>
-                        <small>Successful</small>
+                <div class="card shadow-sm hover-shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-muted small mb-1">Successful</p>
+                                <h3 class="text-success mb-0">{{ $stats['success'] }}</h3>
+                            </div>
+                            <div class="bg-success bg-opacity-10 p-3 rounded-circle">
+                                <i class="fas fa-check-circle fa-2x text-success"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card" style="background: var(--danger) !important;">
-                    <div class="card-body text-center">
-                        <h3 class="mb-0">{{ $stats['error'] }}</h3>
-                        <small>Failed</small>
+                <div class="card shadow-sm hover-shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-muted small mb-1">Failed</p>
+                                <h3 class="text-danger mb-0">{{ $stats['error'] }}</h3>
+                            </div>
+                            <div class="bg-danger bg-opacity-10 p-3 rounded-circle">
+                                <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -203,7 +156,12 @@
         </div>
 
         <!-- Filters -->
-        <form method="GET" class="filter-form">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Transmissions</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET">
             <div class="row">
                 <div class="col-md-2">
                     <label for="state" class="form-label">State</label>
@@ -248,27 +206,29 @@
                     <input type="text" name="search" id="search" class="form-control" placeholder="Email, name..." value="{{ request('search') }}">
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search me-1"></i> Filter
-                    </button>
-                    <a href="{{ route('admin.state-transmissions.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-times me-1"></i> Clear
-                    </a>
-                </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i> Filter
+                            </button>
+                            <a href="{{ route('admin.state-transmissions.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i> Clear
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
 
         <!-- Transmissions Table -->
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">State Transmissions</h5>
+                <h5 class="mb-0"><i class="fas fa-table me-2"></i>State Transmissions</h5>
                 <small class="text-muted">{{ $transmissions->total() }} total records</small>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-dark table-striped mb-0">
+                    <table class="table table-striped mb-0">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -390,6 +350,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

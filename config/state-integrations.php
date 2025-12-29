@@ -10,10 +10,12 @@ return [
         'tvcc' => [
             'enabled' => env('CALIFORNIA_TVCC_ENABLED', false),
             'url' => env('CALIFORNIA_TVCC_URL', 'https://xsg.dmv.ca.gov/tvcc/tvccservice'),
+            'wsdl_url' => env('CALIFORNIA_TVCC_WSDL_URL', 'https://xsg.dmv.ca.gov/tvcc/tvccservice?wsdl'),
             'user' => env('CALIFORNIA_TVCC_USER', 'Support@dummiestrafficschool.com'),
-            'password' => env('CALIFORNIA_TVCC_PASSWORD', ''), // Stored in database
+            'password' => env('CALIFORNIA_TVCC_PASSWORD', 'Traffic24'), // Also stored in database
             'modality' => env('CALIFORNIA_TVCC_MODALITY', '4T'),
             'timeout' => env('CALIFORNIA_TVCC_TIMEOUT', 30),
+            'environment' => env('CALIFORNIA_TVCC_ENVIRONMENT', 'production'),
         ],
         'ctsi' => [
             'enabled' => env('CALIFORNIA_CTSI_ENABLED', false),

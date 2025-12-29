@@ -1,4 +1,4 @@
-<footer class="py-4 mt-5" style="margin-left: 280px; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border-color);">
+<footer class="py-4 mt-5" style="margin-left: 280px; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border-color); z-index: 1 !important; position: relative !important;">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">

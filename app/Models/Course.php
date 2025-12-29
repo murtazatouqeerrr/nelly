@@ -40,6 +40,30 @@ class Course extends Model
     {
         return $this->hasMany(InstructorCourse::class);
     }
+
+    public function enrollments()
+    {
+        return $this->hasMany(UserCourseEnrollment::class, 'course_id')->where('course_table', 'courses');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($course) {
+            // Delete all related enrollments
+            $course->enrollments()->delete();
+            
+            // Delete related chapters
+            $course->chapters()->delete();
+            
+            // Delete related school courses
+            $course->schoolCourses()->delete();
+            
+            // Delete related instructor courses
+            $course->instructorCourses()->delete();
+        });
+    }
 }
 
 class SchoolCourse extends Model

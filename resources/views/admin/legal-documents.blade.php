@@ -3,7 +3,7 @@
 @section('title', 'Legal Documents')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" style="margin-left: 300px; max-width: calc(100% - 320px); padding: 20px;">
     <h1 class="mb-4">Legal Documents Management</h1>
     
     <button class="btn btn-primary mb-3" onclick="showCreateModal()">Create New Document</button>

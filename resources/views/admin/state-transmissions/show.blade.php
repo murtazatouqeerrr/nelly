@@ -4,64 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>State Transmission Details - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/themes.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-        :root {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --accent: #4a90e2;
-            --border: #404040;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --transition: all 0.3s ease;
-        }
-
-        body {
-            background: var(--bg-primary) !important;
-            color: var(--text-primary) !important;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .card {
-            background: var(--bg-secondary) !important;
-            border: 1px solid var(--border) !important;
-            border-radius: 12px !important;
-        }
-
-        .btn-primary {
-            background: var(--accent) !important;
-            border-color: var(--accent) !important;
-        }
-
-        .btn-success {
-            background: var(--success) !important;
-            border-color: var(--success) !important;
-        }
-
-        .btn-warning {
-            background: var(--warning) !important;
-            border-color: var(--warning) !important;
-            color: #000 !important;
-        }
-
-        .btn-danger {
-            background: var(--danger) !important;
-            border-color: var(--danger) !important;
-        }
-
         .badge {
             font-size: 0.75em;
             padding: 0.5em 0.75em;
         }
 
-        .status-pending { background-color: var(--warning) !important; color: #000 !important; }
-        .status-success { background-color: var(--success) !important; }
-        .status-error { background-color: var(--danger) !important; }
+        .status-pending { background-color: #ffc107 !important; color: #000 !important; }
+        .status-success { background-color: #516425 !important; }
+        .status-error { background-color: #dc3545 !important; }
 
         .system-flhsmv { background-color: #ff6b35 !important; }
         .system-tvcc { background-color: #4ecdc4 !important; }
@@ -71,18 +26,14 @@
 
         .info-label {
             font-weight: 600;
-            color: var(--text-secondary);
             margin-bottom: 0.25rem;
         }
 
         .info-value {
-            color: var(--text-primary);
             margin-bottom: 1rem;
         }
 
         .json-container {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
             border-radius: 8px;
             padding: 1rem;
             font-family: 'Courier New', monospace;
@@ -103,7 +54,7 @@
             top: 0;
             bottom: 0;
             width: 2px;
-            background: var(--border);
+            background: #dee2e6;
         }
 
         .timeline-item {
@@ -119,13 +70,13 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: var(--accent);
-            border: 2px solid var(--bg-secondary);
+            background: #4a90e2;
+            border: 2px solid #fff;
         }
 
-        .timeline-success::before { background: var(--success) !important; }
-        .timeline-error::before { background: var(--danger) !important; }
-        .timeline-warning::before { background: var(--warning) !important; }
+        .timeline-success::before { background: #516425 !important; }
+        .timeline-error::before { background: #dc3545 !important; }
+        .timeline-warning::before { background: #ffc107 !important; }
     </style>
 </head>
 <body>
@@ -373,6 +324,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

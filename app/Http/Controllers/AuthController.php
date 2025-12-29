@@ -71,6 +71,15 @@ class AuthController extends Controller
 
             $user = auth()->user();
 
+            // Check if 2FA is enabled for API requests
+            if ($user->two_factor_enabled) {
+                // For API requests, return that 2FA is required
+                return response()->json([
+                    'requires_2fa' => true,
+                    'message' => 'Two-factor authentication required'
+                ], 200);
+            }
+
             return response()->json([
                 'user' => $user->load('role'),
                 'token' => JWTAuth::attempt($credentials),
@@ -90,8 +99,47 @@ class AuthController extends Controller
         ]);
 
         if ($success) {
-            $request->session()->regenerate();
+            $user = auth()->user();
+            
+            // Check if 2FA is enabled
+            if ($user->two_factor_enabled) {
+                // Generate and send 2FA code
+                $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+                
+                $user->update([
+                    'two_factor_code' => Hash::make($code),
+                    'two_factor_expires_at' => now()->addMinutes(10),
+                    'two_factor_verified_at' => null,
+                    'two_factor_attempts' => 0
+                ]);
 
+                // Send email with code
+                try {
+                    \Mail::send('emails.two-factor-code', [
+                        'user' => $user,
+                        'code' => $code
+                    ], function ($message) use ($user) {
+                        $message->to($user->email)
+                                ->subject('Your Two-Factor Authentication Code');
+                    });
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send 2FA code during login: ' . $e->getMessage());
+                    return back()->withErrors([
+                        'email' => 'Failed to send verification code. Please try again.',
+                    ])->onlyInput('email');
+                }
+
+                // Store user ID in session for 2FA verification
+                session(['pending_2fa_user_id' => $user->id]);
+                
+                // Logout the user temporarily until 2FA is verified
+                auth()->logout();
+                
+                // Redirect to 2FA verification page
+                return redirect()->route('two-factor.verify')->with('message', 'Please check your email for the verification code.');
+            }
+
+            $request->session()->regenerate();
             return redirect()->intended('/dashboard');
         }
 
@@ -129,9 +177,13 @@ class AuthController extends Controller
                 return response()->json(['error' => 'Unauthenticated'], 401);
             }
 
-            return response()->json($user->load('role'));
+            // Load the role relationship
+            $user->load('role');
+
+            return response()->json($user);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            \Log::error('Error in userWeb: ' . $e->getMessage() . ' | Stack: ' . $e->getTraceAsString());
+            return response()->json(['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
         }
     }
 
@@ -141,6 +193,7 @@ class AuthController extends Controller
             $user = auth()->user();
 
             $validated = $request->validate([
+                // Basic Information
                 'first_name' => 'sometimes|string|max:255',
                 'last_name' => 'sometimes|string|max:255',
                 'email' => 'sometimes|email|unique:users,email,'.$user->id,
@@ -149,6 +202,33 @@ class AuthController extends Controller
                 'city' => 'sometimes|string',
                 'state' => 'sometimes|string',
                 'zip_code' => 'sometimes|string',
+                
+                // License Information
+                'license_state' => 'sometimes|string|max:255',
+                'license_class' => 'sometimes|string|max:255',
+                
+                // Court & Citation Information
+                'court_selected' => 'sometimes|string|max:255',
+                'citation_number' => 'sometimes|string|max:255',
+                'due_month' => 'sometimes|integer|min:1|max:12',
+                'due_day' => 'sometimes|integer|min:1|max:31',
+                'due_year' => 'sometimes|integer|min:2020|max:2030',
+                
+                // Security Questions
+                'security_q1' => 'sometimes|string|max:255',
+                'security_q2' => 'sometimes|string|max:255',
+                'security_q3' => 'sometimes|string|max:255',
+                'security_q4' => 'sometimes|string|max:255',
+                'security_q5' => 'sometimes|string|max:255',
+                'security_q6' => 'sometimes|string|max:255',
+                'security_q7' => 'sometimes|string|max:255',
+                'security_q8' => 'sometimes|string|max:255',
+                'security_q9' => 'sometimes|string|max:255',
+                'security_q10' => 'sometimes|string|max:255',
+                
+                // Agreement Information
+                'agreement_name' => 'sometimes|string|max:255',
+                'terms_agreement' => 'sometimes|boolean',
             ]);
 
             $user->update($validated);

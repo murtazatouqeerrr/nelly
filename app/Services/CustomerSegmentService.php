@@ -95,17 +95,17 @@ class CustomerSegmentService
     public function getSegmentCounts(): array
     {
         return [
-            'completed_this_month' => UserCourseEnrollment::completedInMonth(now()->year, now()->month)->count(),
-            'paid_incomplete' => UserCourseEnrollment::paidNotCompleted()->count(),
+            'completed_this_month' => UserCourseEnrollment::query()->completedInMonth(now()->year, now()->month)->count(),
+            'paid_incomplete' => UserCourseEnrollment::query()->paidNotCompleted()->count(),
             'in_progress' => UserCourseEnrollment::whereNotNull('started_at')
                 ->whereNull('completed_at')
                 ->where('payment_status', 'paid')
                 ->count(),
-            'abandoned' => UserCourseEnrollment::abandoned(30)->count(),
-            'expiring_soon' => UserCourseEnrollment::expiringWithin(7)->count(),
-            'expired' => UserCourseEnrollment::expiredRecently(30)->count(),
-            'never_started' => UserCourseEnrollment::neverStarted()->count(),
-            'struggling' => UserCourseEnrollment::stuckOnQuiz(3)->count(),
+            'abandoned' => UserCourseEnrollment::query()->abandoned(30)->count(),
+            'expiring_soon' => UserCourseEnrollment::query()->expiringWithin(7)->count(),
+            'expired' => UserCourseEnrollment::query()->expiredRecently(30)->count(),
+            'never_started' => UserCourseEnrollment::query()->neverStarted()->count(),
+            'struggling' => UserCourseEnrollment::query()->stuckOnQuiz(3)->count(),
         ];
     }
 
@@ -115,7 +115,7 @@ class CustomerSegmentService
 
         for ($i = $months - 1; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $count = UserCourseEnrollment::completedInMonth($date->year, $date->month)->count();
+            $count = UserCourseEnrollment::query()->completedInMonth($date->year, $date->month)->count();
 
             $data->push([
                 'month' => $date->format('M Y'),

@@ -108,8 +108,27 @@
             </div>
             
             <div class="text-center">
-                <div class="price-tag">
+                <div class="price-tag" id="originalPrice">
                     ${{ number_format($course->price ?? 29.99, 2) }}
+                </div>
+                <div id="discountInfo" style="display: none;">
+                    <div class="text-muted"><s id="originalPriceStrike">${{ number_format($course->price ?? 29.99, 2) }}</s></div>
+                    <div class="text-success"><strong>Discount: -$<span id="discountAmount">0.00</span></strong></div>
+                    <div class="price-tag text-success" id="finalPrice">${{ number_format($course->price ?? 29.99, 2) }}</div>
+                </div>
+            </div>
+            
+            <!-- Coupon Section -->
+            <div class="card mb-4" style="border: 2px dashed #516425;">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="fas fa-ticket-alt text-success"></i> Have a Coupon Code?</h6>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code" maxlength="6" style="text-transform: uppercase;">
+                        <button type="button" class="btn btn-success" onclick="applyCoupon()">
+                            <i class="fas fa-check"></i> Apply
+                        </button>
+                    </div>
+                    <div id="couponMessage" class="mt-2"></div>
                 </div>
             </div>
             
@@ -117,7 +136,10 @@
                 @csrf
                 <input type="hidden" name="course_id" value="{{ $course->id }}">
                 <input type="hidden" name="table" value="{{ $table ?? 'florida_courses' }}">
-                <input type="hidden" name="amount" value="{{ $course->price ?? 29.99 }}">
+                <input type="hidden" name="amount" value="{{ $course->price ?? 29.99 }}" id="finalAmount">
+                <input type="hidden" name="original_amount" value="{{ $course->price ?? 29.99 }}">
+                <input type="hidden" name="coupon_code" value="" id="appliedCouponCode">
+                <input type="hidden" name="discount_amount" value="0" id="appliedDiscountAmount">
                 
                 <h5 class="mb-3">Select Payment Method</h5>
                 
@@ -159,6 +181,9 @@
     </div>
     
     <script>
+        const originalPrice = {{ $course->price ?? 29.99 }};
+        let appliedCoupon = null;
+        
         function selectPaymentMethod(method) {
             document.querySelectorAll('.payment-method').forEach(el => {
                 el.classList.remove('selected');
@@ -166,6 +191,120 @@
             event.currentTarget.classList.add('selected');
             document.querySelector(`input[value="${method}"]`).checked = true;
         }
+        
+        async function applyCoupon() {
+            const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
+            const messageDiv = document.getElementById('couponMessage');
+            
+            if (!couponCode) {
+                showCouponMessage('Please enter a coupon code', 'danger');
+                return;
+            }
+            
+            // Show loading state
+            const applyBtn = event.target;
+            const originalText = applyBtn.innerHTML;
+            applyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Applying...';
+            applyBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/coupons/apply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        code: couponCode,
+                        amount: originalPrice
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.valid) {
+                    appliedCoupon = data.coupon;
+                    updatePriceDisplay(data.discount, data.final_amount);
+                    updateHiddenFields(couponCode, data.discount, data.final_amount);
+                    showCouponMessage(`Coupon applied! You saved $${data.discount.toFixed(2)}`, 'success');
+                    
+                    // Change button to "Remove"
+                    applyBtn.innerHTML = '<i class="fas fa-times"></i> Remove';
+                    applyBtn.onclick = removeCoupon;
+                    applyBtn.className = 'btn btn-outline-danger';
+                } else {
+                    showCouponMessage(data.error || 'Invalid coupon code', 'danger');
+                }
+            } catch (error) {
+                console.error('Coupon error:', error);
+                showCouponMessage('Error applying coupon. Please try again.', 'danger');
+            } finally {
+                if (!appliedCoupon) {
+                    applyBtn.innerHTML = originalText;
+                }
+                applyBtn.disabled = false;
+            }
+        }
+        
+        function removeCoupon() {
+            appliedCoupon = null;
+            updatePriceDisplay(0, originalPrice);
+            updateHiddenFields('', 0, originalPrice);
+            showCouponMessage('', '');
+            
+            // Reset button
+            const applyBtn = event.target;
+            applyBtn.innerHTML = '<i class="fas fa-check"></i> Apply';
+            applyBtn.onclick = applyCoupon;
+            applyBtn.className = 'btn btn-success';
+            
+            // Clear coupon code
+            document.getElementById('couponCode').value = '';
+        }
+        
+        function updatePriceDisplay(discount, finalAmount) {
+            const originalPriceDiv = document.getElementById('originalPrice');
+            const discountInfoDiv = document.getElementById('discountInfo');
+            
+            if (discount > 0) {
+                originalPriceDiv.style.display = 'none';
+                discountInfoDiv.style.display = 'block';
+                document.getElementById('discountAmount').textContent = discount.toFixed(2);
+                document.getElementById('finalPrice').textContent = '$' + finalAmount.toFixed(2);
+            } else {
+                originalPriceDiv.style.display = 'block';
+                discountInfoDiv.style.display = 'none';
+            }
+        }
+        
+        function updateHiddenFields(couponCode, discount, finalAmount) {
+            document.getElementById('finalAmount').value = finalAmount;
+            document.getElementById('appliedCouponCode').value = couponCode;
+            document.getElementById('appliedDiscountAmount').value = discount;
+        }
+        
+        function showCouponMessage(message, type) {
+            const messageDiv = document.getElementById('couponMessage');
+            if (message) {
+                messageDiv.innerHTML = `<div class="alert alert-${type} alert-sm mb-0">${message}</div>`;
+            } else {
+                messageDiv.innerHTML = '';
+            }
+        }
+        
+        // Auto-uppercase coupon code input
+        document.getElementById('couponCode').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+        
+        // Allow Enter key to apply coupon
+        document.getElementById('couponCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyCoupon();
+            }
+        });
         
         document.getElementById('paymentForm').addEventListener('submit', function(e) {
             const selectedMethod = document.querySelector('input[name="payment_method"]:checked');

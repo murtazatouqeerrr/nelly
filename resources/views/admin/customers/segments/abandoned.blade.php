@@ -81,7 +81,7 @@
                         {{ $enrollment->last_activity_at ? $enrollment->last_activity_at->diffInDays(now()) : $enrollment->enrolled_at->diffInDays(now()) }} days
                     </td>
                     <td class="px-6 py-4">
-                        <span class="px-2 py-1 text-xs rounded {{ $enrollment->payment_status == 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                        <span class="px-2 py-1 text-xs rounded {{ $enrollment->payment_status == 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}" style="{{ $enrollment->payment_status == 'paid' ? 'background-color: #f4f6f0; color: #516425;' : '' }}">
                             {{ ucfirst($enrollment->payment_status) }}
                         </span>
                     </td>

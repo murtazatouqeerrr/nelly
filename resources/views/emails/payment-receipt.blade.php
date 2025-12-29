@@ -52,7 +52,7 @@
                     </tr>
                     <tr>
                         <th>Status:</th>
-                        <td><span style="color: #28a745; font-weight: bold;">✓ Completed</span></td>
+                        <td><span style="color: #516425; font-weight: bold;">✓ Completed</span></td>
                     </tr>
                 </table>
             </div>
@@ -65,7 +65,7 @@
             </div>
             @endif
             
-            <div style="background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <div style="background: #f4f6f0; border: 1px solid #516425; padding: 15px; border-radius: 5px; margin: 20px 0;">
                 <strong>🎓 Course Access Active:</strong> Your course enrollment is now active and you have immediate access to all materials.
             </div>
             

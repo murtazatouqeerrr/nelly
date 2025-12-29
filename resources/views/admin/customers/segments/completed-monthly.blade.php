@@ -80,7 +80,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div class="bg-white rounded-lg shadow-md p-6">
             <p class="text-sm text-gray-600">Total Completed</p>
-            <p class="text-3xl font-bold text-green-600 mt-2">{{ $stats['total'] }}</p>
+            <p class="text-3xl font-bold text-green-600 mt-2" style="color: #516425;">{{ $stats['total'] }}</p>
         </div>
         <div class="bg-white rounded-lg shadow-md p-6">
             <p class="text-sm text-gray-600">By State</p>
@@ -107,7 +107,7 @@
             <form action="{{ route('admin.customers.bulk-export') }}" method="POST">
                 @csrf
                 <input type="hidden" name="enrollment_ids" id="export-ids">
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" style="background-color: #516425;" onmouseover="this.style.backgroundColor='#3d4b1c'" onmouseout="this.style.backgroundColor='#516425'">
                     Export Selected
                 </button>
             </form>
@@ -143,7 +143,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">{{ $enrollment->completed_at?->format('M d, Y') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($enrollment->floridaCertificate)
-                            <span class="text-green-600">{{ $enrollment->floridaCertificate->certificate_number }}</span>
+                            <span class="text-green-600" style="color: #516425;">{{ $enrollment->floridaCertificate->certificate_number }}</span>
                             @else
                             <span class="text-gray-400">N/A</span>
                             @endif

@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Create your Account - Step 4</title>
     <style>
         body { 
@@ -71,8 +72,8 @@
             min-width: 120px;
             text-align: center;
         }
-        .btn-continue { background: #28a745; color: white; }
-        .btn-continue:hover { background: #218838; }
+        .btn-continue { background: #516425; color: white; }
+        .btn-continue:hover { background: #3d4b1c; }
         .btn-edit { background: #fd7e14; color: white; }
         .btn-edit:hover { background: #e8650e; }
         .footer { text-align: center; margin-top: 30px; color: #6c757d; }
@@ -208,7 +209,7 @@
                 <!-- Terms and Conditions Section -->
                 <div class="terms-section">
                     <div class="terms-text">
-                        Please type in your name below and check the box to Agree to the terms above. If you are a minor under the age of 18 your parent or guardian must type in their name below.
+                        Enter your name below and check the box to agree to the terms above. If you are under 18, a parent or guardian must enter their name. Please provide a valid citation number (or case number if no citation is available). Incorrect information requiring certificate resubmission will result in a $3.00 fee. By proceeding, you agree to these terms.
                     </div>
                     
                     <div class="name-input-row">
@@ -236,6 +237,7 @@
         </div>
     </div>
     
+    <script src="/js/csrf-handler.js"></script>
     <script>
         // Real-time validation for agreement name field
         document.querySelector('input[name="agreement_name"]').addEventListener('input', function(e) {

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Florida Fee Remittances')
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4" style="margin-left: 300px; max-width: calc(100% - 320px); padding: 20px;">
     <h1 class="mb-4">Florida Fee Remittances</h1>
     
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Create New Remittance</button>

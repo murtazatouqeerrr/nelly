@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid mt-4 ">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-stamp me-2"></i>State Stamps Management</h2>
         <button class="btn btn-primary" onclick="resetForm()" data-bs-toggle="modal" data-bs-target="#addStampModal">
@@ -74,8 +74,13 @@
                         <div class="text-muted small">Current Logo</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">State Code (2 letters)</label>
-                        <input type="text" class="form-control" id="state_code" name="state_code" maxlength="2" required>
+                        <label class="form-label">State Code</label>
+                        <select class="form-select" id="state_code" name="state_code" required>
+                            <option value="">Select a State</option>
+                            @foreach($states as $state)
+                                <option value="{{ $state->code }}">{{ $state->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">State Name</label>
@@ -115,6 +120,17 @@ document.getElementById('is_active').addEventListener('change', function() {
     document.getElementById('activeLabel').textContent = this.checked ? 'Active' : 'Inactive';
 });
 
+// Auto-populate state name when state code is selected
+document.getElementById('state_code').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    if (selectedOption.value) {
+        const stateName = selectedOption.text; // Now just the state name
+        document.getElementById('state_name').value = stateName;
+    } else {
+        document.getElementById('state_name').value = '';
+    }
+});
+
 document.getElementById('stampForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -127,6 +143,12 @@ document.getElementById('stampForm').addEventListener('submit', async function(e
     formData.delete('is_active'); // Remove the default value
     formData.append('is_active', isActiveCheckbox.checked ? '1' : '0');
     
+    // Handle disabled state_code dropdown during edit
+    const stateCodeSelect = document.getElementById('state_code');
+    if (stateCodeSelect.disabled && stampId) {
+        formData.append('state_code', stateCodeSelect.value);
+    }
+    
     // Determine URL and method
     let url = '/admin/state-stamps';
     if (stampId && method === 'PUT') {
@@ -138,6 +160,7 @@ document.getElementById('stampForm').addEventListener('submit', async function(e
     console.log('Method:', method);
     console.log('Stamp ID:', stampId);
     console.log('Is Active:', isActiveCheckbox.checked);
+    console.log('State Code:', stateCodeSelect.value);
     
     try {
         const response = await fetch(url, {
@@ -197,8 +220,8 @@ function resetForm() {
     document.getElementById('is_active').checked = true;
     document.getElementById('activeLabel').textContent = 'Active';
     
-    // Make state_code editable and logo required for new stamps
-    document.getElementById('state_code').removeAttribute('readonly');
+    // Make state_code dropdown enabled and logo required for new stamps
+    document.getElementById('state_code').removeAttribute('disabled');
     document.getElementById('logo').setAttribute('required', 'required');
 }
 
@@ -209,7 +232,7 @@ function editStamp(stamp) {
     // Populate form fields
     document.getElementById('stamp_id').value = stamp.id;
     document.getElementById('state_code').value = stamp.state_code;
-    document.getElementById('state_code').setAttribute('readonly', 'readonly');
+    document.getElementById('state_code').setAttribute('disabled', 'disabled');
     document.getElementById('state_name').value = stamp.state_name;
     document.getElementById('description').value = stamp.description || '';
     

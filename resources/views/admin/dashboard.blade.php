@@ -30,7 +30,7 @@
         </div>
     </nav>
 
-    <div class="container-fluid mt-4">
+    <div class="container-fluid mt-4" style="margin-left: 300px; max-width: calc(100% - 320px); padding: 20px;">
         <div id="app">
             <admin-dashboard></admin-dashboard>
         </div>
@@ -42,50 +42,50 @@
                     <h2>Admin Dashboard</h2>
                     <div class="row" id="stats-cards">
                         <div class="col-md-2">
-                            <div class="card bg-primary text-white">
-                                <div class="card-body text-center">
+                            <div class="card bg-primary text-white h-100">
+                                <div class="card-body text-center d-flex flex-column justify-content-center">
                                     <h3 id="total-users">-</h3>
-                                    <p>Active Users</p>
+                                    <p class="mb-0">Active Users</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="card bg-success text-white">
-                                <div class="card-body text-center">
+                            <div class="card bg-success text-white h-100">
+                                <div class="card-body text-center d-flex flex-column justify-content-center">
                                     <h3 id="total-enrollments">-</h3>
-                                    <p>Monthly Enrollments</p>
+                                    <p class="mb-0">Monthly Enrollments</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="card bg-info text-white">
-                                <div class="card-body text-center">
+                            <div class="card bg-info text-white h-100">
+                                <div class="card-body text-center d-flex flex-column justify-content-center">
                                     <h3 id="monthly-revenue">-</h3>
-                                    <p>Monthly Revenue</p>
+                                    <p class="mb-0">Monthly Revenue</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="card bg-warning text-white">
-                                <div class="card-body text-center">
+                            <div class="card bg-warning text-white h-100">
+                                <div class="card-body text-center d-flex flex-column justify-content-center">
                                     <h3 id="completion-rate">-</h3>
-                                    <p>Completion Rate</p>
+                                    <p class="mb-0">Completion Rate</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="card bg-danger text-white">
-                                <div class="card-body text-center">
+                            <div class="card bg-danger text-white h-100">
+                                <div class="card-body text-center d-flex flex-column justify-content-center">
                                     <h3 id="pending-submissions">-</h3>
-                                    <p>Pending Submissions</p>
+                                    <p class="mb-0">Pending Submissions</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="card bg-secondary text-white">
-                                <div class="card-body text-center">
+                            <div class="card bg-secondary text-white h-100">
+                                <div class="card-body text-center d-flex flex-column justify-content-center">
                                     <h3 id="total-courses">-</h3>
-                                    <p>Active Courses</p>
+                                    <p class="mb-0">Active Courses</p>
                                 </div>
                             </div>
                         </div>
