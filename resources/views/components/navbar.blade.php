@@ -67,12 +67,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/dashboard') ? 'bg-primary rounded' : '' }}" href="/admin/dashboard">
-                            <i class="fas fa-chart-line me-2"></i> Admin Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('create-course') ? 'bg-primary rounded' : '' }}" href="/create-course">
-                            <i class="fas fa-plus-circle me-2"></i> Manage Courses
+                            <i class="fas fa-tachometer-alt me-2"></i> Admin Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
@@ -81,13 +76,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/florida-courses*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-courses">
-                            <i class="fas fa-flag-usa me-2"></i>Courses (Advanced)
+                        <a class="nav-link text-white {{ request()->is('admin/users') ? 'bg-primary rounded' : '' }}" href="/admin/users">
+                            <i class="fas fa-user me-2"></i> Users
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/florida-certificates*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-certificates">
-                            <i class="fas fa-certificate me-2"></i> Florida Certificates
+                        <a class="nav-link text-white {{ request()->is('admin/user-access') ? 'bg-primary rounded' : '' }}" href="/admin/user-access">
+                            <i class="fas fa-lock me-2"></i> User Access
                         </a>
                     </li>
                     <li class="nav-item">
@@ -101,18 +96,97 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/dicds-submissions*') ? 'bg-primary rounded' : '' }}" href="/admin/dicds-submissions">
-                            <i class="fas fa-paper-plane me-2"></i> DICDS Submissions
+                        <a class="nav-link text-white {{ request()->is('admin/support/tickets*') ? 'bg-primary rounded' : '' }}" href="/admin/support/tickets">
+                            <i class="fas fa-ticket-alt me-2"></i> Support Tickets
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/faqs*') ? 'bg-primary rounded' : '' }}" href="/admin/faqs">
+                            <i class="fas fa-question me-2"></i> FAQs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/reports') ? 'bg-primary rounded' : '' }}" href="/admin/reports">
+                            <i class="fas fa-chart-bar me-2"></i> Reports
+                        </a>
+                    </li>
+                    
+                    <hr style="border-color: var(--border) !important; opacity: 0.3;">
+                    <li class="nav-item">
+                        <small style="color: var(--text-secondary) !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="px-3">ONLINE COURSES</small>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('create-course') ? 'bg-primary rounded' : '' }}" href="/create-course">
+                            <i class="fas fa-book me-2"></i> Manage Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/florida-courses*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-courses">
+                            <i class="fas fa-cogs me-2"></i> Courses (Advanced)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/course-timers*') ? 'bg-primary rounded' : '' }}" href="/admin/course-timers">
+                            <i class="fas fa-hourglass me-2"></i> Course Timers
+                        </a>
+                    </li>
+                    <hr style="border-color: var(--border) !important; opacity: 0.3;">
+                    <li class="nav-item">
+                        <small style="color: var(--text-secondary) !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="px-3">COURSE BOOKLETS</small>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/booklets') && !request()->is('admin/booklets/orders*') && !request()->is('admin/booklets/templates*') ? 'bg-primary rounded' : '' }}" href="/admin/booklets">
+                            <i class="fas fa-book-open me-2"></i> Manage Booklets
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/booklets/orders*') ? 'bg-primary rounded' : '' }}" href="/admin/booklets/orders">
+                            <i class="fas fa-shopping-cart me-2"></i> Booklet Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/booklets/templates*') ? 'bg-primary rounded' : '' }}" href="/admin/booklets/templates">
+                            <i class="fas fa-file-alt me-2"></i> Booklet Templates
+                        </a>
+                    </li>
+                    
+                    <hr style="border-color: var(--border) !important; opacity: 0.3;">
+                    <li class="nav-item">
+                        <small style="color: var(--text-secondary) !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="px-3">EMAIL & NOTIFICATIONS</small>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/email-templates') ? 'bg-primary rounded' : '' }}" href="/admin/email-templates">
+                            <i class="fas fa-envelope me-2"></i> Email Templates
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/notifications') ? 'bg-primary rounded' : '' }}" href="/admin/notifications">
+                            <i class="fas fa-bell me-2"></i> Notifications
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/newsletter/subscribers*') ? 'bg-primary rounded' : '' }}" href="/admin/newsletter/subscribers">
+                            <i class="fas fa-newspaper me-2"></i> Newsletter Subscribers
+                        </a>
+                    </li>
+                    
+                    <hr style="border-color: var(--border) !important; opacity: 0.3;">
+                    <li class="nav-item">
+                        <small style="color: var(--text-secondary) !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="px-3">INTEGRATION & TRANSMISSIONS</small>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/state-integration') ? 'bg-primary rounded' : '' }}" href="/admin/state-integration">
+                            <i class="fas fa-globe me-2"></i> State Integration
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/state-transmissions*') ? 'bg-primary rounded' : '' }}" href="/admin/state-transmissions">
-                            <i class="fas fa-globe-americas me-2"></i> All State Transmissions
+                            <i class="fas fa-exchange-alt me-2"></i> All State Transmissions
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/fl-transmissions*') ? 'bg-primary rounded' : '' }}" href="/admin/fl-transmissions">
-                            <i class="fas fa-exchange-alt me-2"></i> FL Transmissions
+                            <i class="fas fa-paper-plane me-2"></i> FL Transmissions
                         </a>
                     </li>
                     <li class="nav-item">
@@ -126,19 +200,18 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/users') ? 'bg-primary rounded' : '' }}" href="/admin/users">
-                            <i class="fas fa-user-cog me-2"></i> Users
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/user-access') ? 'bg-primary rounded' : '' }}" href="/admin/user-access">
-                            <i class="fas fa-lock me-2"></i> User Access
+                        <a class="nav-link text-white {{ request()->is('admin/state-stamps*') ? 'bg-primary rounded' : '' }}" href="/admin/state-stamps">
+                            <i class="fas fa-stamp me-2"></i> State Stamps
                         </a>
                     </li>
                     
+                    <hr style="border-color: var(--border) !important; opacity: 0.3;">
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/reports') ? 'bg-primary rounded' : '' }}" href="/admin/reports">
-                            <i class="fas fa-chart-bar me-2"></i> Reports
+                        <small style="color: var(--text-secondary) !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="px-3">PAYMENTS & REVENUE</small>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/revenue*') ? 'bg-primary rounded' : '' }}" href="/admin/revenue">
+                            <i class="fas fa-chart-line me-2"></i> Revenue Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
@@ -147,63 +220,93 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/pricing-rules*') ? 'bg-primary rounded' : '' }}" href="/admin/pricing-rules">
+                            <i class="fas fa-tag me-2"></i> Pricing Rules
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/coupons*') ? 'bg-primary rounded' : '' }}" href="/admin/coupons">
+                            <i class="fas fa-tags me-2"></i> Coupons
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/invoices') ? 'bg-primary rounded' : '' }}" href="/admin/invoices">
-                            <i class="fas fa-file-invoice me-2"></i> Invoices
+                            <i class="fas fa-receipt me-2"></i> Invoices
                         </a>
                     </li>
+                    
+                    <hr style="border-color: var(--border) !important; opacity: 0.3;">
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/certificates') ? 'bg-primary rounded' : '' }}" href="/admin/certificates">
-                            <i class="fas fa-certificate me-2"></i> Certificates
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/state-integration') ? 'bg-primary rounded' : '' }}" href="/admin/state-integration">
-                            <i class="fas fa-globe-americas me-2"></i> State Integration
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/email-templates') ? 'bg-primary rounded' : '' }}" href="/admin/email-templates">
-                            <i class="fas fa-envelope me-2"></i> Email Templates
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/notifications') ? 'bg-primary rounded' : '' }}" href="/admin/notifications">
-                            <i class="fas fa-bell me-2"></i> Notifications
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/accessibility-settings') ? 'bg-primary rounded' : '' }}" href="/admin/accessibility-settings">
-                            <i class="fas fa-universal-access me-2"></i> Accessibility
-                        </a>
+                        <small style="color: var(--text-secondary) !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="px-3">ACCESSIBILITY, SECURITY & DATA</small>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/security-questions*') ? 'bg-primary rounded' : '' }}" href="/admin/security-questions">
-                            <i class="fas fa-shield-alt me-2"></i> Security Questions
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/mobile-optimization') ? 'bg-primary rounded' : '' }}" href="/admin/mobile-optimization">
-                            <i class="fas fa-mobile-alt me-2"></i> Mobile Optimization
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/pwa-management') ? 'bg-primary rounded' : '' }}" href="/admin/pwa-management">
-                            <i class="fas fa-download me-2"></i> PWA Management
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/security-dashboard') ? 'bg-primary rounded' : '' }}" href="/admin/security-dashboard">
-                            <i class="fas fa-shield-alt me-2"></i> Security Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/account-security') ? 'bg-primary rounded' : '' }}" href="/admin/account-security">
-                            <i class="fas fa-lock me-2"></i> Account Security
+                            <i class="fas fa-question-circle me-2"></i> Security Questions
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/data-export') ? 'bg-primary rounded' : '' }}" href="/admin/data-export">
-                            <i class="fas fa-file-export me-2"></i> Data Export
+                            <i class="fas fa-download me-2"></i> Data Export
+                        </a>
+                    </li>
+                    
+                    <hr style="border-color: var(--border) !important; opacity: 0.3;">
+                    <li class="nav-item">
+                        <small style="color: var(--text-secondary) !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="px-3">LEGAL & COMPLIANCE</small>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/legal-documents*') ? 'bg-primary rounded' : '' }}" href="/admin/legal-documents">
+                            <i class="fas fa-file-contract me-2"></i> Legal Documents
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/user-consents*') ? 'bg-primary rounded' : '' }}" href="/admin/user-consents">
+                            <i class="fas fa-handshake me-2"></i> User Consents
+                        </a>
+                    </li>
+                    
+                    <hr style="border-color: var(--border) !important; opacity: 0.3;">
+                    <li class="nav-item">
+                        <small style="color: var(--text-secondary) !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="px-3">FLORIDA DICDS</small>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/florida-dashboard*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-dashboard">
+                            <i class="fas fa-home me-2"></i> Florida Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/flhsmv/submissions*') ? 'bg-primary rounded' : '' }}" href="/admin/flhsmv/submissions">
+                            <i class="fas fa-paper-plane me-2"></i> FLHSMV Submissions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/dicds-orders*') ? 'bg-primary rounded' : '' }}" href="/admin/dicds-orders">
+                            <i class="fas fa-shopping-cart me-2"></i> DICDS Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/florida-certificates*') ? 'bg-primary rounded' : '' }}" href="/admin/florida-certificates">
+                            <i class="fas fa-certificate me-2"></i> Florida Certificates
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/compliance-reports*') ? 'bg-primary rounded' : '' }}" href="/admin/compliance-reports">
+                            <i class="fas fa-file-pdf me-2"></i> Compliance Reports
+                        </a>
+                    </li>
+                    
+                    <hr style="border-color: var(--border) !important; opacity: 0.3;">
+                    <li class="nav-item">
+                        <small style="color: var(--text-secondary) !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;" class="px-3">NEVADA STATE</small>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/nevada*') ? 'bg-primary rounded' : '' }}" href="/admin/nevada">
+                            <i class="fas fa-home me-2"></i> Nevada Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/nevada/students*') ? 'bg-primary rounded' : '' }}" href="/admin/nevada/students">
+                            <i class="fas fa-users me-2"></i> Nevada Students
                         </a>
                     </li>
                     
@@ -413,18 +516,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/counties*') ? 'bg-primary rounded' : '' }}" href="/admin/counties">
-                            <i class="fas fa-map-marker-alt me-2"></i> Counties
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/coupons*') ? 'bg-primary rounded' : '' }}" href="/admin/coupons">
                             <i class="fas fa-tags me-2"></i> Coupons
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/question-banks*') ? 'bg-primary rounded' : '' }}" href="/admin/question-banks">
-                            <i class="fas fa-question-circle me-2"></i> Question Banks
                         </a>
                     </li>
                     

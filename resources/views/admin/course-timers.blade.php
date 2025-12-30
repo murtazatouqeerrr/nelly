@@ -509,7 +509,7 @@ async function toggleStrictDuration() {
         if (data.success) {
             currentStrictDurationState = newState;
             updateButtonUI();
-            alert(data.message);
+            alert(data.message + '\n\nPlease refresh the course player page to see the changes.');
         } else {
             alert('Error: ' + data.message);
         }

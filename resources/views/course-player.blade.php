@@ -896,15 +896,17 @@
                 `;
             } else if (isOnLastPage) {
                 // Show complete button only on last page or single page
-                const isDisabled = window.strictDurationEnabled && timerRunning;
+                const timerActive = window.strictTimer && window.strictTimer.isActive;
+                const isDisabled = window.strictDurationEnabled && timerActive;
                 const disabledAttr = isDisabled ? 'disabled' : '';
                 const disabledClass = isDisabled ? 'opacity-50' : '';
+                const timeRemaining = window.strictTimer ? Math.ceil(Math.max(0, window.strictTimer.requiredTime - window.strictTimer.elapsedTime)) : 0;
                 const title = isDisabled ? 'Wait for timer to complete' : '';
                 
                 actionContainer.innerHTML = `
                     <button onclick="completeChapter()" class="btn btn-success btn-lg ${disabledClass}" ${disabledAttr} title="${title}">
                         <i class="fas fa-check-circle"></i> Mark Chapter as Complete
-                        ${isDisabled ? '<br><small>Timer: ' + Math.ceil(timeRemaining) + 's remaining</small>' : ''}
+                        ${isDisabled ? '<br><small>Timer: ' + timeRemaining + 's remaining</small>' : ''}
                     </button>
                 `;
             } else {
@@ -1079,7 +1081,8 @@
             }
 
             // Check strict duration enforcement
-            if (window.strictDurationEnabled && timerRunning) {
+            const timerActive = window.strictTimer && window.strictTimer.isActive;
+            if (window.strictDurationEnabled && timerActive) {
                 alert('You must complete the full chapter duration before marking as complete.');
                 return Promise.reject('Strict duration not met');
             }
@@ -1218,6 +1221,13 @@
         async function completeChapter() {
             if (!currentChapterId) {
                 alert('No chapter selected');
+                return;
+            }
+            
+            // Check strict duration enforcement
+            const timerActive = window.strictTimer && window.strictTimer.isActive;
+            if (window.strictDurationEnabled && timerActive) {
+                alert('You must complete the full chapter duration before marking as complete.');
                 return;
             }
             

@@ -54,7 +54,10 @@ class SecurityVerificationController extends Controller
                 \Log::info('Processing question: ' . $question->question_key);
                 $fullQuestion = $question->full_question;
                 \Log::info('Full question text: ' . $fullQuestion);
-                $questionsMap['security_' . $question->question_key] = $fullQuestion;
+                $questionsMap['security_' . $question->question_key] = [
+                    'question' => $fullQuestion,
+                    'answer_type' => $question->answer_type
+                ];
             }
             
             \Log::info('Questions map built, keys: ' . json_encode(array_keys($questionsMap)));

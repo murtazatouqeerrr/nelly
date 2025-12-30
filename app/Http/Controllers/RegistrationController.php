@@ -84,7 +84,8 @@ class RegistrationController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('=== Validation Error ===', [
                 'step' => $step,
-                'errors' => $e->errors()
+                'errors' => $e->errors(),
+                'input_data' => $request->all()
             ]);
             throw $e;
         } catch (\Exception $e) {

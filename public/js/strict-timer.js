@@ -462,6 +462,11 @@ class StrictTimer {
                 status.className = 'badge bg-warning';
             }
         }
+        
+        // Update action buttons if function exists
+        if (typeof updateActionButtons === 'function') {
+            updateActionButtons();
+        }
     }
 
     showTimerDisplay() {

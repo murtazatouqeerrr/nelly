@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .modal-backdrop {
+        display: none !important;
+    }
+    body.modal-open {
+        overflow: auto !important;
+    }
+</style>
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-question-circle me-2"></i>FAQs Management</h2>
@@ -12,12 +20,12 @@
 </div>
 
 <!-- Add FAQ Modal -->
-<div class="modal fade" id="addFaqModal" tabindex="-1">
+<div class="modal fade" id="addFaqModal" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add FAQ</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeModal()"></button>
             </div>
             <div class="modal-body">
                 <form id="faqForm">
@@ -36,7 +44,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal()">Close</button>
                 <button type="button" class="btn btn-primary" onclick="saveFaq()">Save</button>
             </div>
         </div>
@@ -44,6 +52,15 @@
 </div>
 
 <script>
+function closeModal() {
+    const modal = document.getElementById('addFaqModal');
+    const bsModal = bootstrap.Modal.getInstance(modal);
+    if (bsModal) {
+        bsModal.hide();
+    }
+    document.body.classList.remove('modal-open');
+}
+
 function loadFaqs() {
     fetch('/api/faq', {
         headers: {
@@ -108,8 +125,8 @@ function saveFaq() {
     })
     .then(response => response.json())
     .then(() => {
-        bootstrap.Modal.getInstance(document.getElementById('addFaqModal')).hide();
         document.getElementById('faqForm').reset();
+        closeModal();
         loadFaqs();
     })
     .catch(error => console.error('Error saving FAQ:', error));
@@ -129,6 +146,9 @@ function deleteFaq(id) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadFaqs);
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.remove('modal-open');
+    loadFaqs();
+});
 </script>
 @endsection

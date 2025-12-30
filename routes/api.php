@@ -1722,6 +1722,27 @@ Route::get('/courts/by-county/{state}/{county}', function ($state, $county) {
     ]);
 });
 
+// Public FAQs API
+Route::get('/public/faqs', function () {
+    $faqs = \App\Models\Faq::where('is_active', true)
+        ->orderBy('category')
+        ->orderBy('order')
+        ->get()
+        ->groupBy('category')
+        ->map(function ($items) {
+            return $items->map(function ($faq) {
+                return [
+                    'id' => $faq->id,
+                    'question' => $faq->question,
+                    'answer' => $faq->answer,
+                    'order' => $faq->order,
+                ];
+            })->values();
+        });
+
+    return response()->json($faqs);
+});
+
 // Include new modules API routes
 require __DIR__.'/new-modules-api.php';
 

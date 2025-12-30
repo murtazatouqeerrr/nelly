@@ -165,7 +165,7 @@
                     <div class="form-group">
                         <label for="state">State</label>
                         <div class="searchable-dropdown">
-                            <input type="text" id="state-search" class="search-input" placeholder="Search state...">
+                            <input type="text" id="state-search" class="search-input" placeholder="Search state..." autocomplete="off">
                             <div id="state-dropdown" class="dropdown-list"></div>
                             <input type="hidden" id="state" name="state" required>
                         </div>

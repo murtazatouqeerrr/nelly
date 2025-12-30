@@ -82,13 +82,28 @@
             @endif
             
             @if($errors->any())
-                <div class="validation-errors">
-                    <strong>Please fix the following errors:</strong>
-                    <ul>
+                <div class="validation-errors" style="background: #f8d7da; border: 1px solid #f5c2c7; color: #842029; padding: 20px; border-radius: 0.375rem; margin-bottom: 20px;">
+                    <strong style="font-size: 16px; display: block; margin-bottom: 15px;">❌ Please fix the following errors:</strong>
+                    <ul style="margin: 0; padding-left: 20px;">
                         @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
+                            <li style="margin-bottom: 8px; line-height: 1.5;">{{ $error }}</li>
                         @endforeach
                     </ul>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #f5c2c7; font-size: 14px;">
+                        <strong>Quick Reference:</strong>
+                        <ul style="margin: 10px 0 0 20px; padding: 0;">
+                            <li><strong>Q1 (License Expiration):</strong> Must be exactly 4 digits (e.g., 2025)</li>
+                            <li><strong>Q2 (Weight):</strong> Numbers only, up to 10 digits (e.g., 162)</li>
+                            <li><strong>Q3 (Number of Cars):</strong> Numbers only, up to 5 digits (e.g., 1)</li>
+                            <li><strong>Q4 (Last 4 License Digits):</strong> Must be exactly 4 digits (e.g., 6374)</li>
+                            <li><strong>Q5 (Your Age):</strong> Numbers only, up to 3 digits (e.g., 31)</li>
+                            <li><strong>Q6 (Age Got License):</strong> Numbers only, up to 3 digits (e.g., 16)</li>
+                            <li><strong>Q7 (Zip Code):</strong> Must be exactly 5 digits (e.g., 90210)</li>
+                            <li><strong>Q8 (Birth Year):</strong> Must be exactly 4 digits (e.g., 1980)</li>
+                            <li><strong>Q9 (Hair Color):</strong> Letters only (e.g., black, brown, blonde)</li>
+                            <li><strong>Q10 (City):</strong> Letters only (e.g., New York, Los Angeles)</li>
+                        </ul>
+                    </div>
                 </div>
             @endif
             
@@ -223,11 +238,24 @@
                 securityQuestions = questionKeys.map((key, index) => {
                     // Extract the question key (e.g., 'q1' from 'security_q1')
                     const questionKey = key.replace('security_', '');
-                    return {
-                        key: key,
-                        question: questionsMap[key],
-                        fieldName: questionKey // This will be q1, q2, q3, etc.
-                    };
+                    const questionData = questionsMap[key];
+                    
+                    // Handle both old format (string) and new format (object with question and answer_type)
+                    if (typeof questionData === 'string') {
+                        return {
+                            key: key,
+                            question: questionData,
+                            answer_type: null,
+                            fieldName: questionKey
+                        };
+                    } else if (typeof questionData === 'object' && questionData.question) {
+                        return {
+                            key: key,
+                            question: questionData.question,
+                            answer_type: questionData.answer_type,
+                            fieldName: questionKey
+                        };
+                    }
                 });
                 
                 console.log('Processed security questions:', securityQuestions);
@@ -246,9 +274,10 @@
             
             securityQuestions.forEach((q, index) => {
                 const oldValue = getOldValue(q.fieldName);
-                const inputType = getInputType(q.question);
+                // Use answer_type from API if available, otherwise guess from question text
+                const inputType = q.answer_type ? (q.answer_type === 'number' ? 'number' : 'text') : getInputType(q.question);
                 const pattern = getPattern(inputType);
-                const maxLength = getMaxLength(inputType);
+                const maxLength = getMaxLength(inputType, q.question);
                 const title = getTitle(inputType);
                 
                 html += `
@@ -280,51 +309,61 @@
                     <div class="question-number">1.</div>
                     <div class="question-text">When does your driver's license expire? (Year only, e.g., 2025)</div>
                     <input type="text" name="q1" class="answer-input" data-type="year" pattern="\\d{4}" maxlength="4" title="4 digits only" value="{{ old('q1', session('registration_step_3.q1')) }}" required>
+                    @error('q1')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
                 <div class="question-row">
                     <div class="question-number">2.</div>
                     <div class="question-text">What is the weight listed on your driver's license? (Numbers only, e.g., 162)</div>
                     <input type="text" name="q2" class="answer-input" data-type="number" pattern="\\d+" maxlength="10" title="Numbers only" value="{{ old('q2', session('registration_step_3.q2')) }}" required>
+                    @error('q2')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
                 <div class="question-row">
                     <div class="question-number">3.</div>
                     <div class="question-text">How many cars do you own? (Numbers only, e.g., 1)</div>
                     <input type="text" name="q3" class="answer-input" data-type="number" pattern="\\d+" maxlength="10" title="Numbers only" value="{{ old('q3', session('registration_step_3.q3')) }}" required>
+                    @error('q3')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
                 <div class="question-row">
                     <div class="question-number">4.</div>
                     <div class="question-text">What are the last four digits of your Driver's License Number? (e.g., 6374)</div>
                     <input type="text" name="q4" class="answer-input" data-type="number" pattern="\\d{4}" maxlength="4" title="4 digits only" value="{{ old('q4', session('registration_step_3.q4')) }}" required>
+                    @error('q4')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
                 <div class="question-row">
                     <div class="question-number">5.</div>
                     <div class="question-text">What is your age? (Numbers only, e.g., 31)</div>
                     <input type="text" name="q5" class="answer-input" data-type="number" pattern="\\d+" maxlength="3" title="Numbers only" value="{{ old('q5', session('registration_step_3.q5')) }}" required>
+                    @error('q5')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
                 <div class="question-row">
                     <div class="question-number">6.</div>
                     <div class="question-text">How old were you when you got your Driver's License? (Numbers only, e.g., 16)</div>
                     <input type="text" name="q6" class="answer-input" data-type="number" pattern="\\d+" maxlength="3" title="Numbers only" value="{{ old('q6', session('registration_step_3.q6')) }}" required>
+                    @error('q6')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
                 <div class="question-row">
                     <div class="question-number">7.</div>
                     <div class="question-text">What zip code do you live in? (e.g., 90210)</div>
                     <input type="text" name="q7" class="answer-input" data-type="zip" pattern="\\d{5}" maxlength="5" title="5 digits only" value="{{ old('q7', session('registration_step_3.q7')) }}" required>
+                    @error('q7')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
                 <div class="question-row">
                     <div class="question-number">8.</div>
                     <div class="question-text">In what year were you born? (e.g., 1980)</div>
                     <input type="text" name="q8" class="answer-input" data-type="year" pattern="\\d{4}" maxlength="4" title="4 digits only" value="{{ old('q8', session('registration_step_3.q8')) }}" required>
+                    @error('q8')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
                 <div class="question-row">
                     <div class="question-number">9.</div>
                     <div class="question-text">What color is your hair?</div>
                     <input type="text" name="q9" class="answer-input" data-type="text" pattern="[a-zA-Z\\s\\-']+" maxlength="50" title="Letters, spaces, hyphens, and apostrophes only" value="{{ old('q9', session('registration_step_3.q9')) }}" required>
+                    @error('q9')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
                 <div class="question-row">
                     <div class="question-number">10.</div>
                     <div class="question-text">What city do you live in?</div>
                     <input type="text" name="q10" class="answer-input" data-type="text" pattern="[a-zA-Z\\s\\-']+" maxlength="50" title="Letters, spaces, hyphens, and apostrophes only" value="{{ old('q10', session('registration_step_3.q10')) }}" required>
+                    @error('q10')<span class="error-text" style="color: #dc3545; font-size: 12px; display: block; margin-top: 5px;">⚠️ {{ $message }}</span>@enderror
                 </div>
             `;
             setupValidation();
@@ -354,11 +393,16 @@
             }
         }
         
-        function getMaxLength(inputType) {
+        function getMaxLength(inputType, question = '') {
+            const lowerQuestion = question.toLowerCase();
             switch(inputType) {
                 case 'year': return '4';
                 case 'zip': return '5';
-                case 'number': return '10';
+                case 'number': 
+                    // Age fields should be max 3 digits
+                    if (lowerQuestion.includes('age')) return '3';
+                    // Weight and cars can be longer
+                    return '10';
                 default: return '50';
             }
         }
@@ -394,10 +438,31 @@
                     }
                 });
             });
+            
+            // Add form submission handler
+            const form = document.getElementById('registrationForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('Form submitted');
+                    // Allow form to submit normally
+                });
+            }
         }
         
         // Load questions when page loads
-        document.addEventListener('DOMContentLoaded', loadSecurityQuestions);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, loading security questions');
+            loadSecurityQuestions();
+            
+            // Add form submit listener
+            const form = document.getElementById('registrationForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('Form submit event fired');
+                    console.log('Form data:', new FormData(form));
+                });
+            }
+        });
     </script>
 </body>
 </html>

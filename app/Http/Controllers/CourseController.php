@@ -648,6 +648,11 @@ class CourseController extends Controller
             \Log::info('Final - courses with setting: ' . $finalCoursesCount);
             \Log::info('Final - florida_courses with setting: ' . $finalFloridaCount);
             
+            \Log::info('STEP 10: Clearing cache');
+            // Clear all enrollment cache entries
+            \Cache::flush();
+            \Log::info('Cache cleared');
+            
             \Log::info('╔════════════════════════════════════════╗');
             \Log::info('║ toggleStrictDuration SUCCESS           ║');
             \Log::info('╚════════════════════════════════════════╝');
