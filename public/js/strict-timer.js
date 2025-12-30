@@ -600,11 +600,23 @@ class StrictTimer {
 }
 
 // Global timer instance - initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
+function initializeStrictTimer() {
+    if (!window.strictTimer) {
         window.strictTimer = new StrictTimer();
-    });
+        console.log('✅ StrictTimer initialized successfully');
+    }
+}
+
+// Try multiple initialization methods to ensure it works
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeStrictTimer);
 } else {
     // DOM is already ready
-    window.strictTimer = new StrictTimer();
+    initializeStrictTimer();
 }
+
+// Also initialize on window load as a fallback
+window.addEventListener('load', initializeStrictTimer);
+
+// Ensure timer is available even if page loads very quickly
+setTimeout(initializeStrictTimer, 100);

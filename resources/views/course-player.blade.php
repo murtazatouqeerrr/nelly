@@ -1656,9 +1656,15 @@
                 console.log('🔒 Starting strict timer for chapter:', chapterId);
                 
                 if (!window.strictTimer) {
-                    console.error('❌ StrictTimer not initialized!');
-                    hideTimerDisplay();
-                    return { success: false, error: 'StrictTimer not initialized' };
+                    console.warn('⚠️ StrictTimer not initialized, attempting to initialize...');
+                    if (typeof StrictTimer !== 'undefined') {
+                        window.strictTimer = new StrictTimer();
+                        console.log('✅ StrictTimer initialized in checkChapterTimer');
+                    } else {
+                        console.error('❌ StrictTimer class not available!');
+                        hideTimerDisplay();
+                        return { success: false, error: 'StrictTimer not initialized' };
+                    }
                 }
                 
                 // Get chapter duration
@@ -2202,6 +2208,19 @@
         
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
+            // Ensure StrictTimer is initialized
+            if (!window.strictTimer) {
+                console.warn('⚠️ StrictTimer not yet initialized, attempting to initialize...');
+                if (typeof StrictTimer !== 'undefined') {
+                    window.strictTimer = new StrictTimer();
+                    console.log('✅ StrictTimer initialized in DOMContentLoaded');
+                } else {
+                    console.error('❌ StrictTimer class not available');
+                }
+            } else {
+                console.log('✅ StrictTimer already initialized');
+            }
+            
             // Load pagination settings from localStorage
             loadPaginationSettings();
             
