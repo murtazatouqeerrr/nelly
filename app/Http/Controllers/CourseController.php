@@ -10,7 +10,27 @@ class CourseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Course::with('creator');
+        \Log::info('=== Courses API START ===');
+        
+        // Try florida_courses first since it has data
+        $floridaCount = DB::table('florida_courses')->count();
+        $coursesCount = DB::table('courses')->count();
+        
+        \Log::info('florida_courses count: ' . $floridaCount);
+        \Log::info('courses count: ' . $coursesCount);
+        
+        if ($floridaCount > 0) {
+            \Log::info('Using florida_courses table');
+            // Explicitly select all columns including strict_duration_enabled
+            $query = DB::table('florida_courses')->select(
+                'id', 'title', 'description', 'state_code', 'min_pass_score', 
+                'total_duration', 'price', 'certificate_template', 'is_active',
+                'strict_duration_enabled', 'created_at', 'updated_at'
+            );
+        } else {
+            \Log::info('Using courses table');
+            $query = Course::query();
+        }
 
         if ($request->state_code) {
             $query->where('state_code', $request->state_code);
@@ -24,7 +44,18 @@ class CourseController extends Controller
             $query->where('title', 'like', '%'.$request->search.'%');
         }
 
-        return response()->json($query->get());
+        $result = $query->get();
+        \Log::info('Courses loaded: ' . $result->count());
+        
+        // Log first course data
+        if ($result->count() > 0) {
+            \Log::info('First course data: ' . json_encode($result[0]));
+            \Log::info('strict_duration_enabled value: ' . ($result[0]->strict_duration_enabled ?? 'NULL'));
+        }
+        
+        \Log::info('=== Courses API END ===');
+        
+        return response()->json($result);
     }
 
     public function store(Request $request)
@@ -528,6 +559,126 @@ class CourseController extends Controller
             \Log::error('Course copy error: ' . $e->getMessage());
             return response()->json([
                 'error' => 'Failed to copy course: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function toggleStrictDuration(Request $request)
+    {
+        try {
+            \Log::info('╔════════════════════════════════════════╗');
+            \Log::info('║ toggleStrictDuration START             ║');
+            \Log::info('╚════════════════════════════════════════╝');
+            
+            \Log::info('STEP 1: Received request');
+            \Log::info('Request method: ' . $request->method());
+            \Log::info('Request URL: ' . $request->fullUrl());
+            \Log::info('Request data: ' . json_encode($request->all()));
+            \Log::info('Request headers: ' . json_encode($request->headers->all()));
+            
+            \Log::info('STEP 2: Validating input');
+            $validated = $request->validate([
+                'strict_duration_enabled' => 'required|boolean'
+            ]);
+            \Log::info('Validation passed');
+            \Log::info('Validated value: ' . ($validated['strict_duration_enabled'] ? 'TRUE' : 'FALSE'));
+            
+            \Log::info('STEP 3: Checking database connection');
+            try {
+                $connection = DB::connection()->getPdo();
+                \Log::info('Database connection: OK');
+            } catch (\Exception $e) {
+                \Log::error('Database connection FAILED: ' . $e->getMessage());
+                throw $e;
+            }
+            
+            \Log::info('STEP 4: Checking table existence');
+            $coursesTableExists = DB::getSchemaBuilder()->hasTable('courses');
+            $floridaTableExists = DB::getSchemaBuilder()->hasTable('florida_courses');
+            \Log::info('courses table exists: ' . ($coursesTableExists ? 'YES' : 'NO'));
+            \Log::info('florida_courses table exists: ' . ($floridaTableExists ? 'YES' : 'NO'));
+            
+            \Log::info('STEP 5: Checking column existence');
+            $coursesHasColumn = DB::getSchemaBuilder()->hasColumn('courses', 'strict_duration_enabled');
+            $floridaHasColumn = DB::getSchemaBuilder()->hasColumn('florida_courses', 'strict_duration_enabled');
+            \Log::info('courses.strict_duration_enabled exists: ' . ($coursesHasColumn ? 'YES' : 'NO'));
+            \Log::info('florida_courses.strict_duration_enabled exists: ' . ($floridaHasColumn ? 'YES' : 'NO'));
+            
+            \Log::info('STEP 6: Counting rows in tables');
+            $coursesCount = DB::table('courses')->count();
+            $floridaCount = DB::table('florida_courses')->count();
+            \Log::info('courses table row count: ' . $coursesCount);
+            \Log::info('florida_courses table row count: ' . $floridaCount);
+            
+            \Log::info('STEP 7: Updating courses table');
+            if ($coursesTableExists && $coursesHasColumn && $coursesCount > 0) {
+                \Log::info('Attempting to update courses table...');
+                $coursesUpdated = DB::table('courses')->update(['strict_duration_enabled' => $validated['strict_duration_enabled']]);
+                \Log::info('Courses updated: ' . $coursesUpdated . ' rows');
+                
+                $coursesVerify = DB::table('courses')->where('strict_duration_enabled', $validated['strict_duration_enabled'])->count();
+                \Log::info('Verification - courses with new value: ' . $coursesVerify);
+            } else {
+                \Log::warning('Skipping courses table update - exists: ' . ($coursesTableExists ? 'Y' : 'N') . ', hasColumn: ' . ($coursesHasColumn ? 'Y' : 'N') . ', count: ' . $coursesCount);
+            }
+            
+            \Log::info('STEP 8: Updating florida_courses table');
+            if ($floridaTableExists && $floridaHasColumn && $floridaCount > 0) {
+                \Log::info('Attempting to update florida_courses table...');
+                
+                // Check current values before update
+                $currentTrue = DB::table('florida_courses')->where('strict_duration_enabled', true)->count();
+                $currentFalse = DB::table('florida_courses')->where('strict_duration_enabled', false)->count();
+                $currentNull = DB::table('florida_courses')->whereNull('strict_duration_enabled')->count();
+                
+                \Log::info('Current values - TRUE: ' . $currentTrue . ', FALSE: ' . $currentFalse . ', NULL: ' . $currentNull);
+                
+                $floridaUpdated = DB::table('florida_courses')->update(['strict_duration_enabled' => $validated['strict_duration_enabled']]);
+                \Log::info('Florida courses updated: ' . $floridaUpdated . ' rows');
+                
+                $floridaVerify = DB::table('florida_courses')->where('strict_duration_enabled', $validated['strict_duration_enabled'])->count();
+                \Log::info('Verification - florida_courses with new value: ' . $floridaVerify);
+            } else {
+                \Log::warning('Skipping florida_courses table update - exists: ' . ($floridaTableExists ? 'Y' : 'N') . ', hasColumn: ' . ($floridaHasColumn ? 'Y' : 'N') . ', count: ' . $floridaCount);
+            }
+            
+            \Log::info('STEP 9: Final verification');
+            $finalCoursesCount = DB::table('courses')->where('strict_duration_enabled', $validated['strict_duration_enabled'])->count();
+            $finalFloridaCount = DB::table('florida_courses')->where('strict_duration_enabled', $validated['strict_duration_enabled'])->count();
+            \Log::info('Final - courses with setting: ' . $finalCoursesCount);
+            \Log::info('Final - florida_courses with setting: ' . $finalFloridaCount);
+            
+            \Log::info('╔════════════════════════════════════════╗');
+            \Log::info('║ toggleStrictDuration SUCCESS           ║');
+            \Log::info('╚════════════════════════════════════════╝');
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Strict duration enforcement ' . ($validated['strict_duration_enabled'] ? 'ENABLED' : 'DISABLED') . ' for all courses',
+                'strict_duration_enabled' => $validated['strict_duration_enabled']
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('╔════════════════════════════════════════╗');
+            \Log::error('║ VALIDATION ERROR                       ║');
+            \Log::error('╚════════════════════════════════════════╝');
+            \Log::error('Errors: ' . json_encode($e->errors()));
+            throw $e;
+            
+        } catch (\Exception $e) {
+            \Log::error('╔════════════════════════════════════════╗');
+            \Log::error('║ toggleStrictDuration ERROR             ║');
+            \Log::error('╚════════════════════════════════════════╝');
+            \Log::error('Exception class: ' . get_class($e));
+            \Log::error('Error message: ' . $e->getMessage());
+            \Log::error('Error file: ' . $e->getFile());
+            \Log::error('Error line: ' . $e->getLine());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'error' => 'Failed to update strict duration setting',
+                'message' => $e->getMessage(),
+                'exception' => get_class($e)
             ], 500);
         }
     }

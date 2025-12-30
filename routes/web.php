@@ -525,6 +525,7 @@ Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
     Route::get('/admin/course-timers', function () {
         return view('admin.course-timers');
     });
+    Route::post('/api/courses/toggle-strict-duration', [App\Http\Controllers\CourseController::class, 'toggleStrictDuration']);
 
     // State Stamps Admin routes
     Route::get('/admin/state-stamps', [App\Http\Controllers\StateStampController::class, 'index']);

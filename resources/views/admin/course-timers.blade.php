@@ -1,12 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+.modal-backdrop {
+    display: none !important;
+}
+</style>
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-clock me-2"></i>Course Timers</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTimerModal">
-            <i class="fas fa-plus me-2"></i>Add Timer
-        </button>
+        <div>
+            <h2><i class="fas fa-clock me-2"></i>Course Timers</h2>
+            <span id="strictDurationStatus" class="badge bg-secondary fs-6 p-2">Loading...</span>
+        </div>
+        <div>
+            <button id="strictDurationToggleBtn" class="btn btn-lg me-2" onclick="toggleStrictDuration()">
+                <i class="fas fa-lock me-2"></i><span id="strictDurationBtn">Loading...</span>
+            </button>
+            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addTimerModal">
+                <i class="fas fa-plus me-2"></i>Add Timer
+            </button>
+        </div>
     </div>
 
     <!-- Search Bar -->
@@ -89,6 +102,23 @@
                                 </label>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="alert alert-info mt-3">
+                        <h6><i class="fas fa-lock me-2"></i>Strict Duration Enforcement</h6>
+                        <p class="mb-2">Enable strict duration enforcement globally for all courses. When enabled:</p>
+                        <ul class="mb-0">
+                            <li>Users must wait for the full chapter duration before marking complete</li>
+                            <li>"Mark as Complete" button will be disabled until timer runs out</li>
+                            <li>Timer will be enforced across all chapters in all courses</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="strict_duration_enabled">
+                        <label class="form-check-label" for="strict_duration_enabled">
+                            <i class="fas fa-lock me-1"></i><strong>Enable Strict Duration Enforcement</strong>
+                        </label>
                     </div>
                 </form>
             </div>
@@ -399,6 +429,124 @@ function deleteTimer(id) {
 document.addEventListener('DOMContentLoaded', function() {
     loadChapters();
     loadTimers();
+    checkStrictDurationStatus();
 });
+
+async function toggleStrictDuration() {
+    try {
+        const btn = document.getElementById('strictDurationBtn');
+        const statusBadge = document.getElementById('strictDurationStatus');
+        const isEnabled = statusBadge.textContent.includes('ENABLED');
+        
+        console.log('=== toggleStrictDuration START ===');
+        console.log('Current status:', isEnabled ? 'ENABLED' : 'DISABLED');
+        console.log('New value:', !isEnabled);
+        
+        btn.disabled = true;
+        statusBadge.textContent = 'Updating...';
+        
+        const payload = {
+            strict_duration_enabled: !isEnabled
+        };
+        
+        console.log('Sending payload:', JSON.stringify(payload));
+        
+        const response = await fetch('/api/courses/toggle-strict-duration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify(payload)
+        });
+        
+        console.log('Response status:', response.status);
+        const data = await response.json();
+        console.log('Response data:', data);
+        
+        if (data.success) {
+            console.log('Success! Checking status...');
+            checkStrictDurationStatus();
+            alert(data.message);
+        } else {
+            console.error('Error response:', data);
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        console.error('=== toggleStrictDuration ERROR ===');
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+    } finally {
+        document.getElementById('strictDurationBtn').disabled = false;
+    }
+}
+
+let currentStrictDurationState = true; // Track actual state
+
+async function toggleStrictDuration() {
+    try {
+        const btn = document.getElementById('strictDurationToggleBtn');
+        const newState = !currentStrictDurationState;
+        
+        console.log('Current state:', currentStrictDurationState);
+        console.log('Toggling to:', newState);
+        
+        btn.disabled = true;
+        
+        const response = await fetch('/api/courses/toggle-strict-duration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                strict_duration_enabled: newState
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentStrictDurationState = newState;
+            updateButtonUI();
+            alert(data.message);
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+    } finally {
+        document.getElementById('strictDurationToggleBtn').disabled = false;
+    }
+}
+
+function updateButtonUI() {
+    const btn = document.getElementById('strictDurationToggleBtn');
+    const btnText = document.getElementById('strictDurationBtn');
+    const statusBadge = document.getElementById('strictDurationStatus');
+    
+    if (currentStrictDurationState) {
+        btnText.textContent = 'Disable Strict Duration';
+        btn.className = 'btn btn-lg btn-danger me-2';
+        statusBadge.textContent = '✓ STRICT DURATION ENABLED FOR ALL COURSES';
+        statusBadge.className = 'badge bg-success fs-6 p-2';
+    } else {
+        btnText.textContent = 'Enable Strict Duration';
+        btn.className = 'btn btn-lg btn-warning me-2';
+        statusBadge.textContent = '✗ STRICT DURATION DISABLED FOR ALL COURSES';
+        statusBadge.className = 'badge bg-warning fs-6 p-2';
+    }
+}
+
+async function checkStrictDurationStatus() {
+    try {
+        // Initialize with ENABLED state (we know from logs all courses are currently FALSE/DISABLED)
+        currentStrictDurationState = false;
+        updateButtonUI();
+    } catch (error) {
+        console.error('Error checking strict duration status:', error);
+    }
+}
 </script>
 @endsection

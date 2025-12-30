@@ -253,7 +253,11 @@ class EnrollmentController extends Controller
         }
         
         $enrollmentData = $enrollment->toArray();
-        $enrollmentData['course'] = $courseData;
+        $enrollmentData['course'] = $courseData->toArray();
+        // Ensure strict_duration_enabled is included
+        if (!isset($enrollmentData['course']['strict_duration_enabled'])) {
+            $enrollmentData['course']['strict_duration_enabled'] = $courseData->strict_duration_enabled ?? false;
+        }
 
         return response()->json($enrollmentData);
     }

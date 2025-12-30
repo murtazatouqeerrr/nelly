@@ -240,9 +240,10 @@ class StrictTimer {
         }
     }
 
-    async startTimer(chapterId) {
+    async startTimer(chapterId, enrollmentId = null, chapterDurationMinutes = null) {
         console.log('=== Starting Timer ===');
         console.log('Chapter ID:', chapterId);
+        console.log('Chapter Duration (minutes):', chapterDurationMinutes);
         console.log('Browser fingerprint:', this.browserFingerprint);
         
         try {
@@ -250,7 +251,8 @@ class StrictTimer {
             
             const requestData = {
                 chapter_id: chapterId,
-                browser_fingerprint: this.browserFingerprint
+                browser_fingerprint: this.browserFingerprint,
+                enrollment_id: enrollmentId
             };
             
             console.log('Request data:', requestData);
@@ -281,30 +283,53 @@ class StrictTimer {
                 throw new Error(data.error || 'Failed to start timer');
             }
 
-            if (!data.timer_required && !data.session) {
-                console.log('No timer required for this chapter');
+            // Check if timer is required OR if strict duration is globally enabled
+            const strictDurationEnabled = window.strictDurationEnabled || false;
+            
+            if (!data.session && !strictDurationEnabled) {
+                console.log('No timer required for this chapter and strict duration not enabled');
                 return { success: true, timer_required: false };
             }
 
-            this.sessionId = data.session.id;
-            this.sessionToken = data.session_token || data.session.session_token;
-            this.requiredTime = data.required_time;
-            this.elapsedTime = data.elapsed_time || 0;
-            this.isActive = true;
+            // If we have a session, use it
+            if (data.session) {
+                this.sessionId = data.session.id;
+                this.sessionToken = data.session_token || data.session.session_token;
+                this.requiredTime = data.required_time;
+                this.elapsedTime = data.elapsed_time || 0;
+                this.isActive = true;
 
-            console.log('Timer activated:', {
-                sessionId: this.sessionId,
-                sessionToken: this.sessionToken,
-                requiredTime: this.requiredTime,
-                elapsedTime: this.elapsedTime
-            });
+                console.log('Timer activated:', {
+                    sessionId: this.sessionId,
+                    sessionToken: this.sessionToken,
+                    requiredTime: this.requiredTime,
+                    elapsedTime: this.elapsedTime
+                });
 
-            // Start the timer display and countdown
-            this.startCountdown();
-            this.startHeartbeat();
-            this.showTimerDisplay();
+                // Start the timer display and countdown
+                this.startCountdown();
+                this.startHeartbeat();
+                this.showTimerDisplay();
 
-            return { success: true, timer_required: true };
+                return { success: true, timer_required: true };
+            }
+            
+            // If strict duration is enabled but no specific timer, use chapter duration or default
+            if (strictDurationEnabled) {
+                // Use chapter duration if provided, otherwise use 5 minute default
+                const durationMinutes = chapterDurationMinutes || 5;
+                this.requiredTime = durationMinutes * 60;
+                this.elapsedTime = 0;
+                this.isActive = true;
+                
+                console.log('Strict duration enabled - using chapter duration:', durationMinutes, 'minutes');
+                
+                this.startCountdown();
+                this.showTimerDisplay();
+                return { success: true, timer_required: true };
+            }
+
+            return { success: true, timer_required: false };
 
         } catch (error) {
             console.error('Timer start error:', error);
@@ -411,6 +436,12 @@ class StrictTimer {
         const timerText = document.getElementById('timer-text');
         if (timerText) {
             timerText.textContent = timeText;
+        }
+        
+        // Ensure timer display is visible
+        const timerDisplay = document.getElementById('timer-display');
+        if (timerDisplay && this.isActive) {
+            timerDisplay.style.display = 'block';
         }
         
         // Update progress bar

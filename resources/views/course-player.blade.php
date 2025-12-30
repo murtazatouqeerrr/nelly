@@ -364,6 +364,7 @@
         
         let currentEnrollment = null;
         let chapters = [];
+        let strictDurationEnabled = false;
         
         async function loadCourseData() {
             if (!enrollmentId) {
@@ -397,6 +398,11 @@
                 if (!currentEnrollment.course || !currentEnrollment.course.id) {
                     throw new Error('Course data not found for this enrollment');
                 }
+                
+                // Load strict duration setting
+                strictDurationEnabled = currentEnrollment.course.strict_duration_enabled || false;
+                window.strictDurationEnabled = strictDurationEnabled;
+                console.log('Strict duration enabled:', strictDurationEnabled);
                 
                 // Load chapters
                 const chaptersResponse = await fetch(`/web/courses/${currentEnrollment.course.id}/chapters?enrollmentId=${enrollmentId}`, {
@@ -489,6 +495,8 @@
         let timerElapsed = 0;
         let timerRequired = 0;
         let timerInterval = null;
+        let timerRunning = false;
+        let timeRemaining = 0;
         
         // Pagination variables
         let contentPages = [];
@@ -496,17 +504,30 @@
         let wordsPerPage = 800; // Approximately 3-4 minutes of reading
         
         function selectChapter(chapterId) {
-            const chapter = chapters.find(c => c.id === chapterId);
-            if (!chapter) return;
+            console.log('🔍 selectChapter called with:', chapterId, 'Type:', typeof chapterId);
+            
+            // Convert to string if needed
+            const chapterIdStr = String(chapterId);
+            
+            const chapter = chapters.find(c => String(c.id) === chapterIdStr);
+            console.log('🔍 Found chapter:', chapter);
+            
+            if (!chapter) {
+                console.error('Chapter not found:', chapterId);
+                console.log('Available chapters:', chapters.map(c => ({ id: c.id, title: c.title })));
+                return;
+            }
             
             // Handle final exam differently
-            if (chapterId === 'final-exam') {
+            if (chapterIdStr === 'final-exam') {
                 loadFinalExam();
                 return;
             }
             
             // Check if chapter is unlocked
-            const chapterIndex = chapters.findIndex(c => c.id === chapterId);
+            const chapterIndex = chapters.findIndex(c => String(c.id) === chapterIdStr);
+            console.log('🔍 Chapter index:', chapterIndex, 'Is unlocked:', isChapterUnlocked(chapterIndex));
+            
             if (!isChapterUnlocked(chapterIndex)) {
                 console.warn(`Chapter ${chapterId} is locked. Chapter index: ${chapterIndex}`);
                 console.warn('Previous chapters:', chapters.slice(0, chapterIndex).map(c => ({ id: c.id, completed: c.is_completed })));
@@ -514,8 +535,17 @@
                 return;
             }
             
-            console.log(`Loading chapter ${chapterId} (index: ${chapterIndex})`);
+            console.log(`✅ Loading chapter ${chapterId} (index: ${chapterIndex})`);
             currentChapterId = chapterId;
+            
+            // Show timer display if strict duration is enabled
+            if (strictDurationEnabled) {
+                console.log('⏱️ Strict duration enabled, showing timer');
+                const timerDisplay = document.getElementById('timer-display');
+                if (timerDisplay) {
+                    timerDisplay.style.display = 'block';
+                }
+            }
             
             // Check for timer configuration
             checkChapterTimer(chapterId);
@@ -866,9 +896,15 @@
                 `;
             } else if (isOnLastPage) {
                 // Show complete button only on last page or single page
+                const isDisabled = window.strictDurationEnabled && timerRunning;
+                const disabledAttr = isDisabled ? 'disabled' : '';
+                const disabledClass = isDisabled ? 'opacity-50' : '';
+                const title = isDisabled ? 'Wait for timer to complete' : '';
+                
                 actionContainer.innerHTML = `
-                    <button onclick="completeChapter()" class="btn btn-success btn-lg">
+                    <button onclick="completeChapter()" class="btn btn-success btn-lg ${disabledClass}" ${disabledAttr} title="${title}">
                         <i class="fas fa-check-circle"></i> Mark Chapter as Complete
+                        ${isDisabled ? '<br><small>Timer: ' + Math.ceil(timeRemaining) + 's remaining</small>' : ''}
                     </button>
                 `;
             } else {
@@ -1040,6 +1076,12 @@
                 console.error('No chapter ID available');
                 alert('Please select a chapter first');
                 return Promise.reject('No chapter ID available');
+            }
+
+            // Check strict duration enforcement
+            if (window.strictDurationEnabled && timerRunning) {
+                alert('You must complete the full chapter duration before marking as complete.');
+                return Promise.reject('Strict duration not met');
             }
             
             try {
@@ -1603,7 +1645,20 @@
             try {
                 console.log('🔒 Starting strict timer for chapter:', chapterId);
                 
-                const result = await window.strictTimer.startTimer(chapterId);
+                if (!window.strictTimer) {
+                    console.error('❌ StrictTimer not initialized!');
+                    hideTimerDisplay();
+                    return { success: false, error: 'StrictTimer not initialized' };
+                }
+                
+                // Get chapter duration
+                const chapter = chapters.find(c => String(c.id) === String(chapterId));
+                const chapterDuration = chapter ? chapter.duration : null;
+                
+                console.log('📖 Chapter duration:', chapterDuration, 'minutes');
+                
+                // Pass enrollment ID and chapter duration to the timer
+                const result = await window.strictTimer.startTimer(chapterId, enrollmentId, chapterDuration);
                 
                 if (result.timer_required) {
                     console.log('✅ Strict timer activated');
@@ -1647,21 +1702,36 @@
             }
             
             timerStartTime = Date.now();
+            timerRunning = true;
             
             timerInterval = setInterval(() => {
                 timerElapsed = Math.floor((Date.now() - timerStartTime) / 1000);
+                timeRemaining = Math.max(0, timerRequired - timerElapsed);
                 updateTimerDisplay();
                 
                 // Check if timer is complete
                 if (timerElapsed >= timerRequired) {
+                    timerRunning = false;
                     document.getElementById('timer-status').textContent = 'Complete';
                     document.getElementById('timer-status').classList.remove('bg-warning');
                     document.getElementById('timer-status').classList.add('bg-success');
+                    
+                    // Update button if strict duration is enabled
+                    if (strictDurationEnabled) {
+                        displayActionButtons();
+                    }
                 }
             }, 1000);
         }
         
         function updateTimerDisplay() {
+            const timerDisplay = document.getElementById('timer-display');
+            
+            // Show timer display if strict duration is enabled
+            if (strictDurationEnabled) {
+                timerDisplay.style.display = 'block';
+            }
+            
             const minutes = Math.floor(timerElapsed / 60);
             const seconds = timerElapsed % 60;
             const timeText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
